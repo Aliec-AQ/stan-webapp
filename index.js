@@ -15614,7 +15614,7 @@
     });
   };
   const router = createRouter({
-    history: createWebHistory("/"),
+    history: createWebHistory("/stan-webapp/"),
     routes: [
       {
         name: "acceuil",
@@ -15644,14 +15644,12 @@
       document.removeEventListener("click", el.clickOutsideEvent);
     }
   };
-  console.log("App is starting...");
   const app = createApp(_sfc_main$5);
   app.use(router);
   app.use(VueQueryPlugin);
   app.use(src_default, { position: "bottom-right" });
   app.directive("click-outside", clickOutside);
   app.mount("#app");
-  console.log("App mounted successfully!");
   const _imports_0 = "/stan-webapp/logo.png";
   const useGetLignes = (options = {}) => {
     const lignes = ref([]);
