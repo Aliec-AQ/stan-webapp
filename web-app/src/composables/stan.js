@@ -83,7 +83,12 @@ export class Stan {
   static clearCache() {
     try {
       localStorage.removeItem('stan_lignes');
-      localStorage.removeItem('stan_arrets');
+      
+      Object.keys(localStorage).forEach(key => {
+        if (key.startsWith('stan_arrets_')) {
+          localStorage.removeItem(key);
+        }
+      });
     } catch (error) {
       console.error('Error clearing cache:', error);
     }
