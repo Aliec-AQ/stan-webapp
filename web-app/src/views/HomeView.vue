@@ -1,17 +1,37 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue';
-import { useGetLignes } from '@/composables/stan';
-import Line from '@/components/Line.vue';
-import ItemSelector from '@/components/ItemSelector.vue';
+import { Stan } from '@/composables/stan';
+import {Ligne, ItemSelector, SadIcon, SearchIcon} from '@/components';
 import { useRouter } from 'vue-router';
 
+const loading = ref(true);
+const lignes = ref([]);
 const router = useRouter();
-const { lignes, loading, refetch } = useGetLignes();
 const showMobileMenu = ref(false);
+const refreshing = ref(false);
 
-onMounted(() => {
-  refetch.value();
+onMounted(async () => {
+  await loadData();
 });
+
+const loadData = async (forceRefresh = false) => {
+  loading.value = true;
+  try {
+    lignes.value = await Stan.getLignes(forceRefresh);
+  } catch (error) {
+    console.error('Error loading lignes:', error);
+  } finally {
+    loading.value = false;
+  }
+};
+
+const refreshData = async () => {
+  refreshing.value = true;
+  await loadData(true);
+  setTimeout(() => {
+    refreshing.value = false;
+  }, 1000);
+};
 
 const categorizedLignes = computed(() => {
   const categories = {
@@ -44,8 +64,8 @@ const categorizedLignes = computed(() => {
   return categories;
 });
 
-const goToLineDetail = (ligne) => {
-  router.push(`/ligne/${ligne.id}/${ligne.numlignepublic}`);
+const goToLigneDetail = (ligne) => {
+  router.push(`/ligne/${ligne.osmid}`);
 };
 
 const toggleMobileMenu = () => {
@@ -54,63 +74,19 @@ const toggleMobileMenu = () => {
 </script>
 
 <template>
-  <header class="sticky top-0 z-20 shadow-md bg-white">
-    <div class="max-w-7xl mx-auto">
-      <div class="flex items-center justify-between px-4 py-2">
-        <!-- Logo Section -->
-        <div class="flex items-center">
-          <img src="@/assets/logo.png" alt="Logo STAN" class="h-14 md:h-16">
-          <div class="ml-3 hidden md:block">
-            <h1 class="text-xl font-semibold text-blue-800">Lignes de bus stan</h1>
-          </div>
-        </div>
-        
-        <!-- Navigation Links - Desktop -->
-        <nav class="hidden md:flex items-center space-x-6">
-          <a href="#" class="text-blue-700 font-medium flex items-center pb-1 border-b-2 border-blue-600">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-            </svg>
-            Accueil
-          </a>
-        </nav>
-        
-        <button @click="toggleMobileMenu" class="md:hidden p-2 rounded-full hover:bg-gray-100 transition-colors duration-200">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path v-if="showMobileMenu" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            <path v-else stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-      
-      <!-- Mobile Menu -->
-      <div v-show="showMobileMenu" class="md:hidden border-t border-gray-200 py-3 px-4 space-y-3 animate-slideDown">
-        <a href="#" class="flex items-center py-2 px-4 bg-blue-50 text-blue-700 rounded-md font-medium">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-          </svg>
-          Accueil
-        </a>
-      </div>
-    </div>
-    
-    <!-- Search Bar Banner -->
-    <div class="bg-blue-50 py-3 px-4 border-t border-blue-100">
+    <header class="sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100">
       <div class="max-w-7xl mx-auto">
         <p class="text-sm text-blue-700 font-medium mb-1">Trouvez votre ligne</p>
         <div id="search-container" class="relative">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-          </svg>
+          <SearchIcon class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
           <ItemSelector
             class="w-full pl-10 z-10 shadow-sm"
             :items="lignes"
-            @select="goToLineDetail"
+            @select="goToLigneDetail"
           />
         </div>
       </div>
-    </div>
-  </header>
+    </header>
   
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div id="loading" v-if="loading" class="flex flex-col items-center justify-center py-20">
@@ -130,16 +106,14 @@ const toggleMobileMenu = () => {
         </div>
         <div class="lines-container">
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            <Line v-for="ligne in lines" :key="ligne.id" :ligne="ligne" @lineSelected="goToLineDetail(ligne)" 
+            <Ligne v-for="ligne in lines" :key="ligne.id" :ligne="ligne" @lineSelected="goToLigneDetail(ligne)" 
                   class="transform transition-all duration-300 hover:-translate-y-2" />
           </div>
         </div>
       </div>
       
       <div v-if="Object.values(categorizedLignes).every(arr => arr.length === 0)" class="text-center py-16">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <SadIcon class="h-16 w-16 mx-auto text-gray-400 mb-4" />
         <p class="text-gray-500 text-lg">Aucune ligne ne correspond à votre recherche</p>
       </div>
     </div>
@@ -219,5 +193,18 @@ const toggleMobileMenu = () => {
 
 .animate-slideDown {
   animation: slideDown 0.2s ease-out forwards;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 </style>

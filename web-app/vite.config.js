@@ -12,7 +12,7 @@ export default defineConfig({
   },
   build: {
     cssCodeSplit: false,
-    outDir: '../../',
+    outDir: '../',
     rollupOptions: {
       output: {
         format: "iife",

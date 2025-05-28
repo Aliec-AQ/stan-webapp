@@ -10,9 +10,9 @@ const router = createRouter({
     },
     {
       name: 'ligne-detail',
-      path: '/ligne/:id/:numlignepublic',
+      path: '/ligne/:osmid_ligne',
       component: () => import('@/views/LigneDetailView.vue'),
-    },
+    }
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }
