@@ -11,6 +11,12 @@ importers:
       axios:
         specifier: ^1.8.4
         version: 1.9.0
+      pinia:
+        specifier: ^2.3.1
+        version: 2.3.1(vue@3.5.15)
+      pinia-plugin-persist:
+        specifier: ^1.0.0
+        version: 1.0.0(pinia@2.3.1(vue@3.5.15))(vue@3.5.15)
       vue:
         specifier: ^3.5.13
         version: 3.5.15
@@ -1348,6 +1354,25 @@ packages:
     resolution: {integrity: sha512-udgsAY+fTnvv7kI7aaxbqwWNb0AHiB0qBO89PZKPkoTmGOgdbrHDKD+0B2X4uTfJ/FT1R09r9gTsjUjNJotuog==}
     engines: {node: '>=0.10.0'}
 
+  pinia-plugin-persist@1.0.0:
+    resolution: {integrity: sha512-M4hBBd8fz/GgNmUPaaUsC29y1M09lqbXrMAHcusVoU8xlQi1TqgkWnnhvMikZwr7Le/hVyMx8KUcumGGrR6GVw==}
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0
+      pinia: ^2.0.0
+      vue: ^2.0.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  pinia@2.3.1:
+    resolution: {integrity: sha512-khUlZSwt9xXCaTbbxFYBKDc/bWAGWJjOgvxETwkTN7KRm66EeT1ZdZj6i2ceh9sP2Pzqsbc704r2yngBrxBVug==}
+    peerDependencies:
+      typescript: '>=4.4.4'
+      vue: ^2.7.0 || ^3.5.11
+    peerDependenciesMeta:
+      typescript:
+        optional: true
+
   pirates@4.0.7:
     resolution: {integrity: sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==}
     engines: {node: '>= 6'}
@@ -1649,6 +1674,28 @@ packages:
     peerDependencies:
       '@vue/composition-api': ^1.0.0-rc.1
       vue: ^2.6.0 || >=3.0.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  vue-demi@0.12.5:
+    resolution: {integrity: sha512-BREuTgTYlUr0zw0EZn3hnhC3I6gPWv+Kwh4MCih6QcAeaTlaIX0DwOVN0wHej7hSvDPecz4jygy/idsgKfW58Q==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
+    peerDependenciesMeta:
+      '@vue/composition-api':
+        optional: true
+
+  vue-demi@0.14.10:
+    resolution: {integrity: sha512-nMZBOwuzabUO0nLgIcc6rycZEebF6eeUfaiQx9+WSk8e29IbLvPU9feI6tqW4kTo3hvoYAJkMh8n8D0fuISphg==}
+    engines: {node: '>=12'}
+    hasBin: true
+    peerDependencies:
+      '@vue/composition-api': ^1.0.0-rc.1
+      vue: ^3.0.0-0 || ^2.6.0
     peerDependenciesMeta:
       '@vue/composition-api':
         optional: true
@@ -2917,6 +2964,20 @@ snapshots:
 
   pify@2.3.0: {}
 
+  pinia-plugin-persist@1.0.0(pinia@2.3.1(vue@3.5.15))(vue@3.5.15):
+    dependencies:
+      pinia: 2.3.1(vue@3.5.15)
+      vue: 3.5.15
+      vue-demi: 0.12.5(vue@3.5.15)
+
+  pinia@2.3.1(vue@3.5.15):
+    dependencies:
+      '@vue/devtools-api': 6.6.4
+      vue: 3.5.15
+      vue-demi: 0.14.10(vue@3.5.15)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+
   pirates@4.0.7: {}
 
   postcss-import@15.1.0(postcss@8.5.3):
@@ -3233,6 +3294,14 @@ snapshots:
       yaml: 2.8.0
 
   vue-demi@0.10.1(vue@3.5.15):
+    dependencies:
+      vue: 3.5.15
+
+  vue-demi@0.12.5(vue@3.5.15):
+    dependencies:
+      vue: 3.5.15
+
+  vue-demi@0.14.10(vue@3.5.15):
     dependencies:
       vue: 3.5.15
 

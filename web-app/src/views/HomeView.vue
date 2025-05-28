@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue';
 import { Stan } from '@/composables/stan';
-import {Ligne, ItemSelector, SadIcon, SearchIcon} from '@/components';
+import {Ligne, ItemSelector, SadIcon, SearchIcon, AppMenu, LineLoader} from '@/components';
 import { useRouter } from 'vue-router';
 
 const loading = ref(true);
@@ -74,6 +74,7 @@ const toggleMobileMenu = () => {
 </script>
 
 <template>
+  <main class="min-h-screen bg-gray-100">
     <header class="sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100">
       <div class="max-w-7xl mx-auto">
         <p class="text-sm text-blue-700 font-medium mb-1">Trouvez votre ligne</p>
@@ -86,19 +87,13 @@ const toggleMobileMenu = () => {
           />
         </div>
       </div>
-    </header>
+  </header>
   
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-    <div id="loading" v-if="loading" class="flex flex-col items-center justify-center py-20">
-      <div class="loader-container">
-        <div class="loader-line">
-          <div class="loader-highlight"></div>
-        </div>
-      </div>
-      <p class="text-gray-600 animate-pulse mt-4">Chargement des lignes...</p>
-    </div>
+  <LineLoader v-if="loading"/>
+
+  <div v-else class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     
-    <div id="lignes" v-else class="space-y-16">
+    <div id="lignes" class="space-y-16">
       <div v-for="(lines, category) in categorizedLignes" :key="category" class="category-section" v-show="lines.length > 0">
         <div class="category-header mb-6 relative">
           <h2 class="text-2xl font-bold text-gray-800 inline-block pb-2 border-b-4 border-blue-500">{{ category }}</h2>
@@ -118,6 +113,9 @@ const toggleMobileMenu = () => {
       </div>
     </div>
   </div>
+  </main>
+
+    <AppMenu />
 </template>
 
 <style scoped>

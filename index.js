@@ -47,7 +47,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const toRawType = (value) => {
     return toTypeString(value).slice(8, -1);
   };
-  const isPlainObject$1 = (val) => toTypeString(val) === "[object Object]";
+  const isPlainObject$2 = (val) => toTypeString(val) === "[object Object]";
   const isIntegerKey = (key) => isString$2(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
   const isReservedProp = /* @__PURE__ */ makeMap(
     // the leading comma is intentional so empty string "" is also included
@@ -185,7 +185,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     } else if (isSymbol(val)) {
       return stringifySymbol(val);
-    } else if (isObject$2(val) && !isArray$2(val) && !isPlainObject$1(val)) {
+    } else if (isObject$2(val) && !isArray$2(val) && !isPlainObject$2(val)) {
       return String(val);
     }
     return val;
@@ -315,8 +315,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   }
+  function effectScope(detached) {
+    return new EffectScope(detached);
+  }
   function getCurrentScope() {
     return activeEffectScope;
+  }
+  function onScopeDispose(fn, failSilently = false) {
+    if (activeEffectScope) {
+      activeEffectScope.cleanups.push(fn);
+    }
   }
   let activeSub;
   const pausedQueueEffects = /* @__PURE__ */ new WeakSet();
@@ -411,9 +419,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   let batchDepth = 0;
   let batchedSub;
   let batchedComputed;
-  function batch(sub, isComputed = false) {
+  function batch(sub, isComputed2 = false) {
     sub.flags |= 8;
-    if (isComputed) {
+    if (isComputed2) {
       sub.next = batchedComputed;
       batchedComputed = sub;
       return;
@@ -770,6 +778,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     endBatch();
   }
+  function getDepFromReactive(object, key) {
+    const depMap = targetMap.get(object);
+    return depMap && depMap.get(key);
+  }
   function reactiveReadArray(array) {
     const raw = toRaw(array);
     if (raw === array) return raw;
@@ -899,12 +911,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     let wrappedFn = fn;
     if (arr !== self2) {
       if (needsWrap) {
-        wrappedFn = function(item, index) {
-          return fn.call(this, toReactive(item), index, self2);
+        wrappedFn = function(item, index2) {
+          return fn.call(this, toReactive(item), index2, self2);
         };
       } else if (fn.length > 2) {
-        wrappedFn = function(item, index) {
-          return fn.call(this, item, index, self2);
+        wrappedFn = function(item, index2) {
+          return fn.call(this, item, index2, self2);
         };
       }
     }
@@ -916,12 +928,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     let wrappedFn = fn;
     if (arr !== self2) {
       if (!isShallow(self2)) {
-        wrappedFn = function(acc, item, index) {
-          return fn.call(this, acc, toReactive(item), index, self2);
+        wrappedFn = function(acc, item, index2) {
+          return fn.call(this, acc, toReactive(item), index2, self2);
         };
       } else if (fn.length > 3) {
-        wrappedFn = function(acc, item, index) {
-          return fn.call(this, acc, item, index, self2);
+        wrappedFn = function(acc, item, index2) {
+          return fn.call(this, acc, item, index2, self2);
         };
       }
     }
@@ -1459,6 +1471,36 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function proxyRefs(objectWithRefs) {
     return isReactive(objectWithRefs) ? objectWithRefs : new Proxy(objectWithRefs, shallowUnwrapHandlers);
   }
+  function toRefs(object) {
+    const ret = isArray$2(object) ? new Array(object.length) : {};
+    for (const key in object) {
+      ret[key] = propertyToRef(object, key);
+    }
+    return ret;
+  }
+  class ObjectRefImpl {
+    constructor(_object, _key, _defaultValue) {
+      this._object = _object;
+      this._key = _key;
+      this._defaultValue = _defaultValue;
+      this["__v_isRef"] = true;
+      this._value = void 0;
+    }
+    get value() {
+      const val = this._object[this._key];
+      return this._value = val === void 0 ? this._defaultValue : val;
+    }
+    set value(newVal) {
+      this._object[this._key] = newVal;
+    }
+    get dep() {
+      return getDepFromReactive(toRaw(this._object), this._key);
+    }
+  }
+  function propertyToRef(source, key, defaultValue) {
+    const val = source[key];
+    return isRef(val) ? val : new ObjectRefImpl(source, key, defaultValue);
+  }
   class ComputedRefImpl {
     constructor(fn, setter, isSSR) {
       this.fn = fn;
@@ -1684,7 +1726,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       value.forEach((v) => {
         traverse(v, depth, seen2);
       });
-    } else if (isPlainObject$1(value)) {
+    } else if (isPlainObject$2(value)) {
       for (const key in value) {
         traverse(value[key], depth, seen2);
       }
@@ -2539,7 +2581,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function resolve(registry, name) {
     return registry && (registry[name] || registry[camelize(name)] || registry[capitalize(camelize(name))]);
   }
-  function renderList(source, renderItem, cache, index) {
+  function renderList(source, renderItem, cache, index2) {
     let ret;
     const cached = cache;
     const sourceIsArray = isArray$2(source);
@@ -2612,7 +2654,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       validSlotContent || [],
       validSlotContent && slots._ === 1 ? 64 : -2
     );
-    if (rendered.scopeId) {
+    if (!noSlotted && rendered.scopeId) {
       rendered.slotScopeIds = [rendered.scopeId + "-s"];
     }
     if (slot && slot._c) {
@@ -3260,6 +3302,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       } else ;
     }
   }
+  function hasInjectionContext() {
+    return !!(currentInstance || currentRenderingInstance || currentApp);
+  }
   const internalObjectProto = {};
   const createInternalObject = () => Object.create(internalObjectProto);
   const isInternalObject = (obj) => Object.getPrototypeOf(obj) === internalObjectProto;
@@ -3507,8 +3552,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           let shouldCast = false;
           let shouldCastTrue = true;
           if (isArray$2(propType)) {
-            for (let index = 0; index < propType.length; ++index) {
-              const type = propType[index];
+            for (let index2 = 0; index2 < propType.length; ++index2) {
+              const type = propType[index2];
               const typeName = isFunction$2(type) && type.name;
               if (typeName === "Boolean") {
                 shouldCast = true;
@@ -5604,6 +5649,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function createTextVNode(text = " ", flag = 0) {
     return createVNode(Text, null, text, flag);
   }
+  function createStaticVNode(content, numberOfNodes) {
+    const vnode = createVNode(Static, null, content);
+    vnode.staticCount = numberOfNodes;
+    return vnode;
+  }
   function createCommentVNode(text = "", asBlock = false) {
     return asBlock ? (openBlock(), createBlock(Comment, null, text)) : createVNode(Comment, null, text);
   }
@@ -6985,7 +7035,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     // add the Module string tag
     obj.default && isRouteComponent(obj.default);
   }
-  const assign = Object.assign;
+  const assign$1 = Object.assign;
   function applyToParams(fn, params) {
     const newParams = {};
     for (const key in params) {
@@ -6994,7 +7044,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     return newParams;
   }
-  const noop$1 = () => {
+  const noop$2 = () => {
   };
   const isArray$1 = Array.isArray;
   const HASH_RE = /#/g;
@@ -7254,9 +7304,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     function listen(callback) {
       listeners.push(callback);
       const teardown = () => {
-        const index = listeners.indexOf(callback);
-        if (index > -1)
-          listeners.splice(index, 1);
+        const index2 = listeners.indexOf(callback);
+        if (index2 > -1)
+          listeners.splice(index2, 1);
       };
       teardowns.push(teardown);
       return teardown;
@@ -7265,7 +7315,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const { history: history2 } = window;
       if (!history2.state)
         return;
-      history2.replaceState(assign({}, history2.state, { scroll: computeScrollPosition() }), "");
+      history2.replaceState(assign$1({}, history2.state, { scroll: computeScrollPosition() }), "");
     }
     function destroy() {
       for (const teardown of teardowns)
@@ -7327,7 +7377,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
     function replace(to, data) {
-      const state = assign({}, history2.state, buildState(
+      const state = assign$1({}, history2.state, buildState(
         historyState.value.back,
         // keep back and forward entries but override current position
         to,
@@ -7338,7 +7388,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       currentLocation.value = to;
     }
     function push(to, data) {
-      const currentState = assign(
+      const currentState = assign$1(
         {},
         // use current history state to gracefully handle a wrong call to
         // history.replaceState
@@ -7351,7 +7401,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
       );
       changeLocation(currentState.current, currentState, true);
-      const state = assign({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
+      const state = assign$1({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
       changeLocation(to, state, false);
       currentLocation.value = to;
     }
@@ -7371,7 +7421,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         historyListeners.pauseListeners();
       history.go(delta);
     }
-    const routerHistory = assign({
+    const routerHistory = assign$1({
       // it's overridden right after
       location: "",
       base,
@@ -7403,7 +7453,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   })(NavigationFailureType || (NavigationFailureType = {}));
   function createRouterError(type, params) {
     {
-      return assign(new Error(), {
+      return assign$1(new Error(), {
         type,
         [NavigationFailureSymbol]: true
       }, params);
@@ -7421,7 +7471,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g;
   function tokensToParser(segments, extraOptions) {
-    const options = assign({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
+    const options = assign$1({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
     const score = [];
     let pattern = options.start ? "^" : "";
     const keys = [];
@@ -7700,7 +7750,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function createRouteRecordMatcher(record, parent, options) {
     const parser = tokensToParser(tokenizePath(record.path), options);
-    const matcher = assign(parser, {
+    const matcher = assign$1(parser, {
       record,
       parent,
       // these needs to be populated by the parent
@@ -7732,7 +7782,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           normalizedRecords.push(
             // we need to normalize again to ensure the `mods` property
             // being non enumerable
-            normalizeRouteRecord(assign({}, mainNormalizedRecord, {
+            normalizeRouteRecord(assign$1({}, mainNormalizedRecord, {
               // this allows us to hold a copy of the `components` option
               // so that async components cache is hold on the original record
               components: originalRecord ? originalRecord.record.components : mainNormalizedRecord.components,
@@ -7778,7 +7828,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       return originalMatcher ? () => {
         removeRoute(originalMatcher);
-      } : noop$1;
+      } : noop$2;
     }
     function removeRoute(matcherRef) {
       if (isRouteName(matcherRef)) {
@@ -7790,9 +7840,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           matcher.alias.forEach(removeRoute);
         }
       } else {
-        const index = matchers.indexOf(matcherRef);
-        if (index > -1) {
-          matchers.splice(index, 1);
+        const index2 = matchers.indexOf(matcherRef);
+        if (index2 > -1) {
+          matchers.splice(index2, 1);
           if (matcherRef.record.name)
             matcherMap.delete(matcherRef.record.name);
           matcherRef.children.forEach(removeRoute);
@@ -7804,8 +7854,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return matchers;
     }
     function insertMatcher(matcher) {
-      const index = findInsertionIndex(matcher, matchers);
-      matchers.splice(index, 0, matcher);
+      const index2 = findInsertionIndex(matcher, matchers);
+      matchers.splice(index2, 0, matcher);
       if (matcher.record.name && !isAliasRecord(matcher))
         matcherMap.set(matcher.record.name, matcher);
     }
@@ -7821,7 +7871,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             location: location2
           });
         name = matcher.record.name;
-        params = assign(
+        params = assign$1(
           // paramsFromLocation is a new object
           paramsFromLocation(
             currentLocation.params,
@@ -7849,7 +7899,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             currentLocation
           });
         name = matcher.record.name;
-        params = assign({}, currentLocation.params, location2.params);
+        params = assign$1({}, currentLocation.params, location2.params);
         path = matcher.stringify(params);
       }
       const matched = [];
@@ -7931,7 +7981,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return false;
   }
   function mergeMetaFields(matched) {
-    return matched.reduce((meta, record) => assign(meta, record.meta), {});
+    return matched.reduce((meta, record) => assign$1(meta, record.meta), {});
   }
   function mergeOptions(defaults2, partialOptions) {
     const options = {};
@@ -8123,9 +8173,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const currentMatched = currentRoute.matched;
       if (!routeMatched || !currentMatched.length)
         return -1;
-      const index = currentMatched.findIndex(isSameRouteRecord.bind(null, routeMatched));
-      if (index > -1)
-        return index;
+      const index2 = currentMatched.findIndex(isSameRouteRecord.bind(null, routeMatched));
+      if (index2 > -1)
+        return index2;
       const parentRecordPath = getOriginalPath(matched[length - 2]);
       return (
         // we are dealing with nested routes
@@ -8133,7 +8183,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         // referring to the empty child. Or we currently are on a different
         // child of the same parent
         getOriginalPath(routeMatched) === parentRecordPath && // avoid comparing the child with its parent
-        currentMatched[currentMatched.length - 1].path !== parentRecordPath ? currentMatched.findIndex(isSameRouteRecord.bind(null, matched[length - 2])) : index
+        currentMatched[currentMatched.length - 1].path !== parentRecordPath ? currentMatched.findIndex(isSameRouteRecord.bind(null, matched[length - 2])) : index2
       );
     });
     const isActive = computed(() => activeRecordIndex.value > -1 && includesParams(currentRoute.params, route.value.params));
@@ -8143,7 +8193,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         const p2 = router2[unref(props.replace) ? "replace" : "push"](
           unref(props.to)
           // avoid uncaught errors are they are logged anyway
-        ).catch(noop$1);
+        ).catch(noop$2);
         if (props.viewTransition && typeof document !== "undefined" && "startViewTransition" in document) {
           document.startViewTransition(() => p2);
         }
@@ -8307,7 +8357,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             matchedRoute.instances[currentName] = null;
           }
         };
-        const component = h(ViewComponent, assign({}, routeProps, attrs, {
+        const component = h(ViewComponent, assign$1({}, routeProps, attrs, {
           onVnodeUnmounted,
           ref: viewRef
         }));
@@ -8369,12 +8419,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return !!matcher.getRecordMatcher(name);
     }
     function resolve2(rawLocation, currentLocation) {
-      currentLocation = assign({}, currentLocation || currentRoute.value);
+      currentLocation = assign$1({}, currentLocation || currentRoute.value);
       if (typeof rawLocation === "string") {
         const locationNormalized = parseURL(parseQuery$1, rawLocation, currentLocation.path);
         const matchedRoute2 = matcher.resolve({ path: locationNormalized.path }, currentLocation);
         const href2 = routerHistory.createHref(locationNormalized.fullPath);
-        return assign(locationNormalized, matchedRoute2, {
+        return assign$1(locationNormalized, matchedRoute2, {
           params: decodeParams(matchedRoute2.params),
           hash: decode(locationNormalized.hash),
           redirectedFrom: void 0,
@@ -8383,17 +8433,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       let matcherLocation;
       if (rawLocation.path != null) {
-        matcherLocation = assign({}, rawLocation, {
+        matcherLocation = assign$1({}, rawLocation, {
           path: parseURL(parseQuery$1, rawLocation.path, currentLocation.path).path
         });
       } else {
-        const targetParams = assign({}, rawLocation.params);
+        const targetParams = assign$1({}, rawLocation.params);
         for (const key in targetParams) {
           if (targetParams[key] == null) {
             delete targetParams[key];
           }
         }
-        matcherLocation = assign({}, rawLocation, {
+        matcherLocation = assign$1({}, rawLocation, {
           params: encodeParams(targetParams)
         });
         currentLocation.params = encodeParams(currentLocation.params);
@@ -8401,12 +8451,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const matchedRoute = matcher.resolve(matcherLocation, currentLocation);
       const hash = rawLocation.hash || "";
       matchedRoute.params = normalizeParams(decodeParams(matchedRoute.params));
-      const fullPath = stringifyURL(stringifyQuery$1, assign({}, rawLocation, {
+      const fullPath = stringifyURL(stringifyQuery$1, assign$1({}, rawLocation, {
         hash: encodeHash(hash),
         path: matchedRoute.path
       }));
       const href = routerHistory.createHref(fullPath);
-      return assign({
+      return assign$1({
         fullPath,
         // keep the hash encoded so fullPath is effectively path + encodedQuery +
         // hash
@@ -8425,7 +8475,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       });
     }
     function locationAsObject(to) {
-      return typeof to === "string" ? parseURL(parseQuery$1, to, currentRoute.value.path) : assign({}, to);
+      return typeof to === "string" ? parseURL(parseQuery$1, to, currentRoute.value.path) : assign$1({}, to);
     }
     function checkCanceledNavigation(to, from) {
       if (pendingLocation !== to) {
@@ -8439,7 +8489,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return pushWithRedirect(to);
     }
     function replace(to) {
-      return push(assign(locationAsObject(to), { replace: true }));
+      return push(assign$1(locationAsObject(to), { replace: true }));
     }
     function handleRedirectRecord(to) {
       const lastMatched = to.matched[to.matched.length - 1];
@@ -8453,7 +8503,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           );
           newTargetLocation.params = {};
         }
-        return assign({
+        return assign$1({
           query: to.query,
           hash: to.hash,
           // avoid transferring params if the redirect has a path
@@ -8470,8 +8520,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const shouldRedirect = handleRedirectRecord(targetLocation);
       if (shouldRedirect)
         return pushWithRedirect(
-          assign(locationAsObject(shouldRedirect), {
-            state: typeof shouldRedirect === "object" ? assign({}, data, shouldRedirect.state) : data,
+          assign$1(locationAsObject(shouldRedirect), {
+            state: typeof shouldRedirect === "object" ? assign$1({}, data, shouldRedirect.state) : data,
             force,
             replace: replace2
           }),
@@ -8513,11 +8563,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           )) {
             return pushWithRedirect(
               // keep options
-              assign({
+              assign$1({
                 // preserve an existing replacement but allow the redirect to override it
                 replace: replace2
               }, locationAsObject(failure2.to), {
-                state: typeof failure2.to === "object" ? assign({}, data, failure2.to.state) : data,
+                state: typeof failure2.to === "object" ? assign$1({}, data, failure2.to.state) : data,
                 force
               }),
               // preserve the original redirectedFrom if any
@@ -8609,7 +8659,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const state = !isBrowser$1 ? {} : history.state;
       if (isPush) {
         if (replace2 || isFirstNavigation)
-          routerHistory.replace(toLocation.fullPath, assign({
+          routerHistory.replace(toLocation.fullPath, assign$1({
             scroll: isFirstNavigation && state && state.scroll
           }, data));
         else
@@ -8629,7 +8679,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         const toLocation = resolve2(to);
         const shouldRedirect = handleRedirectRecord(toLocation);
         if (shouldRedirect) {
-          pushWithRedirect(assign(shouldRedirect, { replace: true, force: true }), toLocation).catch(noop$1);
+          pushWithRedirect(assign$1(shouldRedirect, { replace: true, force: true }), toLocation).catch(noop$2);
           return;
         }
         pendingLocation = toLocation;
@@ -8651,7 +8701,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */
           )) {
             pushWithRedirect(
-              assign(locationAsObject(error.to), {
+              assign$1(locationAsObject(error.to), {
                 force: true
               }),
               toLocation
@@ -8664,7 +8714,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               ) && !info.delta && info.type === NavigationType.pop) {
                 routerHistory.go(-1, false);
               }
-            }).catch(noop$1);
+            }).catch(noop$2);
             return Promise.reject();
           }
           if (info.delta) {
@@ -8696,7 +8746,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             }
           }
           triggerAfterEach(toLocation, from, failure);
-        }).catch(noop$1);
+        }).catch(noop$2);
       });
     }
     let readyHandlers = useCallbacks();
@@ -8833,7 +8883,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function useRoute(_name) {
     return inject(routeLocationKey);
   }
-  const _sfc_main$e = {
+  const _sfc_main$o = {
     __name: "App",
     setup(__props) {
       return (_ctx, _cache) => {
@@ -9170,14 +9220,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   });
-  var _hoisted_1$e = /* @__PURE__ */ createTextVNode(" × ");
+  var _hoisted_1$o = /* @__PURE__ */ createTextVNode(" × ");
   function render2(_ctx, _cache) {
     return openBlock(), createBlock(resolveDynamicComponent(_ctx.buttonComponent), mergeProps({
       "aria-label": _ctx.ariaLabel,
       class: _ctx.classes
     }, _ctx.$attrs), {
       default: withCtx(() => [
-        _hoisted_1$e
+        _hoisted_1$o
       ]),
       _: 1
     }, 16, ["aria-label", "class"]);
@@ -9185,7 +9235,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   VtCloseButton_default.render = render2;
   var VtCloseButton_default2 = VtCloseButton_default;
   var VtSuccessIcon_default = {};
-  var _hoisted_12$2 = {
+  var _hoisted_12$3 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9195,20 +9245,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512"
   };
-  var _hoisted_2$6 = /* @__PURE__ */ createBaseVNode("path", {
+  var _hoisted_2$9 = /* @__PURE__ */ createBaseVNode("path", {
     fill: "currentColor",
     d: "M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
   }, null, -1);
-  var _hoisted_3$6 = [
-    _hoisted_2$6
+  var _hoisted_3$9 = [
+    _hoisted_2$9
   ];
   function render3(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_12$2, _hoisted_3$6);
+    return openBlock(), createElementBlock("svg", _hoisted_12$3, _hoisted_3$9);
   }
   VtSuccessIcon_default.render = render3;
   var VtSuccessIcon_default2 = VtSuccessIcon_default;
   var VtInfoIcon_default = {};
-  var _hoisted_13$1 = {
+  var _hoisted_13$3 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9226,12 +9276,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     _hoisted_22
   ];
   function render4(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_13$1, _hoisted_32);
+    return openBlock(), createElementBlock("svg", _hoisted_13$3, _hoisted_32);
   }
   VtInfoIcon_default.render = render4;
   var VtInfoIcon_default2 = VtInfoIcon_default;
   var VtWarningIcon_default = {};
-  var _hoisted_14$1 = {
+  var _hoisted_14$2 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9249,7 +9299,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     _hoisted_23
   ];
   function render5(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_14$1, _hoisted_33);
+    return openBlock(), createElementBlock("svg", _hoisted_14$2, _hoisted_33);
   }
   VtWarningIcon_default.render = render5;
   var VtWarningIcon_default2 = VtWarningIcon_default;
@@ -9521,7 +9571,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   });
-  var _hoisted_16 = ["role"];
+  var _hoisted_16$1 = ["role"];
   function render8(_ctx, _cache) {
     const _component_Icon = resolveComponent("Icon");
     const _component_CloseButton = resolveComponent("CloseButton");
@@ -9548,7 +9598,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           key: 1,
           "toast-id": _ctx.id
         }, _ctx.hasProp(_ctx.content, "props") ? _ctx.content.props : {}, toHandlers(_ctx.hasProp(_ctx.content, "listeners") ? _ctx.content.listeners : {}), { onCloseToast: _ctx.closeToast }), null, 16, ["toast-id", "onCloseToast"]))
-      ], 10, _hoisted_16),
+      ], 10, _hoisted_16$1),
       !!_ctx.closeButton ? (openBlock(), createBlock(_component_CloseButton, {
         key: 1,
         component: _ctx.closeButton,
@@ -9895,12 +9945,408 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         name: "ligne-detail",
         path: "/ligne/:osmid_ligne",
         component: () => __vitePreload(() => Promise.resolve().then(() => LigneDetailView), false ? __VITE_PRELOAD__ : void 0)
+      },
+      {
+        name: "favorites",
+        path: "/favorites",
+        component: () => __vitePreload(() => Promise.resolve().then(() => FavoritesView), false ? __VITE_PRELOAD__ : void 0)
+      },
+      {
+        name: "settings",
+        path: "/settings",
+        component: () => __vitePreload(() => Promise.resolve().then(() => SettingsView$1), false ? __VITE_PRELOAD__ : void 0)
       }
     ],
     scrollBehavior(to, from, savedPosition) {
       return { top: 0, behavior: "smooth" };
     }
   });
+  /*!
+   * pinia v2.3.1
+   * (c) 2025 Eduardo San Martin Morote
+   * @license MIT
+   */
+  let activePinia;
+  const setActivePinia = (pinia2) => activePinia = pinia2;
+  const piniaSymbol = (
+    /* istanbul ignore next */
+    Symbol()
+  );
+  function isPlainObject$1(o) {
+    return o && typeof o === "object" && Object.prototype.toString.call(o) === "[object Object]" && typeof o.toJSON !== "function";
+  }
+  var MutationType;
+  (function(MutationType2) {
+    MutationType2["direct"] = "direct";
+    MutationType2["patchObject"] = "patch object";
+    MutationType2["patchFunction"] = "patch function";
+  })(MutationType || (MutationType = {}));
+  function createPinia() {
+    const scope = effectScope(true);
+    const state = scope.run(() => ref({}));
+    let _p = [];
+    let toBeInstalled = [];
+    const pinia2 = markRaw({
+      install(app2) {
+        setActivePinia(pinia2);
+        {
+          pinia2._a = app2;
+          app2.provide(piniaSymbol, pinia2);
+          app2.config.globalProperties.$pinia = pinia2;
+          toBeInstalled.forEach((plugin) => _p.push(plugin));
+          toBeInstalled = [];
+        }
+      },
+      use(plugin) {
+        if (!this._a && true) {
+          toBeInstalled.push(plugin);
+        } else {
+          _p.push(plugin);
+        }
+        return this;
+      },
+      _p,
+      // it's actually undefined here
+      // @ts-expect-error
+      _a: null,
+      _e: scope,
+      _s: /* @__PURE__ */ new Map(),
+      state
+    });
+    return pinia2;
+  }
+  const noop$1 = () => {
+  };
+  function addSubscription(subscriptions, callback, detached, onCleanup = noop$1) {
+    subscriptions.push(callback);
+    const removeSubscription = () => {
+      const idx = subscriptions.indexOf(callback);
+      if (idx > -1) {
+        subscriptions.splice(idx, 1);
+        onCleanup();
+      }
+    };
+    if (!detached && getCurrentScope()) {
+      onScopeDispose(removeSubscription);
+    }
+    return removeSubscription;
+  }
+  function triggerSubscriptions(subscriptions, ...args) {
+    subscriptions.slice().forEach((callback) => {
+      callback(...args);
+    });
+  }
+  const fallbackRunWithContext = (fn) => fn();
+  const ACTION_MARKER = Symbol();
+  const ACTION_NAME = Symbol();
+  function mergeReactiveObjects(target, patchToApply) {
+    if (target instanceof Map && patchToApply instanceof Map) {
+      patchToApply.forEach((value, key) => target.set(key, value));
+    } else if (target instanceof Set && patchToApply instanceof Set) {
+      patchToApply.forEach(target.add, target);
+    }
+    for (const key in patchToApply) {
+      if (!patchToApply.hasOwnProperty(key))
+        continue;
+      const subPatch = patchToApply[key];
+      const targetValue = target[key];
+      if (isPlainObject$1(targetValue) && isPlainObject$1(subPatch) && target.hasOwnProperty(key) && !isRef(subPatch) && !isReactive(subPatch)) {
+        target[key] = mergeReactiveObjects(targetValue, subPatch);
+      } else {
+        target[key] = subPatch;
+      }
+    }
+    return target;
+  }
+  const skipHydrateSymbol = (
+    /* istanbul ignore next */
+    Symbol()
+  );
+  function shouldHydrate(obj) {
+    return !isPlainObject$1(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
+  }
+  const { assign } = Object;
+  function isComputed(o) {
+    return !!(isRef(o) && o.effect);
+  }
+  function createOptionsStore(id, options, pinia2, hot) {
+    const { state, actions, getters } = options;
+    const initialState = pinia2.state.value[id];
+    let store;
+    function setup() {
+      if (!initialState && true) {
+        {
+          pinia2.state.value[id] = state ? state() : {};
+        }
+      }
+      const localState = toRefs(pinia2.state.value[id]);
+      return assign(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
+        computedGetters[name] = markRaw(computed(() => {
+          setActivePinia(pinia2);
+          const store2 = pinia2._s.get(id);
+          return getters[name].call(store2, store2);
+        }));
+        return computedGetters;
+      }, {}));
+    }
+    store = createSetupStore(id, setup, options, pinia2, hot, true);
+    return store;
+  }
+  function createSetupStore($id, setup, options = {}, pinia2, hot, isOptionsStore) {
+    let scope;
+    const optionsForPlugin = assign({ actions: {} }, options);
+    const $subscribeOptions = { deep: true };
+    let isListening;
+    let isSyncListening;
+    let subscriptions = [];
+    let actionSubscriptions = [];
+    let debuggerEvents;
+    const initialState = pinia2.state.value[$id];
+    if (!isOptionsStore && !initialState && true) {
+      {
+        pinia2.state.value[$id] = {};
+      }
+    }
+    ref({});
+    let activeListener;
+    function $patch(partialStateOrMutator) {
+      let subscriptionMutation;
+      isListening = isSyncListening = false;
+      if (typeof partialStateOrMutator === "function") {
+        partialStateOrMutator(pinia2.state.value[$id]);
+        subscriptionMutation = {
+          type: MutationType.patchFunction,
+          storeId: $id,
+          events: debuggerEvents
+        };
+      } else {
+        mergeReactiveObjects(pinia2.state.value[$id], partialStateOrMutator);
+        subscriptionMutation = {
+          type: MutationType.patchObject,
+          payload: partialStateOrMutator,
+          storeId: $id,
+          events: debuggerEvents
+        };
+      }
+      const myListenerId = activeListener = Symbol();
+      nextTick().then(() => {
+        if (activeListener === myListenerId) {
+          isListening = true;
+        }
+      });
+      isSyncListening = true;
+      triggerSubscriptions(subscriptions, subscriptionMutation, pinia2.state.value[$id]);
+    }
+    const $reset = isOptionsStore ? function $reset2() {
+      const { state } = options;
+      const newState = state ? state() : {};
+      this.$patch(($state) => {
+        assign($state, newState);
+      });
+    } : (
+      /* istanbul ignore next */
+      noop$1
+    );
+    function $dispose() {
+      scope.stop();
+      subscriptions = [];
+      actionSubscriptions = [];
+      pinia2._s.delete($id);
+    }
+    const action = (fn, name = "") => {
+      if (ACTION_MARKER in fn) {
+        fn[ACTION_NAME] = name;
+        return fn;
+      }
+      const wrappedAction = function() {
+        setActivePinia(pinia2);
+        const args = Array.from(arguments);
+        const afterCallbackList = [];
+        const onErrorCallbackList = [];
+        function after(callback) {
+          afterCallbackList.push(callback);
+        }
+        function onError(callback) {
+          onErrorCallbackList.push(callback);
+        }
+        triggerSubscriptions(actionSubscriptions, {
+          args,
+          name: wrappedAction[ACTION_NAME],
+          store,
+          after,
+          onError
+        });
+        let ret;
+        try {
+          ret = fn.apply(this && this.$id === $id ? this : store, args);
+        } catch (error) {
+          triggerSubscriptions(onErrorCallbackList, error);
+          throw error;
+        }
+        if (ret instanceof Promise) {
+          return ret.then((value) => {
+            triggerSubscriptions(afterCallbackList, value);
+            return value;
+          }).catch((error) => {
+            triggerSubscriptions(onErrorCallbackList, error);
+            return Promise.reject(error);
+          });
+        }
+        triggerSubscriptions(afterCallbackList, ret);
+        return ret;
+      };
+      wrappedAction[ACTION_MARKER] = true;
+      wrappedAction[ACTION_NAME] = name;
+      return wrappedAction;
+    };
+    const partialStore = {
+      _p: pinia2,
+      // _s: scope,
+      $id,
+      $onAction: addSubscription.bind(null, actionSubscriptions),
+      $patch,
+      $reset,
+      $subscribe(callback, options2 = {}) {
+        const removeSubscription = addSubscription(subscriptions, callback, options2.detached, () => stopWatcher());
+        const stopWatcher = scope.run(() => watch(() => pinia2.state.value[$id], (state) => {
+          if (options2.flush === "sync" ? isSyncListening : isListening) {
+            callback({
+              storeId: $id,
+              type: MutationType.direct,
+              events: debuggerEvents
+            }, state);
+          }
+        }, assign({}, $subscribeOptions, options2)));
+        return removeSubscription;
+      },
+      $dispose
+    };
+    const store = reactive(partialStore);
+    pinia2._s.set($id, store);
+    const runWithContext = pinia2._a && pinia2._a.runWithContext || fallbackRunWithContext;
+    const setupStore = runWithContext(() => pinia2._e.run(() => (scope = effectScope()).run(() => setup({ action }))));
+    for (const key in setupStore) {
+      const prop = setupStore[key];
+      if (isRef(prop) && !isComputed(prop) || isReactive(prop)) {
+        if (!isOptionsStore) {
+          if (initialState && shouldHydrate(prop)) {
+            if (isRef(prop)) {
+              prop.value = initialState[key];
+            } else {
+              mergeReactiveObjects(prop, initialState[key]);
+            }
+          }
+          {
+            pinia2.state.value[$id][key] = prop;
+          }
+        }
+      } else if (typeof prop === "function") {
+        const actionValue = action(prop, key);
+        {
+          setupStore[key] = actionValue;
+        }
+        optionsForPlugin.actions[key] = prop;
+      } else ;
+    }
+    {
+      assign(store, setupStore);
+      assign(toRaw(store), setupStore);
+    }
+    Object.defineProperty(store, "$state", {
+      get: () => pinia2.state.value[$id],
+      set: (state) => {
+        $patch(($state) => {
+          assign($state, state);
+        });
+      }
+    });
+    pinia2._p.forEach((extender) => {
+      {
+        assign(store, scope.run(() => extender({
+          store,
+          app: pinia2._a,
+          pinia: pinia2,
+          options: optionsForPlugin
+        })));
+      }
+    });
+    if (initialState && isOptionsStore && options.hydrate) {
+      options.hydrate(store.$state, initialState);
+    }
+    isListening = true;
+    isSyncListening = true;
+    return store;
+  }
+  /*! #__NO_SIDE_EFFECTS__ */
+  // @__NO_SIDE_EFFECTS__
+  function defineStore(idOrOptions, setup, setupOptions) {
+    let id;
+    let options;
+    const isSetupStore = typeof setup === "function";
+    {
+      id = idOrOptions;
+      options = isSetupStore ? setupOptions : setup;
+    }
+    function useStore(pinia2, hot) {
+      const hasContext = hasInjectionContext();
+      pinia2 = // in test mode, ignore the argument provided as we can always retrieve a
+      // pinia instance with getActivePinia()
+      pinia2 || (hasContext ? inject(piniaSymbol, null) : null);
+      if (pinia2)
+        setActivePinia(pinia2);
+      pinia2 = activePinia;
+      if (!pinia2._s.has(id)) {
+        if (isSetupStore) {
+          createSetupStore(id, setup, options, pinia2);
+        } else {
+          createOptionsStore(id, options, pinia2);
+        }
+      }
+      const store = pinia2._s.get(id);
+      return store;
+    }
+    useStore.$id = id;
+    return useStore;
+  }
+  const updateStorage = (strategy, store) => {
+    const storage = strategy.storage || sessionStorage;
+    const storeKey = strategy.key || store.$id;
+    if (strategy.paths) {
+      const partialState = strategy.paths.reduce((finalObj, key) => {
+        finalObj[key] = store.$state[key];
+        return finalObj;
+      }, {});
+      storage.setItem(storeKey, JSON.stringify(partialState));
+    } else {
+      storage.setItem(storeKey, JSON.stringify(store.$state));
+    }
+  };
+  var index = ({ options, store }) => {
+    var _a, _b, _c, _d;
+    if ((_a = options.persist) == null ? void 0 : _a.enabled) {
+      const defaultStrat = [{
+        key: store.$id,
+        storage: sessionStorage
+      }];
+      const strategies = ((_c = (_b = options.persist) == null ? void 0 : _b.strategies) == null ? void 0 : _c.length) ? (_d = options.persist) == null ? void 0 : _d.strategies : defaultStrat;
+      strategies.forEach((strategy) => {
+        const storage = strategy.storage || sessionStorage;
+        const storeKey = strategy.key || store.$id;
+        const storageResult = storage.getItem(storeKey);
+        if (storageResult) {
+          store.$patch(JSON.parse(storageResult));
+          updateStorage(strategy, store);
+        }
+      });
+      store.$subscribe(() => {
+        strategies.forEach((strategy) => {
+          updateStorage(strategy, store);
+        });
+      });
+    }
+  };
+  const pinia = createPinia();
+  pinia.use(index);
   const clickOutside = {
     beforeMount(el, binding) {
       el.clickOutsideEvent = (event) => {
@@ -9914,9 +10360,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       document.removeEventListener("click", el.clickOutsideEvent);
     }
   };
-  const app = createApp(_sfc_main$e);
+  const app = createApp(_sfc_main$o);
   app.use(router);
   app.use(src_default, { position: "bottom-right" });
+  app.use(pinia);
   app.directive("click-outside", clickOutside);
   app.mount("#app");
   function bind(fn, thisArg) {
@@ -10421,10 +10868,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           value = JSON.stringify(value);
         } else if (utils$1.isArray(value) && isFlatArray(value) || (utils$1.isFileList(value) || utils$1.endsWith(key, "[]")) && (arr = utils$1.toArray(value))) {
           key = removeBrackets(key);
-          arr.forEach(function each(el, index) {
+          arr.forEach(function each(el, index2) {
             !(utils$1.isUndefined(el) || el === null) && formData.append(
               // eslint-disable-next-line no-nested-ternary
-              indexes === true ? renderKey([key], index, dots) : indexes === null ? key : key + "[]",
+              indexes === true ? renderKey([key], index2, dots) : indexes === null ? key : key + "[]",
               convertValue(el)
             );
           });
@@ -10655,11 +11102,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return obj;
   }
   function formDataToJSON(formData) {
-    function buildPath(path, value, target, index) {
-      let name = path[index++];
+    function buildPath(path, value, target, index2) {
+      let name = path[index2++];
       if (name === "__proto__") return true;
       const isNumericKey = Number.isFinite(+name);
-      const isLast = index >= path.length;
+      const isLast = index2 >= path.length;
       name = !name && utils$1.isArray(target) ? target.length : name;
       if (isLast) {
         if (utils$1.hasOwnProp(target, name)) {
@@ -10672,7 +11119,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (!target[name] || !utils$1.isObject(target[name])) {
         target[name] = [];
       }
-      const result = buildPath(path, value, target[name], index);
+      const result = buildPath(path, value, target[name], index2);
       if (result && utils$1.isArray(target[name])) {
         target[name] = arrayToObject(target[name]);
       }
@@ -12148,9 +12595,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (!this._listeners) {
         return;
       }
-      const index = this._listeners.indexOf(listener);
-      if (index !== -1) {
-        this._listeners.splice(index, 1);
+      const index2 = this._listeners.indexOf(listener);
+      if (index2 !== -1) {
+        this._listeners.splice(index2, 1);
       }
     }
     toAbortSignal() {
@@ -12302,7 +12749,6 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     mergeConfig
   } = axios;
   const _Stan = class _Stan {
-    // 24 heures en millisecondes
     static saveToCache(key, data) {
       try {
         const cacheItem = {
@@ -12331,7 +12777,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     static clearCache() {
       try {
         localStorage.removeItem("stan_lignes");
-        localStorage.removeItem("stan_arrets");
+        Object.keys(localStorage).forEach((key) => {
+          if (key.startsWith("stan_arrets_")) {
+            localStorage.removeItem(key);
+          }
+        });
       } catch (error) {
         console.error("Error clearing cache:", error);
       }
@@ -12449,6 +12899,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       return passages;
     }
+    static getPlan(ligne) {
+      if (!ligne || !ligne.osmid) return null;
+      const planUrl = this.plans[ligne.osmid];
+      if (!planUrl) return null;
+      return planUrl;
+    }
     static getInstance() {
       return axios.create({
         baseURL: "https://www.reseau-stan.com/?type=476",
@@ -12459,6 +12915,52 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   };
   __publicField(_Stan, "CACHE_DURATION", 24 * 60 * 60 * 1e3);
+  // 24 heures en millisecondes
+  __publicField(_Stan, "plans", {
+    "line:GST:1-97": "https://tim.reseau-stan.com/tim/data/pdf/2283_Ligne Tempo 1.pdf",
+    "line:GST:2-97": "https://tim.reseau-stan.com/tim/data/pdf/1372_Ligne Tempo 2.pdf",
+    "line:GST:3-97": "https://tim.reseau-stan.com/tim/data/pdf/2312_Ligne Tempo 3.pdf",
+    "line:GST:4-97": "https://tim.reseau-stan.com/tim/data/pdf/2215_Ligne Tempo 4.pdf",
+    "line:GST:5-97": "https://tim.reseau-stan.com/tim/data/pdf/2216_Ligne Corol.pdf",
+    "line:GST:18-97": "https://tim.reseau-stan.com/tim/data/pdf/2219_Brabois Express.pdf",
+    "line:GST:14-97": "https://tim.reseau-stan.com/tim/data/pdf/1315_Ligne 14ex-14sept23.pdf",
+    "line:SUB:10": "https://tim.reseau-stan.com/tim/data/pdf/2217_Ligne 10.pdf",
+    "line:GST:11-97": "https://tim.reseau-stan.com/tim/data/pdf/2218_Ligne 11.pdf",
+    "line:GST:12-97": "https://tim.reseau-stan.com/tim/data/pdf/2109_Ligne 12.pdf",
+    "line:GST:13-97": "https://tim.reseau-stan.com/tim/data/pdf/1868_Ligne 13.pdf",
+    "line:GST:15-97": "https://tim.reseau-stan.com/tim/data/pdf/2309_Ligne 15.pdf",
+    "line:GST:16-97": "https://tim.reseau-stan.com/tim/data/pdf/2310_Ligne 16.pdf",
+    "line:GST:17-97": "https://tim.reseau-stan.com/tim/data/pdf/2112_Ligne 17.pdf",
+    "ine:GST:20-97": "https://tim.reseau-stan.com/tim/data/pdf/2113_Ligne 20.pdf",
+    "line:GST:21-97": "https://tim.reseau-stan.com/tim/data/pdf/2118_Ligne 21.pdf",
+    "line:GST:22-97": "https://tim.reseau-stan.com/tim/data/pdf/1321_Ligne 22.pdf",
+    "line:SUB:23": "https://tim.reseau-stan.com/tim/data/pdf/2115_Ligne 23.pdf",
+    "line:SUB:24": "https://tim.reseau-stan.com/tim/data/pdf/1323_Ligne 24.pdf",
+    "line:GST:30-97": "https://tim.reseau-stan.com/tim/data/pdf/1324_Ligne 30.pdf",
+    "line:GST:31-97": "https://tim.reseau-stan.com/tim/data/pdf/1870_Ligne 31.pdf",
+    "line:GST:32-97": "https://tim.reseau-stan.com/tim/data/pdf/1327_Plan -ligne 32-sept 23.pdf",
+    "line:GST:33-97": "https://tim.reseau-stan.com/tim/data/pdf/2116_Ligne 33.pdf",
+    "line:GST:50-97": "https://tim.reseau-stan.com/tim/data/pdf/2119_Ligne 50.pdf",
+    "line:GST:51-97": "https://tim.reseau-stan.com/tim/data/pdf/2027_Ligne 51.pdf",
+    "line:GST:52-97": "https://tim.reseau-stan.com/tim/data/pdf/2120_Ligne 52.pdf",
+    "line:GST:53-97": "https://tim.reseau-stan.com/tim/data/pdf/2028_Ligne 53.pdf",
+    "line:GST:54-97": "https://tim.reseau-stan.com/tim/data/pdf/2121_Ligne 54.pdf",
+    "line:GST:55-97": "https://tim.reseau-stan.com/tim/data/pdf/1640_Plan -55 - 2 oct 23.pdf",
+    "line:GST:56-97": "https://tim.reseau-stan.com/tim/data/pdf/1333_Ligne 56.pdf",
+    "line:GST:57-97": "https://tim.reseau-stan.com/tim/data/pdf/2023_Ligne 57.pdf",
+    "line:GST:58-97": "https://tim.reseau-stan.com/tim/data/pdf/2029_Ligne 58.pdf",
+    "line:GST:59-97": "https://tim.reseau-stan.com/tim/data/pdf/2122_Ligne 59.pdf",
+    "line:GST:60-97": "https://tim.reseau-stan.com/tim/data/pdf/1388_Ligne 60-V2.pdf",
+    "line:GST:61-97": "https://tim.reseau-stan.com/tim/data/pdf/2123_Ligne 61.pdf",
+    "line:GST:62-97": "https://tim.reseau-stan.com/tim/data/pdf/2124_Ligne 62 - 02.09",
+    "line:GST:63-97": "https://tim.reseau-stan.com/tim/data/pdf/2125_Ligne 63.pdf",
+    "line:GST:64-97": "https://tim.reseau-stan.com/tim/data/pdf/2126_Ligne 64.pdf",
+    "line:GST:65-97": "https://tim.reseau-stan.com/tim/data/pdf/2026_Ligne 65.pdf",
+    "line:GST:66-97": "https://tim.reseau-stan.com/tim/data/pdf/2127_Ligne 66.pdf",
+    "line:GST:67-97": "https://tim.reseau-stan.com/tim/data/pdf/2128_Ligne 67.pdf",
+    "line:GST:41-97": "https://tim.reseau-stan.com/tim/data/pdf/2299_Citadine Nancy.pdf",
+    "line:GST:42-97": "https://tim.reseau-stan.com/tim/data/pdf/1484_Citadine Vandoeuvre.pdf"
+  });
   let Stan = _Stan;
   const _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
@@ -12467,152 +12969,305 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     return target;
   };
-  const _sfc_main$d = {};
-  const _hoisted_1$d = {
+  const _sfc_main$n = {};
+  const _hoisted_1$n = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-bus-side",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$7(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$d, _cache[0] || (_cache[0] = [
+  function _sfc_render$d(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$n, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M3,6C1.89,6 1,6.89 1,8V15H3A3,3 0 0,0 6,18A3,3 0 0,0 9,15H15A3,3 0 0,0 18,18A3,3 0 0,0 21,15H23V8C23,6.89 22.11,6 21,6H3M2.5,7.5H6.5V10H2.5V7.5M8,7.5H12V10H8V7.5M13.5,7.5H17.5V10H13.5V7.5M19,7.5H21.5V13L19,11V7.5M6,13.5A1.5,1.5 0 0,1 7.5,15A1.5,1.5 0 0,1 6,16.5A1.5,1.5 0 0,1 4.5,15A1.5,1.5 0 0,1 6,13.5M18,13.5A1.5,1.5 0 0,1 19.5,15A1.5,1.5 0 0,1 18,16.5A1.5,1.5 0 0,1 16.5,15A1.5,1.5 0 0,1 18,13.5Z" }, null, -1)
     ]));
   }
-  const BusIcon = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$7]]);
-  const _sfc_main$c = {};
-  const _hoisted_1$c = {
+  const BusIcon = /* @__PURE__ */ _export_sfc(_sfc_main$n, [["render", _sfc_render$d]]);
+  const _sfc_main$m = {};
+  const _hoisted_1$m = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-down",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$6(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$c, _cache[0] || (_cache[0] = [
+  function _sfc_render$c(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$m, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" }, null, -1)
     ]));
   }
-  const ChevronDownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$6]]);
-  const _sfc_main$b = {};
-  const _hoisted_1$b = {
+  const ChevronDownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$m, [["render", _sfc_render$c]]);
+  const _sfc_main$l = {};
+  const _hoisted_1$l = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-left",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$5(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$b, _cache[0] || (_cache[0] = [
+  function _sfc_render$b(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$l, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" }, null, -1)
     ]));
   }
-  const ChevronLeftIcon = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$5]]);
-  const _sfc_main$a = {};
-  const _hoisted_1$a = {
+  const ChevronLeftIcon = /* @__PURE__ */ _export_sfc(_sfc_main$l, [["render", _sfc_render$b]]);
+  const _sfc_main$k = {};
+  const _hoisted_1$k = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-right",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$4(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$a, _cache[0] || (_cache[0] = [
+  function _sfc_render$a(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$k, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" }, null, -1)
     ]));
   }
-  const ChevronRightIcon = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$4]]);
-  const _sfc_main$9 = {};
-  const _hoisted_1$9 = {
+  const ChevronRightIcon = /* @__PURE__ */ _export_sfc(_sfc_main$k, [["render", _sfc_render$a]]);
+  const _sfc_main$j = {};
+  const _hoisted_1$j = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-up",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$3(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$9, _cache[0] || (_cache[0] = [
+  function _sfc_render$9(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$j, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" }, null, -1)
     ]));
   }
-  const ChevronUpIcon = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$3]]);
-  const _sfc_main$8 = {};
-  const _hoisted_1$8 = {
+  const ChevronUpIcon = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["render", _sfc_render$9]]);
+  const _sfc_main$i = {};
+  const _hoisted_1$i = {
+    xmlns: "http://www.w3.org/2000/svg",
+    id: "mdi-close",
+    fill: "currentColor",
+    viewBox: "0 0 24 24"
+  };
+  function _sfc_render$8(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$i, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", { d: "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" }, null, -1)
+    ]));
+  }
+  const CloseIcon = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["render", _sfc_render$8]]);
+  const _sfc_main$h = {};
+  const _hoisted_1$h = {
+    xmlns: "http://www.w3.org/2000/svg",
+    id: "mdi-home",
+    fill: "currentColor",
+    viewBox: "0 0 24 24"
+  };
+  function _sfc_render$7(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$h, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", { d: "M10,20V14H14V20H19V12H22L12,3L2,12H5V20H10Z" }, null, -1)
+    ]));
+  }
+  const HomeIcon = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["render", _sfc_render$7]]);
+  const _sfc_main$g = {};
+  const _hoisted_1$g = {
+    xmlns: "http://www.w3.org/2000/svg",
+    id: "mdi-map",
+    fill: "currentColor",
+    viewBox: "0 0 24 24"
+  };
+  function _sfc_render$6(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$g, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", { d: "M15,19L9,16.89V5L15,7.11M20.5,3C20.44,3 20.39,3 20.34,3L15,5.1L9,3L3.36,4.9C3.15,4.97 3,5.15 3,5.38V20.5A0.5,0.5 0 0,0 3.5,21C3.55,21 3.61,21 3.66,20.97L9,18.9L15,21L20.64,19.1C20.85,19 21,18.85 21,18.62V3.5A0.5,0.5 0 0,0 20.5,3Z" }, null, -1)
+    ]));
+  }
+  const MapIcon = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$6]]);
+  const _sfc_main$f = {};
+  const _hoisted_1$f = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-refresh",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$2(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$8, _cache[0] || (_cache[0] = [
+  function _sfc_render$5(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$f, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" }, null, -1)
     ]));
   }
-  const RefreshIcon = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$2]]);
-  const _sfc_main$7 = {};
-  const _hoisted_1$7 = {
+  const RefreshIcon = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$5]]);
+  const _sfc_main$e = {};
+  const _hoisted_1$e = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-emoticon-sad-outline",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$1(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$7, _cache[0] || (_cache[0] = [
+  function _sfc_render$4(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$e, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M15.5,8C16.3,8 17,8.7 17,9.5C17,10.3 16.3,11 15.5,11C14.7,11 14,10.3 14,9.5C14,8.7 14.7,8 15.5,8M10,9.5C10,10.3 9.3,11 8.5,11C7.7,11 7,10.3 7,9.5C7,8.7 7.7,8 8.5,8C9.3,8 10,8.7 10,9.5M12,14C13.75,14 15.29,14.72 16.19,15.81L14.77,17.23C14.32,16.5 13.25,16 12,16C10.75,16 9.68,16.5 9.23,17.23L7.81,15.81C8.71,14.72 10.25,14 12,14Z" }, null, -1)
     ]));
   }
-  const SadIcon = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$1]]);
-  const _sfc_main$6 = {};
-  const _hoisted_1$6 = {
+  const SadIcon = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$4]]);
+  const _sfc_main$d = {};
+  const _hoisted_1$d = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-magnify",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$6, _cache[0] || (_cache[0] = [
+  function _sfc_render$3(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$d, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" }, null, -1)
     ]));
   }
-  const SearchIcon = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render]]);
-  const _hoisted_1$5 = { class: "flex-grow" };
-  const _hoisted_2$5 = { class: "font-medium" };
-  const _hoisted_3$5 = { class: "text-gray-500" };
-  const _hoisted_4$4 = {
+  const SearchIcon = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$3]]);
+  const _sfc_main$c = {};
+  const _hoisted_1$c = {
+    xmlns: "http://www.w3.org/2000/svg",
+    id: "mdi-cog",
+    fill: "currentColor",
+    viewBox: "0 0 24 24"
+  };
+  function _sfc_render$2(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$c, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", { d: "M12,15.5A3.5,3.5 0 0,1 8.5,12A3.5,3.5 0 0,1 12,8.5A3.5,3.5 0 0,1 15.5,12A3.5,3.5 0 0,1 12,15.5M19.43,12.97C19.47,12.65 19.5,12.33 19.5,12C19.5,11.67 19.47,11.34 19.43,11L21.54,9.37C21.73,9.22 21.78,8.95 21.66,8.73L19.66,5.27C19.54,5.05 19.27,4.96 19.05,5.05L16.56,6.05C16.04,5.66 15.5,5.32 14.87,5.07L14.5,2.42C14.46,2.18 14.25,2 14,2H10C9.75,2 9.54,2.18 9.5,2.42L9.13,5.07C8.5,5.32 7.96,5.66 7.44,6.05L4.95,5.05C4.73,4.96 4.46,5.05 4.34,5.27L2.34,8.73C2.21,8.95 2.27,9.22 2.46,9.37L4.57,11C4.53,11.34 4.5,11.67 4.5,12C4.5,12.33 4.53,12.65 4.57,12.97L2.46,14.63C2.27,14.78 2.21,15.05 2.34,15.27L4.34,18.73C4.46,18.95 4.73,19.03 4.95,18.95L7.44,17.94C7.96,18.34 8.5,18.68 9.13,18.93L9.5,21.58C9.54,21.82 9.75,22 10,22H14C14.25,22 14.46,21.82 14.5,21.58L14.87,18.93C15.5,18.67 16.04,18.34 16.56,17.94L19.05,18.95C19.27,19.03 19.54,18.95 19.66,18.73L21.66,15.27C21.78,15.05 21.73,14.78 21.54,14.63L19.43,12.97Z" }, null, -1)
+    ]));
+  }
+  const SettingsIcon = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$2]]);
+  const _sfc_main$b = {};
+  const _hoisted_1$b = {
+    xmlns: "http://www.w3.org/2000/svg",
+    viewBox: "0 0 24 24",
+    fill: "currentColor"
+  };
+  function _sfc_render$1(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$b, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", {
+        "fill-rule": "evenodd",
+        d: "M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z",
+        "clip-rule": "evenodd"
+      }, null, -1)
+    ]));
+  }
+  const StarIcon = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$1]]);
+  const _sfc_main$a = {};
+  const _hoisted_1$a = {
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    "stroke-width": "1.5",
+    stroke: "currentColor"
+  };
+  function _sfc_render(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$a, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", {
+        "stroke-linecap": "round",
+        "stroke-linejoin": "round",
+        d: "M11.48 3.499a.562.562 0 011.04 0l2.125 5.111a.563.563 0 00.475.345l5.518.442c.499.04.701.663.321.988l-4.204 3.602a.563.563 0 00-.182.557l1.285 5.385a.562.562 0 01-.84.61l-4.725-2.885a.563.563 0 00-.586 0L6.982 20.54a.562.562 0 01-.84-.61l1.285-5.386a.562.562 0 00-.182-.557l-4.204-3.602a.563.563 0 01.321-.988l5.518-.442a.563.563 0 00.475-.345L11.48 3.5z"
+      }, null, -1)
+    ]));
+  }
+  const StarOutlineIcon = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render]]);
+  const _hoisted_1$9 = { class: "sticky bottom-0 left-0 w-full max-w-3xl bg-white border rounded-t-xl mx-auto h-16 flex items-center justify-around" };
+  const _sfc_main$9 = {
+    __name: "AppMenu",
+    setup(__props) {
+      const router2 = useRouter();
+      const navigateTo = (route) => {
+        router2.push(route);
+      };
+      return (_ctx, _cache) => {
+        return openBlock(), createElementBlock("footer", _hoisted_1$9, [
+          createBaseVNode("button", {
+            onClick: _cache[0] || (_cache[0] = ($event) => navigateTo("/favorites"))
+          }, [
+            createVNode(unref(StarIcon), { class: "size-6" })
+          ]),
+          createBaseVNode("button", {
+            onClick: _cache[1] || (_cache[1] = ($event) => navigateTo("/"))
+          }, [
+            createVNode(unref(HomeIcon), { class: "size-6" })
+          ]),
+          createBaseVNode("button", {
+            onClick: _cache[2] || (_cache[2] = ($event) => navigateTo("/settings"))
+          }, [
+            createVNode(unref(SettingsIcon), { class: "size-6" })
+          ])
+        ]);
+      };
+    }
+  };
+  const useFavoritesStore = /* @__PURE__ */ defineStore("favorites", {
+    state: () => ({
+      favoriteArrets: []
+    }),
+    actions: {
+      addFavorite(arret) {
+        if (!this.isFavorite(arret.osmid)) {
+          this.favoriteArrets.push({
+            ...arret,
+            addedAt: /* @__PURE__ */ new Date()
+          });
+        }
+      },
+      removeFavorite(arretId) {
+        this.favoriteArrets = this.favoriteArrets.filter((arret) => arret.osmid !== arretId);
+      },
+      toggleFavorite(arret) {
+        if (this.isFavorite(arret.osmid)) {
+          this.removeFavorite(arret.osmid);
+          return false;
+        } else {
+          this.addFavorite(arret);
+          return true;
+        }
+      }
+    },
+    getters: {
+      isFavorite: (state) => (arretId) => {
+        return state.favoriteArrets.some((arret) => arret.osmid === arretId);
+      },
+      getFavorites: (state) => {
+        return state.favoriteArrets;
+      }
+    },
+    persist: {
+      enabled: true,
+      strategies: [
+        { storage: localStorage, paths: ["favoriteArrets"] }
+      ]
+    }
+  });
+  const _hoisted_1$8 = ["src"];
+  const _hoisted_2$8 = { class: "flex-grow" };
+  const _hoisted_3$8 = { class: "font-medium" };
+  const _hoisted_4$6 = { class: "text-gray-500" };
+  const _hoisted_5$6 = {
     key: 0,
     class: "px-4 py-4 bg-gray-50"
   };
-  const _hoisted_5$4 = {
+  const _hoisted_6$6 = {
     key: 0,
     class: "py-3"
   };
-  const _hoisted_6$4 = { class: "loader-container" };
-  const _hoisted_7$4 = { class: "loader-line" };
-  const _hoisted_8$4 = { key: 1 };
-  const _hoisted_9$4 = {
+  const _hoisted_7$6 = { class: "loader-container" };
+  const _hoisted_8$6 = { class: "loader-line" };
+  const _hoisted_9$5 = { key: 1 };
+  const _hoisted_10$4 = {
     key: 0,
     class: "text-sm text-gray-500 py-2"
   };
-  const _hoisted_10$3 = {
+  const _hoisted_11$3 = {
     key: 1,
     class: "space-y-6"
   };
-  const _hoisted_11$2 = { class: "font-semibold text-sm text-gray-700 mb-2" };
-  const _hoisted_12$1 = { class: "relative h-[30px] ml-[20px]" };
-  const _hoisted_13 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
-  const _hoisted_14 = {
+  const _hoisted_12$2 = { class: "font-semibold text-sm text-gray-700 mb-2" };
+  const _hoisted_13$2 = { class: "relative h-[30px] ml-[20px]" };
+  const _hoisted_14$1 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
+  const _hoisted_15 = {
     key: 0,
     class: "absolute top-0 left-[30%] flex flex-col items-center transform -translate-x-1/2"
   };
-  const _hoisted_15 = {
+  const _hoisted_16 = {
     key: 1,
     class: "absolute top-0 left-[70%] flex flex-col items-center transform -translate-x-1/2"
   };
-  const _sfc_main$5 = {
+  const _sfc_main$8 = {
     __name: "Arret",
     props: {
       arret: {
         type: Object,
-        required: true
-      },
-      index: {
-        type: Number,
         required: true
       },
       color: {
@@ -12630,11 +13285,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       isSelected: {
         type: Boolean,
         default: false
+      },
+      isFavorite: {
+        type: Boolean,
+        default: false
       }
     },
-    emits: ["selectArret"],
+    emits: ["selectArret", "toggleFavorite"],
     setup(__props, { emit: __emit }) {
+      const favorites = useFavoritesStore();
       const props = __props;
+      const emit2 = __emit;
       const formatPassageTime = (passage) => {
         if (passage.temps_min === 0) {
           return "À l'approche";
@@ -12666,6 +13327,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
         return grouped;
       });
+      const isFavoriteArret = computed(() => {
+        return props.isFavorite || favorites.isFavorite(props.arret.osmid);
+      });
+      const handleToggleFavorite = (e) => {
+        e.stopPropagation();
+        emit2("toggleFavorite", props.arret);
+      };
       return (_ctx, _cache) => {
         return openBlock(), createElementBlock("li", {
           key: __props.arret.osmid
@@ -12674,13 +13342,26 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             class: "p-4 flex items-center cursor-pointer hover:bg-gray-50 transition-colors",
             onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("selectArret", __props.arret))
           }, [
-            createBaseVNode("div", {
-              class: normalizeClass([__props.color, "w-8 h-8 rounded-full flex items-center justify-center mr-4 text-white font-bold"])
-            }, toDisplayString(__props.index + 1), 3),
-            createBaseVNode("div", _hoisted_1$5, [
-              createBaseVNode("h3", _hoisted_2$5, toDisplayString(__props.arret.libelle), 1)
+            createBaseVNode("img", {
+              src: __props.arret.ligne.image,
+              class: "size-6 mr-3"
+            }, null, 8, _hoisted_1$8),
+            createBaseVNode("div", _hoisted_2$8, [
+              createBaseVNode("h3", _hoisted_3$8, toDisplayString(__props.arret.libelle), 1)
             ]),
-            createBaseVNode("div", _hoisted_3$5, [
+            createBaseVNode("button", {
+              class: "text-yellow-400 mr-2 p-1",
+              onClick: handleToggleFavorite
+            }, [
+              isFavoriteArret.value ? (openBlock(), createBlock(unref(StarIcon), {
+                key: 0,
+                class: "size-5"
+              })) : (openBlock(), createBlock(unref(StarOutlineIcon), {
+                key: 1,
+                class: "size-5 text-gray-400"
+              }))
+            ]),
+            createBaseVNode("div", _hoisted_4$6, [
               !__props.isSelected ? (openBlock(), createBlock(unref(ChevronDownIcon), {
                 key: 0,
                 class: "size-5"
@@ -12690,40 +13371,40 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               }))
             ])
           ]),
-          __props.isSelected ? (openBlock(), createElementBlock("div", _hoisted_4$4, [
-            __props.loading ? (openBlock(), createElementBlock("div", _hoisted_5$4, [
-              createBaseVNode("div", _hoisted_6$4, [
-                createBaseVNode("div", _hoisted_7$4, [
+          __props.isSelected ? (openBlock(), createElementBlock("div", _hoisted_5$6, [
+            __props.loading ? (openBlock(), createElementBlock("div", _hoisted_6$6, [
+              createBaseVNode("div", _hoisted_7$6, [
+                createBaseVNode("div", _hoisted_8$6, [
                   createBaseVNode("div", {
                     class: normalizeClass([__props.color, "loader-highlight"])
                   }, null, 2)
                 ])
               ]),
               _cache[1] || (_cache[1] = createBaseVNode("p", { class: "mt-2 text-center text-sm text-gray-600" }, "Chargement des passages...", -1))
-            ])) : (openBlock(), createElementBlock("div", _hoisted_8$4, [
-              Object.keys(passagesByDirection.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_9$4, " Aucun passage prévu prochainement ")) : (openBlock(), createElementBlock("div", _hoisted_10$3, [
+            ])) : (openBlock(), createElementBlock("div", _hoisted_9$5, [
+              Object.keys(passagesByDirection.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$4, " Aucun passage prévu prochainement ")) : (openBlock(), createElementBlock("div", _hoisted_11$3, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(passagesByDirection.value, (passages, direction) => {
                   return openBlock(), createElementBlock("div", {
                     key: direction,
                     class: "py-4 relative"
                   }, [
-                    createBaseVNode("div", _hoisted_11$2, toDisplayString(direction), 1),
-                    createBaseVNode("div", _hoisted_12$1, [
+                    createBaseVNode("div", _hoisted_12$2, toDisplayString(direction), 1),
+                    createBaseVNode("div", _hoisted_13$2, [
                       createBaseVNode("div", {
                         class: normalizeClass(["absolute top-[15px] left-0 right-[30px] h-1 dotted-line", __props.color])
                       }, null, 2),
-                      createBaseVNode("div", _hoisted_13, [
+                      createBaseVNode("div", _hoisted_14$1, [
                         createBaseVNode("div", {
                           class: normalizeClass(["w-2 h-2 rounded-full", __props.color])
                         }, null, 2)
                       ]),
-                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_14, [
+                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_15, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[0].temps_theorique }])
                         }, toDisplayString(formatPassageTime(passages[0])), 3)
                       ])) : createCommentVNode("", true),
-                      passages.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_15, [
+                      passages.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_16, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[1].temps_theorique }])
@@ -12739,24 +13420,61 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const Arret = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-ca71c73b"]]);
-  const _hoisted_1$4 = { class: "custom-dropdown relative" };
-  const _hoisted_2$4 = { class: "text-gray-900" };
-  const _hoisted_3$4 = {
+  const Arret = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-55a5227b"]]);
+  const _hoisted_1$7 = {
+    key: 0,
+    id: "fancy-modal",
+    class: "fixed inset-0 z-50 flex items-center justify-center"
+  };
+  const _hoisted_2$7 = { class: "w-full h-full bg-black/70 relative overflow-auto" };
+  const _hoisted_3$7 = {
+    id: "modal-content",
+    class: "py-[40px] md:px-[40px] w-full h-full flex flex-col"
+  };
+  const _sfc_main$7 = {
+    __name: "FancyModal",
+    props: {
+      show: {
+        type: Boolean,
+        default: false
+      }
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return __props.show ? (openBlock(), createElementBlock("div", _hoisted_1$7, [
+          createBaseVNode("div", _hoisted_2$7, [
+            createBaseVNode("div", _hoisted_3$7, [
+              renderSlot(_ctx.$slots, "default", {}, void 0, true)
+            ]),
+            createBaseVNode("button", {
+              onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("close")),
+              class: "absolute top-0 right-0 text-white bg-black/70 size-[40px] flex items-center justify-center z-10"
+            }, [
+              createVNode(unref(CloseIcon), { class: "size-6" })
+            ])
+          ])
+        ])) : createCommentVNode("", true);
+      };
+    }
+  };
+  const FancyModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-36d06f24"]]);
+  const _hoisted_1$6 = { class: "custom-dropdown relative" };
+  const _hoisted_2$6 = { class: "text-gray-900" };
+  const _hoisted_3$6 = {
     key: 0,
     class: "absolute z-10 mt-1 w-full bg-stone-50 shadow-lg max-h-60 text-base overflow-auto border border-gray-500 dropdown-menu"
   };
-  const _hoisted_4$3 = { class: "sticky top-0 px-3 py-2 bg-stone-50 border-b border-gray-700" };
-  const _hoisted_5$3 = { class: "relative" };
-  const _hoisted_6$3 = { class: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" };
-  const _hoisted_7$3 = ["onClick"];
-  const _hoisted_8$3 = ["src", "alt"];
-  const _hoisted_9$3 = { class: "text-black" };
-  const _hoisted_10$2 = {
+  const _hoisted_4$5 = { class: "sticky top-0 px-3 py-2 bg-stone-50 border-b border-gray-700" };
+  const _hoisted_5$5 = { class: "relative" };
+  const _hoisted_6$5 = { class: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" };
+  const _hoisted_7$5 = ["onClick"];
+  const _hoisted_8$5 = ["src", "alt"];
+  const _hoisted_9$4 = { class: "text-black" };
+  const _hoisted_10$3 = {
     key: 0,
     class: "px-3 py-4 text-center text-gray-400"
   };
-  const _sfc_main$4 = {
+  const _sfc_main$6 = {
     __name: "ItemSelector",
     props: {
       items: {
@@ -12811,21 +13529,21 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
       return (_ctx, _cache) => {
         const _directive_click_outside = resolveDirective("click-outside");
-        return withDirectives((openBlock(), createElementBlock("div", _hoisted_1$4, [
+        return withDirectives((openBlock(), createElementBlock("div", _hoisted_1$6, [
           createBaseVNode("button", {
             type: "button",
             onClick: toggleDropdown,
             class: "w-full bg-stone-50 border border-gray-600 rounded-md px-3 py-2 text-white flex items-center justify-between"
           }, [
-            createBaseVNode("span", _hoisted_2$4, toDisplayString(props.label || "Sélectionner une ligne"), 1),
+            createBaseVNode("span", _hoisted_2$6, toDisplayString(props.label || "Sélectionner une ligne"), 1),
             createVNode(unref(ChevronDownIcon), {
               class: normalizeClass(["size-5 text-gray-400", { "transform rotate-180": isOpen.value }])
             }, null, 8, ["class"])
           ]),
-          isOpen.value ? (openBlock(), createElementBlock("div", _hoisted_3$4, [
-            createBaseVNode("div", _hoisted_4$3, [
-              createBaseVNode("div", _hoisted_5$3, [
-                createBaseVNode("div", _hoisted_6$3, [
+          isOpen.value ? (openBlock(), createElementBlock("div", _hoisted_3$6, [
+            createBaseVNode("div", _hoisted_4$5, [
+              createBaseVNode("div", _hoisted_5$5, [
+                createBaseVNode("div", _hoisted_6$5, [
                   createVNode(unref(SearchIcon), { class: "size-4 text-gray-400" })
                 ]),
                 withDirectives(createBaseVNode("input", {
@@ -12852,11 +13570,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   src: item.image,
                   alt: item.libelle,
                   class: "w-8 h-8 mr-3 object-contain"
-                }, null, 8, _hoisted_8$3),
-                createBaseVNode("span", _hoisted_9$3, toDisplayString(item.libelle), 1)
-              ], 8, _hoisted_7$3);
+                }, null, 8, _hoisted_8$5),
+                createBaseVNode("span", _hoisted_9$4, toDisplayString(item.libelle), 1)
+              ], 8, _hoisted_7$5);
             }), 128)),
-            filteredItems.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$2, " Aucune ligne trouvée ")) : createCommentVNode("", true)
+            filteredItems.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$3, " Aucune ligne trouvée ")) : createCommentVNode("", true)
           ])) : createCommentVNode("", true)
         ])), [
           [_directive_click_outside, handleClickOutside]
@@ -12864,7 +13582,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const ItemSelector = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-a284d4ea"]]);
+  const ItemSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-a284d4ea"]]);
   const getColor = (ligne) => {
     if (!ligne || !ligne.numlignepublic) return "bg-gray-500";
     if (ligne.numlignepublic.startsWith("T")) {
@@ -12881,16 +13599,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return "bg-gradient-to-r from-gray-500 to-gray-600";
     }
   };
-  const _hoisted_1$3 = { class: "flex items-center justify-between" };
-  const _hoisted_2$3 = { class: "text-white font-bold text-lg" };
-  const _hoisted_3$3 = { class: "h-6 w-6 flex items-center justify-center rounded-full bg-white bg-opacity-20" };
-  const _hoisted_4$2 = { class: "px-4 py-4" };
-  const _hoisted_5$2 = { class: "flex items-center" };
-  const _hoisted_6$2 = ["src"];
-  const _hoisted_7$2 = { class: "flex-1" };
-  const _hoisted_8$2 = { class: "font-medium text-gray-900 line-clamp-1" };
-  const _hoisted_9$2 = { class: "px-4 py-3 bg-gray-50 flex items-center justify-between" };
-  const _sfc_main$3 = {
+  const _hoisted_1$5 = { class: "flex items-center justify-between" };
+  const _hoisted_2$5 = { class: "text-white font-bold text-lg" };
+  const _hoisted_3$5 = { class: "h-6 w-6 flex items-center justify-center rounded-full bg-white bg-opacity-20" };
+  const _hoisted_4$4 = { class: "px-4 py-4" };
+  const _hoisted_5$4 = { class: "flex items-center" };
+  const _hoisted_6$4 = ["src"];
+  const _hoisted_7$4 = { class: "flex-1" };
+  const _hoisted_8$4 = { class: "font-medium text-gray-900 line-clamp-1" };
+  const _hoisted_9$3 = { class: "px-4 py-3 bg-gray-50 flex items-center justify-between" };
+  const _sfc_main$5 = {
     __name: "Ligne",
     props: {
       ligne: {
@@ -12913,26 +13631,26 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           createBaseVNode("div", {
             class: normalizeClass(["px-4 py-2", unref(getColor)(__props.ligne)])
           }, [
-            createBaseVNode("div", _hoisted_1$3, [
-              createBaseVNode("span", _hoisted_2$3, toDisplayString(__props.ligne.numlignepublic), 1),
-              createBaseVNode("div", _hoisted_3$3, [
+            createBaseVNode("div", _hoisted_1$5, [
+              createBaseVNode("span", _hoisted_2$5, toDisplayString(__props.ligne.numlignepublic), 1),
+              createBaseVNode("div", _hoisted_3$5, [
                 createVNode(unref(BusIcon), { class: "size-4 text-white" })
               ])
             ])
           ], 2),
-          createBaseVNode("div", _hoisted_4$2, [
-            createBaseVNode("div", _hoisted_5$2, [
+          createBaseVNode("div", _hoisted_4$4, [
+            createBaseVNode("div", _hoisted_5$4, [
               createBaseVNode("img", {
                 src: __props.ligne.image,
                 alt: "Ligne Icon",
                 class: "w-12 h-12 object-contain mr-3 flex-shrink-0"
-              }, null, 8, _hoisted_6$2),
-              createBaseVNode("div", _hoisted_7$2, [
-                createBaseVNode("p", _hoisted_8$2, toDisplayString(__props.ligne.libelle), 1)
+              }, null, 8, _hoisted_6$4),
+              createBaseVNode("div", _hoisted_7$4, [
+                createBaseVNode("p", _hoisted_8$4, toDisplayString(__props.ligne.libelle), 1)
               ])
             ])
           ]),
-          createBaseVNode("div", _hoisted_9$2, [
+          createBaseVNode("div", _hoisted_9$3, [
             _cache[1] || (_cache[1] = createBaseVNode("span", { class: "text-sm font-medium text-blue-600 group-hover:text-blue-800 transition-colors duration-200 flex items-center" }, " Voir détails ", -1)),
             createVNode(unref(ChevronRightIcon), { class: "size-5 text-blue-600" })
           ]),
@@ -12941,11 +13659,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const Ligne = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-fcfb2123"]]);
-  const _hoisted_1$2 = { class: "flex justify-center items-center min-h-screen" };
-  const _hoisted_2$2 = { class: "loader-container" };
-  const _hoisted_3$2 = { class: "loader-line" };
-  const _sfc_main$2 = {
+  const Ligne = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-4e8aa8c1"]]);
+  const _hoisted_1$4 = { class: "flex justify-center items-center min-h-screen" };
+  const _hoisted_2$4 = { class: "loader-container" };
+  const _hoisted_3$4 = { class: "loader-line" };
+  const _sfc_main$4 = {
     __name: "LineLoader",
     props: {
       color: {
@@ -12955,9 +13673,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     },
     setup(__props) {
       return (_ctx, _cache) => {
-        return openBlock(), createElementBlock("div", _hoisted_1$2, [
-          createBaseVNode("div", _hoisted_2$2, [
-            createBaseVNode("div", _hoisted_3$2, [
+        return openBlock(), createElementBlock("div", _hoisted_1$4, [
+          createBaseVNode("div", _hoisted_2$4, [
+            createBaseVNode("div", _hoisted_3$4, [
               createBaseVNode("div", {
                 class: normalizeClass([__props.color, "loader-highlight"])
               }, null, 2)
@@ -12967,33 +13685,31 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const LineLoader = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-bd0cfbc1"]]);
-  const _hoisted_1$1 = { class: "sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100" };
-  const _hoisted_2$1 = { class: "max-w-7xl mx-auto" };
-  const _hoisted_3$1 = {
+  const LineLoader = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-bd0cfbc1"]]);
+  const _hoisted_1$3 = { class: "min-h-screen bg-gray-100" };
+  const _hoisted_2$3 = { class: "sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100" };
+  const _hoisted_3$3 = { class: "max-w-7xl mx-auto" };
+  const _hoisted_4$3 = {
     id: "search-container",
     class: "relative"
   };
-  const _hoisted_4$1 = { class: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" };
-  const _hoisted_5$1 = {
-    key: 0,
-    id: "loading",
-    class: "flex flex-col items-center justify-center py-20"
-  };
-  const _hoisted_6$1 = {
+  const _hoisted_5$3 = {
     key: 1,
+    class: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
+  };
+  const _hoisted_6$3 = {
     id: "lignes",
     class: "space-y-16"
   };
-  const _hoisted_7$1 = { class: "category-header mb-6 relative" };
-  const _hoisted_8$1 = { class: "text-2xl font-bold text-gray-800 inline-block pb-2 border-b-4 border-blue-500" };
-  const _hoisted_9$1 = { class: "lines-container" };
-  const _hoisted_10$1 = { class: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" };
-  const _hoisted_11$1 = {
+  const _hoisted_7$3 = { class: "category-header mb-6 relative" };
+  const _hoisted_8$3 = { class: "text-2xl font-bold text-gray-800 inline-block pb-2 border-b-4 border-blue-500" };
+  const _hoisted_9$2 = { class: "lines-container" };
+  const _hoisted_10$2 = { class: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" };
+  const _hoisted_11$2 = {
     key: 0,
     class: "text-center py-16"
   };
-  const _sfc_main$1 = {
+  const _sfc_main$3 = {
     __name: "HomeView",
     setup(__props) {
       const loading = ref(true);
@@ -13046,88 +13762,88 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
       return (_ctx, _cache) => {
         return openBlock(), createElementBlock(Fragment, null, [
-          createBaseVNode("header", _hoisted_1$1, [
-            createBaseVNode("div", _hoisted_2$1, [
-              _cache[0] || (_cache[0] = createBaseVNode("p", { class: "text-sm text-blue-700 font-medium mb-1" }, "Trouvez votre ligne", -1)),
-              createBaseVNode("div", _hoisted_3$1, [
-                createVNode(unref(SearchIcon), { class: "h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" }),
-                createVNode(unref(ItemSelector), {
-                  class: "w-full pl-10 z-10 shadow-sm",
-                  items: lignes.value,
-                  onSelect: goToLigneDetail
-                }, null, 8, ["items"])
-              ])
-            ])
-          ]),
-          createBaseVNode("div", _hoisted_4$1, [
-            loading.value ? (openBlock(), createElementBlock("div", _hoisted_5$1, _cache[1] || (_cache[1] = [
-              createBaseVNode("div", { class: "loader-container" }, [
-                createBaseVNode("div", { class: "loader-line" }, [
-                  createBaseVNode("div", { class: "loader-highlight" })
+          createBaseVNode("main", _hoisted_1$3, [
+            createBaseVNode("header", _hoisted_2$3, [
+              createBaseVNode("div", _hoisted_3$3, [
+                _cache[0] || (_cache[0] = createBaseVNode("p", { class: "text-sm text-blue-700 font-medium mb-1" }, "Trouvez votre ligne", -1)),
+                createBaseVNode("div", _hoisted_4$3, [
+                  createVNode(unref(SearchIcon), { class: "h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" }),
+                  createVNode(unref(ItemSelector), {
+                    class: "w-full pl-10 z-10 shadow-sm",
+                    items: lignes.value,
+                    onSelect: goToLigneDetail
+                  }, null, 8, ["items"])
                 ])
-              ], -1),
-              createBaseVNode("p", { class: "text-gray-600 animate-pulse mt-4" }, "Chargement des lignes...", -1)
-            ]))) : (openBlock(), createElementBlock("div", _hoisted_6$1, [
-              (openBlock(true), createElementBlock(Fragment, null, renderList(categorizedLignes.value, (lines, category) => {
-                return withDirectives((openBlock(), createElementBlock("div", {
-                  key: category,
-                  class: "category-section"
-                }, [
-                  createBaseVNode("div", _hoisted_7$1, [
-                    createBaseVNode("h2", _hoisted_8$1, toDisplayString(category), 1),
-                    _cache[2] || (_cache[2] = createBaseVNode("div", { class: "absolute bottom-0 left-0 w-full h-px bg-gray-200" }, null, -1))
-                  ]),
-                  createBaseVNode("div", _hoisted_9$1, [
-                    createBaseVNode("div", _hoisted_10$1, [
-                      (openBlock(true), createElementBlock(Fragment, null, renderList(lines, (ligne) => {
-                        return openBlock(), createBlock(unref(Ligne), {
-                          key: ligne.id,
-                          ligne,
-                          onLineSelected: ($event) => goToLigneDetail(ligne),
-                          class: "transform transition-all duration-300 hover:-translate-y-2"
-                        }, null, 8, ["ligne", "onLineSelected"]);
-                      }), 128))
+              ])
+            ]),
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_5$3, [
+              createBaseVNode("div", _hoisted_6$3, [
+                (openBlock(true), createElementBlock(Fragment, null, renderList(categorizedLignes.value, (lines, category) => {
+                  return withDirectives((openBlock(), createElementBlock("div", {
+                    key: category,
+                    class: "category-section"
+                  }, [
+                    createBaseVNode("div", _hoisted_7$3, [
+                      createBaseVNode("h2", _hoisted_8$3, toDisplayString(category), 1),
+                      _cache[1] || (_cache[1] = createBaseVNode("div", { class: "absolute bottom-0 left-0 w-full h-px bg-gray-200" }, null, -1))
+                    ]),
+                    createBaseVNode("div", _hoisted_9$2, [
+                      createBaseVNode("div", _hoisted_10$2, [
+                        (openBlock(true), createElementBlock(Fragment, null, renderList(lines, (ligne) => {
+                          return openBlock(), createBlock(unref(Ligne), {
+                            key: ligne.id,
+                            ligne,
+                            onLineSelected: ($event) => goToLigneDetail(ligne),
+                            class: "transform transition-all duration-300 hover:-translate-y-2"
+                          }, null, 8, ["ligne", "onLineSelected"]);
+                        }), 128))
+                      ])
                     ])
-                  ])
-                ])), [
-                  [vShow, lines.length > 0]
-                ]);
-              }), 128)),
-              Object.values(categorizedLignes.value).every((arr) => arr.length === 0) ? (openBlock(), createElementBlock("div", _hoisted_11$1, [
-                createVNode(unref(SadIcon), { class: "h-16 w-16 mx-auto text-gray-400 mb-4" }),
-                _cache[3] || (_cache[3] = createBaseVNode("p", { class: "text-gray-500 text-lg" }, "Aucune ligne ne correspond à votre recherche", -1))
-              ])) : createCommentVNode("", true)
+                  ])), [
+                    [vShow, lines.length > 0]
+                  ]);
+                }), 128)),
+                Object.values(categorizedLignes.value).every((arr) => arr.length === 0) ? (openBlock(), createElementBlock("div", _hoisted_11$2, [
+                  createVNode(unref(SadIcon), { class: "h-16 w-16 mx-auto text-gray-400 mb-4" }),
+                  _cache[2] || (_cache[2] = createBaseVNode("p", { class: "text-gray-500 text-lg" }, "Aucune ligne ne correspond à votre recherche", -1))
+                ])) : createCommentVNode("", true)
+              ])
             ]))
-          ])
+          ]),
+          createVNode(unref(_sfc_main$9))
         ], 64);
       };
     }
   };
-  const HomeView = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-e96dd33a"]]);
+  const HomeView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-6df98904"]]);
   const HomeView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: HomeView
   }, Symbol.toStringTag, { value: "Module" }));
-  const _hoisted_1 = { class: "min-h-screen bg-gray-100" };
-  const _hoisted_2 = {
+  const _hoisted_1$2 = { class: "min-h-screen bg-gray-100" };
+  const _hoisted_2$2 = {
     key: 1,
     class: "pb-20"
   };
-  const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
-  const _hoisted_4 = { class: "text-xl font-bold text-white" };
-  const _hoisted_5 = ["disabled"];
-  const _hoisted_6 = { class: "container mx-auto px-4 mt-4" };
-  const _hoisted_7 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
-  const _hoisted_8 = ["src"];
-  const _hoisted_9 = { class: "font-bold text-lg" };
-  const _hoisted_10 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_11 = { class: "bg-white rounded-lg shadow-md" };
-  const _hoisted_12 = { class: "divide-y divide-gray-200" };
-  const _sfc_main = {
+  const _hoisted_3$2 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_4$2 = { class: "text-xl font-bold text-white" };
+  const _hoisted_5$2 = ["disabled"];
+  const _hoisted_6$2 = ["disabled"];
+  const _hoisted_7$2 = { class: "container mx-auto px-4 mt-4" };
+  const _hoisted_8$2 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
+  const _hoisted_9$1 = ["src"];
+  const _hoisted_10$1 = { class: "font-bold text-lg" };
+  const _hoisted_11$1 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_12$1 = { class: "bg-white rounded-lg shadow-md" };
+  const _hoisted_13$1 = { class: "divide-y divide-gray-200" };
+  const _hoisted_14 = ["src"];
+  const _sfc_main$2 = {
     __name: "LigneDetailView",
     setup(__props) {
       const route = useRoute();
       const router2 = useRouter();
+      const favoritesStore = useFavoritesStore();
+      const showFancyModal = ref(false);
       const arrets = ref([]);
       const ligne = ref(null);
       const loading = ref(true);
@@ -13223,16 +13939,254 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const isArretLoading = (arret) => {
         return loadingArretId.value === arret.osmid;
       };
+      const handleToggleFavorite = (arret) => {
+        favoritesStore.toggleFavorite(arret);
+      };
       watch(() => route.path, () => {
         clearAutoRefresh();
       });
       return (_ctx, _cache) => {
         var _a, _b;
-        return openBlock(), createElementBlock("div", _hoisted_1, [
-          loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2, [
-            createBaseVNode("header", {
-              class: normalizeClass([unref(getColor)(ligne.value), "sticky top-0 z-10 shadow-md"])
-            }, [
+        return openBlock(), createElementBlock(Fragment, null, [
+          createBaseVNode("div", _hoisted_1$2, [
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2$2, [
+              createBaseVNode("header", {
+                class: normalizeClass([unref(getColor)(ligne.value), "sticky top-0 z-10 shadow-md"])
+              }, [
+                createBaseVNode("div", _hoisted_3$2, [
+                  createBaseVNode("button", {
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
+                    class: "text-white p-2"
+                  }, [
+                    createVNode(unref(ChevronLeftIcon), { class: "size-6" })
+                  ]),
+                  createBaseVNode("h1", _hoisted_4$2, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
+                  createBaseVNode("div", null, [
+                    createBaseVNode("button", {
+                      onClick: refreshData,
+                      class: "text-white p-2",
+                      disabled: refreshing.value
+                    }, [
+                      createVNode(unref(RefreshIcon), {
+                        class: normalizeClass([{ "animate-spin": refreshing.value }, "size-6"])
+                      }, null, 8, ["class"])
+                    ], 8, _hoisted_5$2),
+                    createBaseVNode("button", {
+                      onClick: _cache[1] || (_cache[1] = ($event) => showFancyModal.value = true),
+                      class: "text-white p-2",
+                      disabled: !ligne.value
+                    }, [
+                      createVNode(unref(MapIcon), { class: "size-6" })
+                    ], 8, _hoisted_6$2)
+                  ])
+                ])
+              ], 2),
+              createBaseVNode("div", _hoisted_7$2, [
+                createBaseVNode("div", _hoisted_8$2, [
+                  ((_a = ligne.value) == null ? void 0 : _a.image) ? (openBlock(), createElementBlock("img", {
+                    key: 0,
+                    src: ligne.value.image,
+                    alt: "Line icon",
+                    class: "h-12 mr-4"
+                  }, null, 8, _hoisted_9$1)) : createCommentVNode("", true),
+                  createBaseVNode("div", null, [
+                    createBaseVNode("h2", _hoisted_10$1, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
+                  ])
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_11$1, [
+                _cache[3] || (_cache[3] = createBaseVNode("h2", { class: "text-xl font-semibold mb-3" }, "Arrêts", -1)),
+                createBaseVNode("div", _hoisted_12$1, [
+                  createBaseVNode("ul", _hoisted_13$1, [
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(arrets.value, (arret, index2) => {
+                      return openBlock(), createBlock(unref(Arret), {
+                        key: arret.osmid,
+                        color: unref(getColor)(ligne.value),
+                        arret,
+                        index: index2,
+                        passages: getPassagesForArret(arret),
+                        loading: isArretLoading(arret),
+                        "is-selected": selectedArret.value === arret.osmid,
+                        onSelectArret: handleSelectArret,
+                        onToggleFavorite: handleToggleFavorite
+                      }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected"]);
+                    }), 128))
+                  ])
+                ])
+              ])
+            ]))
+          ]),
+          createVNode(unref(_sfc_main$9)),
+          createVNode(unref(FancyModal), {
+            show: showFancyModal.value,
+            onClose: _cache[2] || (_cache[2] = ($event) => showFancyModal.value = false)
+          }, {
+            default: withCtx(() => [
+              ligne.value ? (openBlock(), createElementBlock("iframe", {
+                key: 0,
+                src: unref(Stan).getPlan(ligne.value),
+                class: "size-full",
+                frameborder: "0",
+                allowfullscreen: ""
+              }, null, 8, _hoisted_14)) : createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["show"])
+        ], 64);
+      };
+    }
+  };
+  const LigneDetailView = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    default: _sfc_main$2
+  }, Symbol.toStringTag, { value: "Module" }));
+  const _hoisted_1$1 = { class: "min-h-screen bg-gray-100" };
+  const _hoisted_2$1 = {
+    key: 1,
+    class: "pb-20"
+  };
+  const _hoisted_3$1 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
+  const _hoisted_4$1 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_5$1 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_6$1 = {
+    key: 0,
+    class: "bg-white rounded-lg shadow-md p-8 text-center"
+  };
+  const _hoisted_7$1 = {
+    key: 1,
+    class: "bg-white rounded-lg shadow-md"
+  };
+  const _hoisted_8$1 = { class: "divide-y divide-gray-200" };
+  const _sfc_main$1 = {
+    __name: "FavoritesView",
+    setup(__props) {
+      const router2 = useRouter();
+      const favorites = useFavoritesStore();
+      const favoriteArrets = computed(() => favorites.getFavorites);
+      const loading = ref(true);
+      const selectedArret = ref(null);
+      const arretPassages = ref({});
+      const loadingArretId = ref(null);
+      onMounted(async () => {
+        loading.value = false;
+      });
+      const handleSelectArret = async (arret) => {
+        if (selectedArret.value === arret.osmid) {
+          selectedArret.value = null;
+          return;
+        }
+        selectedArret.value = arret.osmid;
+        loadingArretId.value = arret.osmid;
+        try {
+          const passages = await Stan.getProchainsPassages(arret);
+          arretPassages.value = { ...arretPassages.value, [arret.osmid]: passages };
+        } catch (error) {
+          console.error("Error loading passages:", error);
+        } finally {
+          loadingArretId.value = null;
+        }
+      };
+      const getPassagesForArret = (arret) => {
+        return selectedArret.value === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
+      };
+      const isArretLoading = (arret) => {
+        return loadingArretId.value === arret.osmid;
+      };
+      const handleRemoveFavorite = (arretId) => {
+        favorites.removeFavorite(arretId);
+        if (selectedArret.value === arretId) {
+          selectedArret.value = null;
+        }
+      };
+      return (_ctx, _cache) => {
+        return openBlock(), createElementBlock(Fragment, null, [
+          createBaseVNode("div", _hoisted_1$1, [
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2$1, [
+              createBaseVNode("header", _hoisted_3$1, [
+                createBaseVNode("div", _hoisted_4$1, [
+                  createBaseVNode("button", {
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
+                    class: "text-white p-2"
+                  }, [
+                    createVNode(unref(ChevronLeftIcon), { class: "size-6" })
+                  ]),
+                  _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Favoris", -1)),
+                  _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_5$1, [
+                favoriteArrets.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, _cache[3] || (_cache[3] = [
+                  createBaseVNode("p", { class: "text-gray-500" }, "Vous n'avez pas encore d'arrêts favoris.", -1),
+                  createBaseVNode("p", { class: "text-gray-500 mt-2" }, "Ajoutez des arrêts à vos favoris pour les retrouver ici.", -1)
+                ]))) : (openBlock(), createElementBlock("div", _hoisted_7$1, [
+                  createBaseVNode("ul", _hoisted_8$1, [
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(favoriteArrets.value, (arret, index2) => {
+                      return openBlock(), createBlock(unref(Arret), {
+                        key: arret.osmid,
+                        color: unref(getColor)(arret.ligne),
+                        arret,
+                        index: index2,
+                        passages: getPassagesForArret(arret),
+                        loading: isArretLoading(arret),
+                        "is-selected": selectedArret.value === arret.osmid,
+                        "is-favorite": true,
+                        onSelectArret: handleSelectArret,
+                        onToggleFavorite: ($event) => handleRemoveFavorite(arret.osmid)
+                      }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected", "onToggleFavorite"]);
+                    }), 128))
+                  ])
+                ]))
+              ])
+            ]))
+          ]),
+          createVNode(unref(_sfc_main$9))
+        ], 64);
+      };
+    }
+  };
+  const FavoritesView = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    default: _sfc_main$1
+  }, Symbol.toStringTag, { value: "Module" }));
+  const _hoisted_1 = { class: "min-h-screen bg-gray-100 pb-20" };
+  const _hoisted_2 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
+  const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_4 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_5 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_6 = { class: "flex flex-col" };
+  const _hoisted_7 = ["disabled"];
+  const _hoisted_8 = { key: 0 };
+  const _hoisted_9 = { key: 1 };
+  const _hoisted_10 = {
+    key: 0,
+    class: "mt-4 bg-green-100 text-green-700 p-3 rounded-md flex items-center"
+  };
+  const _hoisted_11 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_12 = { class: "text-gray-600" };
+  const _hoisted_13 = { class: "mb-2" };
+  const _sfc_main = {
+    __name: "SettingsView",
+    setup(__props) {
+      const router2 = useRouter();
+      const cacheCleared = ref(false);
+      const appVersion = ref("1.0.0");
+      const clearingCache = ref(false);
+      const clearCache = async () => {
+        clearingCache.value = true;
+        await new Promise((resolve2) => setTimeout(resolve2, 500));
+        Stan.clearCache();
+        cacheCleared.value = true;
+        clearingCache.value = false;
+        setTimeout(() => {
+          cacheCleared.value = false;
+        }, 3e3);
+      };
+      onMounted(() => {
+      });
+      return (_ctx, _cache) => {
+        return openBlock(), createElementBlock(Fragment, null, [
+          createBaseVNode("div", _hoisted_1, [
+            createBaseVNode("header", _hoisted_2, [
               createBaseVNode("div", _hoisted_3, [
                 createBaseVNode("button", {
                   onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
@@ -13240,57 +14194,58 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 }, [
                   createVNode(unref(ChevronLeftIcon), { class: "size-6" })
                 ]),
-                createBaseVNode("h1", _hoisted_4, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
-                createBaseVNode("button", {
-                  onClick: refreshData,
-                  class: "text-white p-2",
-                  disabled: refreshing.value
-                }, [
-                  createVNode(unref(RefreshIcon), {
-                    class: normalizeClass([{ "animate-spin": refreshing.value }, "size-6"])
-                  }, null, 8, ["class"])
-                ], 8, _hoisted_5)
-              ])
-            ], 2),
-            createBaseVNode("div", _hoisted_6, [
-              createBaseVNode("div", _hoisted_7, [
-                ((_a = ligne.value) == null ? void 0 : _a.image) ? (openBlock(), createElementBlock("img", {
-                  key: 0,
-                  src: ligne.value.image,
-                  alt: "Line icon",
-                  class: "h-12 mr-4"
-                }, null, 8, _hoisted_8)) : createCommentVNode("", true),
-                createBaseVNode("div", null, [
-                  createBaseVNode("h2", _hoisted_9, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
-                ])
+                _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Paramètres", -1)),
+                _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
               ])
             ]),
-            createBaseVNode("div", _hoisted_10, [
-              _cache[1] || (_cache[1] = createBaseVNode("h2", { class: "text-xl font-semibold mb-3" }, "Arrêts", -1)),
-              createBaseVNode("div", _hoisted_11, [
-                createBaseVNode("ul", _hoisted_12, [
-                  (openBlock(true), createElementBlock(Fragment, null, renderList(arrets.value, (arret, index) => {
-                    return openBlock(), createBlock(unref(Arret), {
-                      key: arret.osmid,
-                      color: unref(getColor)(ligne.value),
-                      arret,
-                      index,
-                      passages: getPassagesForArret(arret),
-                      loading: isArretLoading(arret),
-                      "is-selected": selectedArret.value === arret.osmid,
-                      onSelectArret: handleSelectArret
-                    }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected"]);
-                  }), 128))
+            createBaseVNode("div", _hoisted_4, [
+              createBaseVNode("div", _hoisted_5, [
+                _cache[4] || (_cache[4] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "Gestion du cache", -1)),
+                _cache[5] || (_cache[5] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " L'application stocke les données des lignes et arrêts en cache pour améliorer les performances pendant 24h. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet. ", -1)),
+                createBaseVNode("div", _hoisted_6, [
+                  createBaseVNode("button", {
+                    onClick: clearCache,
+                    disabled: clearingCache.value,
+                    class: normalizeClass(["bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-200", { "opacity-70 cursor-not-allowed": clearingCache.value }])
+                  }, [
+                    clearingCache.value ? (openBlock(), createElementBlock("span", _hoisted_8, "Suppression en cours...")) : (openBlock(), createElementBlock("span", _hoisted_9, "Vider le cache"))
+                  ], 10, _hoisted_7),
+                  cacheCleared.value ? (openBlock(), createElementBlock("div", _hoisted_10, _cache[3] || (_cache[3] = [
+                    createBaseVNode("svg", {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      class: "h-5 w-5 mr-2",
+                      viewBox: "0 0 20 20",
+                      fill: "currentColor"
+                    }, [
+                      createBaseVNode("path", {
+                        "fill-rule": "evenodd",
+                        d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",
+                        "clip-rule": "evenodd"
+                      })
+                    ], -1),
+                    createTextVNode(" Cache vidé avec succès ! ")
+                  ]))) : createCommentVNode("", true)
                 ])
-              ])
+              ]),
+              createBaseVNode("div", _hoisted_11, [
+                _cache[8] || (_cache[8] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "À propos", -1)),
+                createBaseVNode("div", _hoisted_12, [
+                  createBaseVNode("p", _hoisted_13, "Version: " + toDisplayString(appVersion.value), 1),
+                  _cache[6] || (_cache[6] = createBaseVNode("p", { class: "mb-2" }, "Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.", -1)),
+                  _cache[7] || (_cache[7] = createBaseVNode("p", null, "Les données sont récupérées depuis le site reseau-stan.com.", -1))
+                ])
+              ]),
+              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6" data-v-757b37ac><h2 class="text-xl font-semibold mb-4" data-v-757b37ac>Assistance</h2><p class="text-gray-600 mb-4" data-v-757b37ac> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-757b37ac><li class="mb-2" data-v-757b37ac>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-757b37ac>Rafraîchir la page</li><li class="mb-2" data-v-757b37ac>Vérifier votre connexion internet</li></ul></div>', 1))
             ])
-          ]))
-        ]);
+          ]),
+          createVNode(unref(_sfc_main$9))
+        ], 64);
       };
     }
   };
-  const LigneDetailView = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-757b37ac"]]);
+  const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
-    default: _sfc_main
+    default: SettingsView
   }, Symbol.toStringTag, { value: "Module" }));
 })();
