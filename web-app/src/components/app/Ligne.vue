@@ -55,7 +55,8 @@ const goToLineDetail = (ligne) => {
     </div>
 </template>
 
-<style scoped>.line-card {
+<style scoped>
+.line-card {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     will-change: transform;
 }

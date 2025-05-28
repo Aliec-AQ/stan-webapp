@@ -1197,6 +1197,9 @@ video {
 .static {
   position: static;
 }
+.fixed {
+  position: fixed;
+}
 .absolute {
   position: absolute;
 }
@@ -1231,6 +1234,9 @@ video {
 .left-\[70\%\] {
   left: 70%;
 }
+.right-0 {
+  right: 0px;
+}
 .right-\[30px\] {
   right: 30px;
 }
@@ -1251,6 +1257,9 @@ video {
 }
 .z-20 {
   z-index: 20;
+}
+.z-50 {
+  z-index: 50;
 }
 .mx-auto {
   margin-left: auto;
@@ -1322,6 +1331,14 @@ video {
   width: 1.5rem;
   height: 1.5rem;
 }
+.size-\[40px\] {
+  width: 40px;
+  height: 40px;
+}
+.size-full {
+  width: 100%;
+  height: 100%;
+}
 .h-1 {
   height: 0.25rem;
 }
@@ -1348,6 +1365,9 @@ video {
 }
 .h-\[30px\] {
   height: 30px;
+}
+.h-full {
+  height: 100%;
 }
 .h-px {
   height: 1px;
@@ -1525,6 +1545,9 @@ video {
   --tw-bg-opacity: 1;
   background-color: rgb(0 0 0 / var(--tw-bg-opacity, 1));
 }
+.bg-black\/70 {
+  background-color: rgb(0 0 0 / 0.7);
+}
 .bg-blue-50 {
   --tw-bg-opacity: 1;
   background-color: rgb(239 246 255 / var(--tw-bg-opacity, 1));
@@ -1675,6 +1698,10 @@ video {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+.py-\[40px\] {
+  padding-top: 40px;
+  padding-bottom: 40px;
 }
 .pb-2 {
   padding-bottom: 0.5rem;
@@ -1893,6 +1920,11 @@ video {
   .md\:grid-cols-3 {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  .md\:px-\[40px\] {
+    padding-left: 40px;
+    padding-right: 40px;
+  }
 }
 
 
@@ -1963,6 +1995,12 @@ to {
 }
 }
 
+/* direct child of #modal-content tkes the full height  and width*/
+#modal-content[data-v-36d06f24] > [data-v-36d06f24] {
+    width: 100%;
+    height: 100%;
+}
+
 .custom-dropdown[data-v-a284d4ea] {
   -webkit-user-select: none;
      -moz-user-select: none;
@@ -1972,14 +2010,15 @@ to {
   scrollbar-width: thin;
   scrollbar-color: #747474 #ffffff;
 }
-.line-card[data-v-fcfb2123] {
+
+.line-card[data-v-4e8aa8c1] {
     transition: transform 0.3s ease, box-shadow 0.3s ease;
     will-change: transform;
 }
-.line-card[data-v-fcfb2123]:hover {
+.line-card[data-v-4e8aa8c1]:hover {
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
 }
-.line-clamp-1[data-v-fcfb2123] {
+.line-clamp-1[data-v-4e8aa8c1] {
   display: -webkit-box;
   -webkit-line-clamp: 1;
   -webkit-box-orient: vertical;

@@ -3,6 +3,7 @@ import ChevronDownIcon from "./ChevronDownIcon.vue";
 import ChevronLeftIcon from "./ChevronLeftIcon.vue";
 import ChevronRightIcon from "./ChevronRightIcon.vue";
 import ChevronUpIcon from "./ChevronUpIcon.vue";
+import CloseIcon from "./CloseIcon.vue";
 import MapIcon from "./MapIcon.vue";
 import RefreshIcon from "./RefreshIcon.vue";
 import SadIcon from "./SadIcon.vue";
@@ -14,6 +15,7 @@ export {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    CloseIcon,
     MapIcon,
     RefreshIcon,
     SadIcon,
@@ -26,6 +28,7 @@ export default {
     ChevronLeftIcon,
     ChevronRightIcon,
     ChevronUpIcon,
+    CloseIcon,
     MapIcon,
     RefreshIcon,
     SadIcon,

@@ -2612,7 +2612,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       validSlotContent || [],
       validSlotContent && slots._ === 1 ? 64 : -2
     );
-    if (rendered.scopeId) {
+    if (!noSlotted && rendered.scopeId) {
       rendered.slotScopeIds = [rendered.scopeId + "-s"];
     }
     if (slot && slot._c) {
@@ -8833,7 +8833,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function useRoute(_name) {
     return inject(routeLocationKey);
   }
-  const _sfc_main$e = {
+  const _sfc_main$h = {
     __name: "App",
     setup(__props) {
       return (_ctx, _cache) => {
@@ -9170,14 +9170,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   });
-  var _hoisted_1$e = /* @__PURE__ */ createTextVNode(" × ");
+  var _hoisted_1$h = /* @__PURE__ */ createTextVNode(" × ");
   function render2(_ctx, _cache) {
     return openBlock(), createBlock(resolveDynamicComponent(_ctx.buttonComponent), mergeProps({
       "aria-label": _ctx.ariaLabel,
       class: _ctx.classes
     }, _ctx.$attrs), {
       default: withCtx(() => [
-        _hoisted_1$e
+        _hoisted_1$h
       ]),
       _: 1
     }, 16, ["aria-label", "class"]);
@@ -9195,20 +9195,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512"
   };
-  var _hoisted_2$6 = /* @__PURE__ */ createBaseVNode("path", {
+  var _hoisted_2$7 = /* @__PURE__ */ createBaseVNode("path", {
     fill: "currentColor",
     d: "M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
   }, null, -1);
-  var _hoisted_3$6 = [
-    _hoisted_2$6
+  var _hoisted_3$7 = [
+    _hoisted_2$7
   ];
   function render3(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_12$2, _hoisted_3$6);
+    return openBlock(), createElementBlock("svg", _hoisted_12$2, _hoisted_3$7);
   }
   VtSuccessIcon_default.render = render3;
   var VtSuccessIcon_default2 = VtSuccessIcon_default;
   var VtInfoIcon_default = {};
-  var _hoisted_13$1 = {
+  var _hoisted_13$2 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9226,12 +9226,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     _hoisted_22
   ];
   function render4(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_13$1, _hoisted_32);
+    return openBlock(), createElementBlock("svg", _hoisted_13$2, _hoisted_32);
   }
   VtInfoIcon_default.render = render4;
   var VtInfoIcon_default2 = VtInfoIcon_default;
   var VtWarningIcon_default = {};
-  var _hoisted_14$1 = {
+  var _hoisted_14$2 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9249,7 +9249,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     _hoisted_23
   ];
   function render5(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_14$1, _hoisted_33);
+    return openBlock(), createElementBlock("svg", _hoisted_14$2, _hoisted_33);
   }
   VtWarningIcon_default.render = render5;
   var VtWarningIcon_default2 = VtWarningIcon_default;
@@ -9914,7 +9914,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       document.removeEventListener("click", el.clickOutsideEvent);
     }
   };
-  const app = createApp(_sfc_main$e);
+  const app = createApp(_sfc_main$h);
   app.use(router);
   app.use(src_default, { position: "bottom-right" });
   app.directive("click-outside", clickOutside);
@@ -12302,7 +12302,6 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     mergeConfig
   } = axios;
   const _Stan = class _Stan {
-    // 24 heures en millisecondes
     static saveToCache(key, data) {
       try {
         const cacheItem = {
@@ -12449,6 +12448,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       return passages;
     }
+    static getPlan(ligne) {
+      if (!ligne || !ligne.osmid) return null;
+      const planUrl = this.plans[ligne.osmid];
+      if (!planUrl) return null;
+      return planUrl;
+    }
     static getInstance() {
       return axios.create({
         baseURL: "https://www.reseau-stan.com/?type=476",
@@ -12459,6 +12464,52 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   };
   __publicField(_Stan, "CACHE_DURATION", 24 * 60 * 60 * 1e3);
+  // 24 heures en millisecondes
+  __publicField(_Stan, "plans", {
+    "line:GST:1-97": "https://tim.reseau-stan.com/tim/data/pdf/2283_Ligne Tempo 1.pdf",
+    "line:GST:2-97": "https://tim.reseau-stan.com/tim/data/pdf/1372_Ligne Tempo 2.pdf",
+    "line:GST:3-97": "https://tim.reseau-stan.com/tim/data/pdf/2312_Ligne Tempo 3.pdf",
+    "line:GST:4-97": "https://tim.reseau-stan.com/tim/data/pdf/2215_Ligne Tempo 4.pdf",
+    "line:GST:5-97": "https://tim.reseau-stan.com/tim/data/pdf/2216_Ligne Corol.pdf",
+    "line:GST:18-97": "https://tim.reseau-stan.com/tim/data/pdf/2219_Brabois Express.pdf",
+    "line:GST:14-97": "https://tim.reseau-stan.com/tim/data/pdf/1315_Ligne 14ex-14sept23.pdf",
+    "line:SUB:10": "https://tim.reseau-stan.com/tim/data/pdf/2217_Ligne 10.pdf",
+    "line:GST:11-97": "https://tim.reseau-stan.com/tim/data/pdf/2218_Ligne 11.pdf",
+    "line:GST:12-97": "https://tim.reseau-stan.com/tim/data/pdf/2109_Ligne 12.pdf",
+    "line:GST:13-97": "https://tim.reseau-stan.com/tim/data/pdf/1868_Ligne 13.pdf",
+    "line:GST:15-97": "https://tim.reseau-stan.com/tim/data/pdf/2309_Ligne 15.pdf",
+    "line:GST:16-97": "https://tim.reseau-stan.com/tim/data/pdf/2310_Ligne 16.pdf",
+    "line:GST:17-97": "https://tim.reseau-stan.com/tim/data/pdf/2112_Ligne 17.pdf",
+    "ine:GST:20-97": "https://tim.reseau-stan.com/tim/data/pdf/2113_Ligne 20.pdf",
+    "line:GST:21-97": "https://tim.reseau-stan.com/tim/data/pdf/2118_Ligne 21.pdf",
+    "line:GST:22-97": "https://tim.reseau-stan.com/tim/data/pdf/1321_Ligne 22.pdf",
+    "line:SUB:23": "https://tim.reseau-stan.com/tim/data/pdf/2115_Ligne 23.pdf",
+    "line:SUB:24": "https://tim.reseau-stan.com/tim/data/pdf/1323_Ligne 24.pdf",
+    "line:GST:30-97": "https://tim.reseau-stan.com/tim/data/pdf/1324_Ligne 30.pdf",
+    "line:GST:31-97": "https://tim.reseau-stan.com/tim/data/pdf/1870_Ligne 31.pdf",
+    "line:GST:32-97": "https://tim.reseau-stan.com/tim/data/pdf/1327_Plan -ligne 32-sept 23.pdf",
+    "line:GST:33-97": "https://tim.reseau-stan.com/tim/data/pdf/2116_Ligne 33.pdf",
+    "line:GST:50-97": "https://tim.reseau-stan.com/tim/data/pdf/2119_Ligne 50.pdf",
+    "line:GST:51-97": "https://tim.reseau-stan.com/tim/data/pdf/2027_Ligne 51.pdf",
+    "line:GST:52-97": "https://tim.reseau-stan.com/tim/data/pdf/2120_Ligne 52.pdf",
+    "line:GST:53-97": "https://tim.reseau-stan.com/tim/data/pdf/2028_Ligne 53.pdf",
+    "line:GST:54-97": "https://tim.reseau-stan.com/tim/data/pdf/2121_Ligne 54.pdf",
+    "line:GST:55-97": "https://tim.reseau-stan.com/tim/data/pdf/1640_Plan -55 - 2 oct 23.pdf",
+    "line:GST:56-97": "https://tim.reseau-stan.com/tim/data/pdf/1333_Ligne 56.pdf",
+    "line:GST:57-97": "https://tim.reseau-stan.com/tim/data/pdf/2023_Ligne 57.pdf",
+    "line:GST:58-97": "https://tim.reseau-stan.com/tim/data/pdf/2029_Ligne 58.pdf",
+    "line:GST:59-97": "https://tim.reseau-stan.com/tim/data/pdf/2122_Ligne 59.pdf",
+    "line:GST:60-97": "https://tim.reseau-stan.com/tim/data/pdf/1388_Ligne 60-V2.pdf",
+    "line:GST:61-97": "https://tim.reseau-stan.com/tim/data/pdf/2123_Ligne 61.pdf",
+    "line:GST:62-97": "https://tim.reseau-stan.com/tim/data/pdf/2124_Ligne 62 - 02.09",
+    "line:GST:63-97": "https://tim.reseau-stan.com/tim/data/pdf/2125_Ligne 63.pdf",
+    "line:GST:64-97": "https://tim.reseau-stan.com/tim/data/pdf/2126_Ligne 64.pdf",
+    "line:GST:65-97": "https://tim.reseau-stan.com/tim/data/pdf/2026_Ligne 65.pdf",
+    "line:GST:66-97": "https://tim.reseau-stan.com/tim/data/pdf/2127_Ligne 66.pdf",
+    "line:GST:67-97": "https://tim.reseau-stan.com/tim/data/pdf/2128_Ligne 67.pdf",
+    "line:GST:41-97": "https://tim.reseau-stan.com/tim/data/pdf/2299_Citadine Nancy.pdf",
+    "line:GST:42-97": "https://tim.reseau-stan.com/tim/data/pdf/1484_Citadine Vandoeuvre.pdf"
+  });
   let Stan = _Stan;
   const _export_sfc = (sfc, props) => {
     const target = sfc.__vccOpts || sfc;
@@ -12467,113 +12518,139 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     return target;
   };
-  const _sfc_main$d = {};
-  const _hoisted_1$d = {
+  const _sfc_main$g = {};
+  const _hoisted_1$g = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-bus-side",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$7(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$d, _cache[0] || (_cache[0] = [
+  function _sfc_render$9(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$g, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M3,6C1.89,6 1,6.89 1,8V15H3A3,3 0 0,0 6,18A3,3 0 0,0 9,15H15A3,3 0 0,0 18,18A3,3 0 0,0 21,15H23V8C23,6.89 22.11,6 21,6H3M2.5,7.5H6.5V10H2.5V7.5M8,7.5H12V10H8V7.5M13.5,7.5H17.5V10H13.5V7.5M19,7.5H21.5V13L19,11V7.5M6,13.5A1.5,1.5 0 0,1 7.5,15A1.5,1.5 0 0,1 6,16.5A1.5,1.5 0 0,1 4.5,15A1.5,1.5 0 0,1 6,13.5M18,13.5A1.5,1.5 0 0,1 19.5,15A1.5,1.5 0 0,1 18,16.5A1.5,1.5 0 0,1 16.5,15A1.5,1.5 0 0,1 18,13.5Z" }, null, -1)
     ]));
   }
-  const BusIcon = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$7]]);
-  const _sfc_main$c = {};
-  const _hoisted_1$c = {
+  const BusIcon = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["render", _sfc_render$9]]);
+  const _sfc_main$f = {};
+  const _hoisted_1$f = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-down",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$6(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$c, _cache[0] || (_cache[0] = [
+  function _sfc_render$8(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$f, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M7.41,8.58L12,13.17L16.59,8.58L18,10L12,16L6,10L7.41,8.58Z" }, null, -1)
     ]));
   }
-  const ChevronDownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$6]]);
-  const _sfc_main$b = {};
-  const _hoisted_1$b = {
+  const ChevronDownIcon = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$8]]);
+  const _sfc_main$e = {};
+  const _hoisted_1$e = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-left",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$5(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$b, _cache[0] || (_cache[0] = [
+  function _sfc_render$7(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$e, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M15.41,16.58L10.83,12L15.41,7.41L14,6L8,12L14,18L15.41,16.58Z" }, null, -1)
     ]));
   }
-  const ChevronLeftIcon = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$5]]);
-  const _sfc_main$a = {};
-  const _hoisted_1$a = {
+  const ChevronLeftIcon = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["render", _sfc_render$7]]);
+  const _sfc_main$d = {};
+  const _hoisted_1$d = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-right",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$4(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$a, _cache[0] || (_cache[0] = [
+  function _sfc_render$6(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$d, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M8.59,16.58L13.17,12L8.59,7.41L10,6L16,12L10,18L8.59,16.58Z" }, null, -1)
     ]));
   }
-  const ChevronRightIcon = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$4]]);
-  const _sfc_main$9 = {};
-  const _hoisted_1$9 = {
+  const ChevronRightIcon = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$6]]);
+  const _sfc_main$c = {};
+  const _hoisted_1$c = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-chevron-up",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
-  function _sfc_render$3(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$9, _cache[0] || (_cache[0] = [
+  function _sfc_render$5(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$c, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M7.41,15.41L12,10.83L16.59,15.41L18,14L12,8L6,14L7.41,15.41Z" }, null, -1)
     ]));
   }
-  const ChevronUpIcon = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$3]]);
-  const _sfc_main$8 = {};
-  const _hoisted_1$8 = {
+  const ChevronUpIcon = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["render", _sfc_render$5]]);
+  const _sfc_main$b = {};
+  const _hoisted_1$b = {
+    xmlns: "http://www.w3.org/2000/svg",
+    id: "mdi-close",
+    fill: "currentColor",
+    viewBox: "0 0 24 24"
+  };
+  function _sfc_render$4(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$b, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", { d: "M19,6.41L17.59,5L12,10.59L6.41,5L5,6.41L10.59,12L5,17.59L6.41,19L12,13.41L17.59,19L19,17.59L13.41,12L19,6.41Z" }, null, -1)
+    ]));
+  }
+  const CloseIcon = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["render", _sfc_render$4]]);
+  const _sfc_main$a = {};
+  const _hoisted_1$a = {
+    xmlns: "http://www.w3.org/2000/svg",
+    id: "mdi-map",
+    fill: "currentColor",
+    viewBox: "0 0 24 24"
+  };
+  function _sfc_render$3(_ctx, _cache) {
+    return openBlock(), createElementBlock("svg", _hoisted_1$a, _cache[0] || (_cache[0] = [
+      createBaseVNode("path", { d: "M15,19L9,16.89V5L15,7.11M20.5,3C20.44,3 20.39,3 20.34,3L15,5.1L9,3L3.36,4.9C3.15,4.97 3,5.15 3,5.38V20.5A0.5,0.5 0 0,0 3.5,21C3.55,21 3.61,21 3.66,20.97L9,18.9L15,21L20.64,19.1C20.85,19 21,18.85 21,18.62V3.5A0.5,0.5 0 0,0 20.5,3Z" }, null, -1)
+    ]));
+  }
+  const MapIcon = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["render", _sfc_render$3]]);
+  const _sfc_main$9 = {};
+  const _hoisted_1$9 = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-refresh",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
   function _sfc_render$2(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$8, _cache[0] || (_cache[0] = [
+    return openBlock(), createElementBlock("svg", _hoisted_1$9, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M17.65,6.35C16.2,4.9 14.21,4 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20C15.73,20 18.84,17.45 19.73,14H17.65C16.83,16.33 14.61,18 12,18A6,6 0 0,1 6,12A6,6 0 0,1 12,6C13.66,6 15.14,6.69 16.22,7.78L13,11H20V4L17.65,6.35Z" }, null, -1)
     ]));
   }
-  const RefreshIcon = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$2]]);
-  const _sfc_main$7 = {};
-  const _hoisted_1$7 = {
+  const RefreshIcon = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["render", _sfc_render$2]]);
+  const _sfc_main$8 = {};
+  const _hoisted_1$8 = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-emoticon-sad-outline",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
   function _sfc_render$1(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$7, _cache[0] || (_cache[0] = [
+    return openBlock(), createElementBlock("svg", _hoisted_1$8, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M20,12A8,8 0 0,0 12,4A8,8 0 0,0 4,12A8,8 0 0,0 12,20A8,8 0 0,0 20,12M22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2A10,10 0 0,1 22,12M15.5,8C16.3,8 17,8.7 17,9.5C17,10.3 16.3,11 15.5,11C14.7,11 14,10.3 14,9.5C14,8.7 14.7,8 15.5,8M10,9.5C10,10.3 9.3,11 8.5,11C7.7,11 7,10.3 7,9.5C7,8.7 7.7,8 8.5,8C9.3,8 10,8.7 10,9.5M12,14C13.75,14 15.29,14.72 16.19,15.81L14.77,17.23C14.32,16.5 13.25,16 12,16C10.75,16 9.68,16.5 9.23,17.23L7.81,15.81C8.71,14.72 10.25,14 12,14Z" }, null, -1)
     ]));
   }
-  const SadIcon = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render$1]]);
-  const _sfc_main$6 = {};
-  const _hoisted_1$6 = {
+  const SadIcon = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["render", _sfc_render$1]]);
+  const _sfc_main$7 = {};
+  const _hoisted_1$7 = {
     xmlns: "http://www.w3.org/2000/svg",
     id: "mdi-magnify",
     fill: "currentColor",
     viewBox: "0 0 24 24"
   };
   function _sfc_render(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_1$6, _cache[0] || (_cache[0] = [
+    return openBlock(), createElementBlock("svg", _hoisted_1$7, _cache[0] || (_cache[0] = [
       createBaseVNode("path", { d: "M9.5,3A6.5,6.5 0 0,1 16,9.5C16,11.11 15.41,12.59 14.44,13.73L14.71,14H15.5L20.5,19L19,20.5L14,15.5V14.71L13.73,14.44C12.59,15.41 11.11,16 9.5,16A6.5,6.5 0 0,1 3,9.5A6.5,6.5 0 0,1 9.5,3M9.5,5C7,5 5,7 5,9.5C5,12 7,14 9.5,14C12,14 14,12 14,9.5C14,7 12,5 9.5,5Z" }, null, -1)
     ]));
   }
-  const SearchIcon = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["render", _sfc_render]]);
-  const _hoisted_1$5 = { class: "flex-grow" };
-  const _hoisted_2$5 = { class: "font-medium" };
-  const _hoisted_3$5 = { class: "text-gray-500" };
+  const SearchIcon = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["render", _sfc_render]]);
+  const _hoisted_1$6 = { class: "flex-grow" };
+  const _hoisted_2$6 = { class: "font-medium" };
+  const _hoisted_3$6 = { class: "text-gray-500" };
   const _hoisted_4$4 = {
     key: 0,
     class: "px-4 py-4 bg-gray-50"
@@ -12595,8 +12672,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const _hoisted_11$2 = { class: "font-semibold text-sm text-gray-700 mb-2" };
   const _hoisted_12$1 = { class: "relative h-[30px] ml-[20px]" };
-  const _hoisted_13 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
-  const _hoisted_14 = {
+  const _hoisted_13$1 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
+  const _hoisted_14$1 = {
     key: 0,
     class: "absolute top-0 left-[30%] flex flex-col items-center transform -translate-x-1/2"
   };
@@ -12604,7 +12681,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     key: 1,
     class: "absolute top-0 left-[70%] flex flex-col items-center transform -translate-x-1/2"
   };
-  const _sfc_main$5 = {
+  const _sfc_main$6 = {
     __name: "Arret",
     props: {
       arret: {
@@ -12677,10 +12754,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             createBaseVNode("div", {
               class: normalizeClass([__props.color, "w-8 h-8 rounded-full flex items-center justify-center mr-4 text-white font-bold"])
             }, toDisplayString(__props.index + 1), 3),
-            createBaseVNode("div", _hoisted_1$5, [
-              createBaseVNode("h3", _hoisted_2$5, toDisplayString(__props.arret.libelle), 1)
+            createBaseVNode("div", _hoisted_1$6, [
+              createBaseVNode("h3", _hoisted_2$6, toDisplayString(__props.arret.libelle), 1)
             ]),
-            createBaseVNode("div", _hoisted_3$5, [
+            createBaseVNode("div", _hoisted_3$6, [
               !__props.isSelected ? (openBlock(), createBlock(unref(ChevronDownIcon), {
                 key: 0,
                 class: "size-5"
@@ -12712,12 +12789,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                       createBaseVNode("div", {
                         class: normalizeClass(["absolute top-[15px] left-0 right-[30px] h-1 dotted-line", __props.color])
                       }, null, 2),
-                      createBaseVNode("div", _hoisted_13, [
+                      createBaseVNode("div", _hoisted_13$1, [
                         createBaseVNode("div", {
                           class: normalizeClass(["w-2 h-2 rounded-full", __props.color])
                         }, null, 2)
                       ]),
-                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_14, [
+                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_14$1, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[0].temps_theorique }])
@@ -12739,7 +12816,44 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const Arret = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-ca71c73b"]]);
+  const Arret = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-ca71c73b"]]);
+  const _hoisted_1$5 = {
+    key: 0,
+    id: "fancy-modal",
+    class: "fixed inset-0 z-50 flex items-center justify-center"
+  };
+  const _hoisted_2$5 = { class: "w-full h-full bg-black/70 relative overflow-auto" };
+  const _hoisted_3$5 = {
+    id: "modal-content",
+    class: "py-[40px] md:px-[40px] w-full h-full flex flex-col"
+  };
+  const _sfc_main$5 = {
+    __name: "FancyModal",
+    props: {
+      show: {
+        type: Boolean,
+        default: false
+      }
+    },
+    setup(__props) {
+      return (_ctx, _cache) => {
+        return __props.show ? (openBlock(), createElementBlock("div", _hoisted_1$5, [
+          createBaseVNode("div", _hoisted_2$5, [
+            createBaseVNode("div", _hoisted_3$5, [
+              renderSlot(_ctx.$slots, "default", {}, void 0, true)
+            ]),
+            createBaseVNode("button", {
+              onClick: _cache[0] || (_cache[0] = ($event) => _ctx.$emit("close")),
+              class: "absolute top-0 right-0 text-white bg-black/70 size-[40px] flex items-center justify-center z-10"
+            }, [
+              createVNode(unref(CloseIcon), { class: "size-6" })
+            ])
+          ])
+        ])) : createCommentVNode("", true);
+      };
+    }
+  };
+  const FancyModal = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-36d06f24"]]);
   const _hoisted_1$4 = { class: "custom-dropdown relative" };
   const _hoisted_2$4 = { class: "text-gray-900" };
   const _hoisted_3$4 = {
@@ -12941,7 +13055,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const Ligne = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-fcfb2123"]]);
+  const Ligne = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-4e8aa8c1"]]);
   const _hoisted_1$2 = { class: "flex justify-center items-center min-h-screen" };
   const _hoisted_2$2 = { class: "loader-container" };
   const _hoisted_3$2 = { class: "loader-line" };
@@ -13116,18 +13230,21 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
   const _hoisted_4 = { class: "text-xl font-bold text-white" };
   const _hoisted_5 = ["disabled"];
-  const _hoisted_6 = { class: "container mx-auto px-4 mt-4" };
-  const _hoisted_7 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
-  const _hoisted_8 = ["src"];
-  const _hoisted_9 = { class: "font-bold text-lg" };
-  const _hoisted_10 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_11 = { class: "bg-white rounded-lg shadow-md" };
-  const _hoisted_12 = { class: "divide-y divide-gray-200" };
+  const _hoisted_6 = ["disabled"];
+  const _hoisted_7 = { class: "container mx-auto px-4 mt-4" };
+  const _hoisted_8 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
+  const _hoisted_9 = ["src"];
+  const _hoisted_10 = { class: "font-bold text-lg" };
+  const _hoisted_11 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_12 = { class: "bg-white rounded-lg shadow-md" };
+  const _hoisted_13 = { class: "divide-y divide-gray-200" };
+  const _hoisted_14 = ["src"];
   const _sfc_main = {
     __name: "LigneDetailView",
     setup(__props) {
       const route = useRoute();
       const router2 = useRouter();
+      const showFancyModal = ref(false);
       const arrets = ref([]);
       const ligne = ref(null);
       const loading = ref(true);
@@ -13228,64 +13345,90 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       });
       return (_ctx, _cache) => {
         var _a, _b;
-        return openBlock(), createElementBlock("div", _hoisted_1, [
-          loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2, [
-            createBaseVNode("header", {
-              class: normalizeClass([unref(getColor)(ligne.value), "sticky top-0 z-10 shadow-md"])
-            }, [
-              createBaseVNode("div", _hoisted_3, [
-                createBaseVNode("button", {
-                  onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
-                  class: "text-white p-2"
-                }, [
-                  createVNode(unref(ChevronLeftIcon), { class: "size-6" })
-                ]),
-                createBaseVNode("h1", _hoisted_4, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
-                createBaseVNode("button", {
-                  onClick: refreshData,
-                  class: "text-white p-2",
-                  disabled: refreshing.value
-                }, [
-                  createVNode(unref(RefreshIcon), {
-                    class: normalizeClass([{ "animate-spin": refreshing.value }, "size-6"])
-                  }, null, 8, ["class"])
-                ], 8, _hoisted_5)
-              ])
-            ], 2),
-            createBaseVNode("div", _hoisted_6, [
+        return openBlock(), createElementBlock(Fragment, null, [
+          createBaseVNode("div", _hoisted_1, [
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2, [
+              createBaseVNode("header", {
+                class: normalizeClass([unref(getColor)(ligne.value), "sticky top-0 z-10 shadow-md"])
+              }, [
+                createBaseVNode("div", _hoisted_3, [
+                  createBaseVNode("button", {
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
+                    class: "text-white p-2"
+                  }, [
+                    createVNode(unref(ChevronLeftIcon), { class: "size-6" })
+                  ]),
+                  createBaseVNode("h1", _hoisted_4, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
+                  createBaseVNode("div", null, [
+                    createBaseVNode("button", {
+                      onClick: refreshData,
+                      class: "text-white p-2",
+                      disabled: refreshing.value
+                    }, [
+                      createVNode(unref(RefreshIcon), {
+                        class: normalizeClass([{ "animate-spin": refreshing.value }, "size-6"])
+                      }, null, 8, ["class"])
+                    ], 8, _hoisted_5),
+                    createBaseVNode("button", {
+                      onClick: _cache[1] || (_cache[1] = ($event) => showFancyModal.value = true),
+                      class: "text-white p-2",
+                      disabled: !ligne.value
+                    }, [
+                      createVNode(unref(MapIcon), { class: "size-6" })
+                    ], 8, _hoisted_6)
+                  ])
+                ])
+              ], 2),
               createBaseVNode("div", _hoisted_7, [
-                ((_a = ligne.value) == null ? void 0 : _a.image) ? (openBlock(), createElementBlock("img", {
-                  key: 0,
-                  src: ligne.value.image,
-                  alt: "Line icon",
-                  class: "h-12 mr-4"
-                }, null, 8, _hoisted_8)) : createCommentVNode("", true),
-                createBaseVNode("div", null, [
-                  createBaseVNode("h2", _hoisted_9, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
+                createBaseVNode("div", _hoisted_8, [
+                  ((_a = ligne.value) == null ? void 0 : _a.image) ? (openBlock(), createElementBlock("img", {
+                    key: 0,
+                    src: ligne.value.image,
+                    alt: "Line icon",
+                    class: "h-12 mr-4"
+                  }, null, 8, _hoisted_9)) : createCommentVNode("", true),
+                  createBaseVNode("div", null, [
+                    createBaseVNode("h2", _hoisted_10, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
+                  ])
                 ])
-              ])
-            ]),
-            createBaseVNode("div", _hoisted_10, [
-              _cache[1] || (_cache[1] = createBaseVNode("h2", { class: "text-xl font-semibold mb-3" }, "Arrêts", -1)),
+              ]),
               createBaseVNode("div", _hoisted_11, [
-                createBaseVNode("ul", _hoisted_12, [
-                  (openBlock(true), createElementBlock(Fragment, null, renderList(arrets.value, (arret, index) => {
-                    return openBlock(), createBlock(unref(Arret), {
-                      key: arret.osmid,
-                      color: unref(getColor)(ligne.value),
-                      arret,
-                      index,
-                      passages: getPassagesForArret(arret),
-                      loading: isArretLoading(arret),
-                      "is-selected": selectedArret.value === arret.osmid,
-                      onSelectArret: handleSelectArret
-                    }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected"]);
-                  }), 128))
+                _cache[3] || (_cache[3] = createBaseVNode("h2", { class: "text-xl font-semibold mb-3" }, "Arrêts", -1)),
+                createBaseVNode("div", _hoisted_12, [
+                  createBaseVNode("ul", _hoisted_13, [
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(arrets.value, (arret, index) => {
+                      return openBlock(), createBlock(unref(Arret), {
+                        key: arret.osmid,
+                        color: unref(getColor)(ligne.value),
+                        arret,
+                        index,
+                        passages: getPassagesForArret(arret),
+                        loading: isArretLoading(arret),
+                        "is-selected": selectedArret.value === arret.osmid,
+                        onSelectArret: handleSelectArret
+                      }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected"]);
+                    }), 128))
+                  ])
                 ])
               ])
-            ])
-          ]))
-        ]);
+            ]))
+          ]),
+          createVNode(unref(FancyModal), {
+            show: showFancyModal.value,
+            onClose: _cache[2] || (_cache[2] = ($event) => showFancyModal.value = false)
+          }, {
+            default: withCtx(() => [
+              ligne.value ? (openBlock(), createElementBlock("iframe", {
+                key: 0,
+                src: unref(Stan).getPlan(ligne.value),
+                class: "size-full",
+                frameborder: "0",
+                allowfullscreen: ""
+              }, null, 8, _hoisted_14)) : createCommentVNode("", true)
+            ]),
+            _: 1
+          }, 8, ["show"])
+        ], 64);
       };
     }
   };

@@ -1,22 +1,26 @@
 <script setup>
 import { onMounted, ref, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { LineLoader, Arret, RefreshIcon, ChevronLeftIcon } from '@/components';
+import { LineLoader, Arret, RefreshIcon, ChevronLeftIcon, FancyModal, MapIcon } from '@/components';
 import { Stan } from '@/composables/stan';
 import { getColor } from '@/utils/stan';
 
 const route = useRoute();
 const router = useRouter();
+
+const showFancyModal = ref(false);
+
 const arrets = ref([]);
 const ligne = ref(null);
+
 const loading = ref(true);
 const refreshing = ref(false);
+
 const selectedArret = ref(null);
 const arretPassages = ref({});
 const loadingPassages = ref(false);
 
 const loadingArretId = ref(null);
-
 const autoRefreshInterval = ref(null);
 
 onMounted(async () => {
@@ -146,13 +150,22 @@ watch(() => route.path, () => {
               <ChevronLeftIcon class="size-6" />
             </button>
             <h1 class="text-xl font-bold text-white">Ligne {{ ligne.numlignepublic }}</h1>
-            <button 
+            <div>
+              <button 
               @click="refreshData" 
               class="text-white p-2"
               :disabled="refreshing"
             >
               <RefreshIcon :class="{ 'animate-spin': refreshing }" class="size-6" />
             </button>
+            <button 
+              @click="showFancyModal = true" 
+              class="text-white p-2"
+              :disabled="!ligne"
+            >
+              <MapIcon class="size-6" />
+            </button>
+            </div>
           </div>
       </header>
 
@@ -185,6 +198,16 @@ watch(() => route.path, () => {
       </div>
     </div>
   </div>
+
+  <FancyModal :show="showFancyModal" @close="showFancyModal = false">
+      <iframe
+      v-if="ligne"
+      :src="Stan.getPlan(ligne)"
+      class="size-full"
+      frameborder="0"
+      allowfullscreen
+      ></iframe>
+  </FancyModal>
 </template>
 
 <style scoped>
