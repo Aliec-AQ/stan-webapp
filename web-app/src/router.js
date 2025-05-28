@@ -12,7 +12,17 @@ const router = createRouter({
       name: 'ligne-detail',
       path: '/ligne/:osmid_ligne',
       component: () => import('@/views/LigneDetailView.vue'),
-    }
+    },
+    {
+      name: 'favorites',
+      path: '/favorites',
+      component: () => import('@/views/FavoritesView.vue'),
+    },
+    {
+      name: 'settings',
+      path: '/settings',
+      component: () => import('@/views/SettingsView.vue'),
+    }    
   ],
   scrollBehavior(to, from, savedPosition) {
     return { top: 0, behavior: 'smooth' }

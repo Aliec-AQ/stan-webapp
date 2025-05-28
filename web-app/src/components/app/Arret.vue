@@ -1,14 +1,13 @@
 <script setup>
-import { ChevronDownIcon, ChevronUpIcon, BusIcon } from '@/components/icons';
+import { ChevronDownIcon, ChevronUpIcon, BusIcon, StarIcon, StarOutlineIcon } from '@/components/icons';
 import { computed } from 'vue';
+import { useFavoritesStore } from '@/stores/favorites';
+
+const favorites = useFavoritesStore();
 
 const props = defineProps({
     arret: {
         type: Object,
-        required: true
-    },
-    index: {
-        type: Number,
         required: true
     },
     color: {
@@ -26,10 +25,14 @@ const props = defineProps({
     isSelected: {
         type: Boolean,
         default: false
+    },
+    isFavorite: {
+        type: Boolean,
+        default: false
     }
 })
 
-const emit = defineEmits(['selectArret'])
+const emit = defineEmits(['selectArret', 'toggleFavorite'])
 
 const formatPassageTime = (passage) => {
     if (passage.temps_min === 0) {
@@ -64,18 +67,32 @@ const passagesByDirection = computed(() => {
     }
     return grouped;
 });
+
+const isFavoriteArret = computed(() => {
+    return props.isFavorite || favorites.isFavorite(props.arret.osmid);
+});
+
+const handleToggleFavorite = (e) => {
+    e.stopPropagation();
+    emit('toggleFavorite', props.arret);
+};
 </script>
 
 <template>
     <li :key="arret.osmid">
         <div class="p-4 flex items-center cursor-pointer hover:bg-gray-50 transition-colors" 
              @click="$emit('selectArret', arret)">
-            <div :class="[color, 'w-8 h-8 rounded-full flex items-center justify-center mr-4 text-white font-bold']">
-                {{ index + 1 }}
-            </div>
+            <img :src="arret.ligne.image" class="size-6 mr-3">
             <div class="flex-grow">
                 <h3 class="font-medium">{{ arret.libelle }}</h3>
             </div>
+            <button 
+                class="text-yellow-400 mr-2 p-1" 
+                @click="handleToggleFavorite"
+            >
+                <StarIcon v-if="isFavoriteArret" class="size-5" />
+                <StarOutlineIcon v-else class="size-5 text-gray-400" />
+            </button>
             <div class="text-gray-500">
                 <ChevronDownIcon v-if="!isSelected" class="size-5" />
                 <ChevronUpIcon v-else class="size-5" />

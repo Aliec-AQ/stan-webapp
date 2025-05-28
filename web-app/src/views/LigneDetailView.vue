@@ -1,12 +1,14 @@
 <script setup>
 import { onMounted, ref, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { LineLoader, Arret, RefreshIcon, ChevronLeftIcon, FancyModal, MapIcon } from '@/components';
+import { LineLoader, Arret, RefreshIcon, ChevronLeftIcon, FancyModal, MapIcon, AppMenu } from '@/components';
 import { Stan } from '@/composables/stan';
 import { getColor } from '@/utils/stan';
+import { useFavoritesStore } from '@/stores/favorites';
 
 const route = useRoute();
 const router = useRouter();
+const favoritesStore = useFavoritesStore();
 
 const showFancyModal = ref(false);
 
@@ -132,6 +134,10 @@ const isArretLoading = (arret) => {
   return loadingArretId.value === arret.osmid;
 };
 
+const handleToggleFavorite = (arret) => {
+  favoritesStore.toggleFavorite(arret);
+};
+
 watch(() => route.path, () => {
   clearAutoRefresh();
 });
@@ -192,12 +198,15 @@ watch(() => route.path, () => {
               :loading="isArretLoading(arret)"
               :is-selected="selectedArret === arret.osmid"
               @select-arret="handleSelectArret"
+              @toggle-favorite="handleToggleFavorite"
             />
           </ul>
         </div>
       </div>
     </div>
   </div>
+
+  <AppMenu />
 
   <FancyModal :show="showFancyModal" @close="showFancyModal = false">
       <iframe

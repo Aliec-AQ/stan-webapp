@@ -1,7 +1,7 @@
 <script setup>
 import { onMounted, computed, ref } from 'vue';
 import { Stan } from '@/composables/stan';
-import {Ligne, ItemSelector, SadIcon, SearchIcon} from '@/components';
+import {Ligne, ItemSelector, SadIcon, SearchIcon, AppMenu} from '@/components';
 import { useRouter } from 'vue-router';
 
 const loading = ref(true);
@@ -74,7 +74,7 @@ const toggleMobileMenu = () => {
 </script>
 
 <template>
-    <header class="sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100">
+  <header class="sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100">
       <div class="max-w-7xl mx-auto">
         <p class="text-sm text-blue-700 font-medium mb-1">Trouvez votre ligne</p>
         <div id="search-container" class="relative">
@@ -86,7 +86,7 @@ const toggleMobileMenu = () => {
           />
         </div>
       </div>
-    </header>
+  </header>
   
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
     <div id="loading" v-if="loading" class="flex flex-col items-center justify-center py-20">
@@ -118,6 +118,8 @@ const toggleMobileMenu = () => {
       </div>
     </div>
   </div>
+
+    <AppMenu />
 </template>
 
 <style scoped>
