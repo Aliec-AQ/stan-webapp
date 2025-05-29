@@ -13173,36 +13173,26 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     __name: "AppMenu",
     setup(__props) {
       const router2 = useRouter();
-      const route = useRoute();
-      const navigateTo = (route2) => {
-        router2.push(route2);
-      };
-      const isActive = (path) => {
-        if (path === "/") {
-          return true;
-        }
-        return route.path.startsWith(path);
+      const navigateTo = (route) => {
+        router2.push(route);
       };
       return (_ctx, _cache) => {
         return openBlock(), createElementBlock("footer", _hoisted_1$9, [
           createBaseVNode("button", {
-            onClick: _cache[0] || (_cache[0] = ($event) => navigateTo("/favorites")),
-            class: normalizeClass({ "text-blue-600": isActive("/favorites") })
+            onClick: _cache[0] || (_cache[0] = ($event) => navigateTo("/favorites"))
           }, [
             createVNode(unref(StarIcon), { class: "size-6" })
-          ], 2),
+          ]),
           createBaseVNode("button", {
-            onClick: _cache[1] || (_cache[1] = ($event) => navigateTo("/home")),
-            class: normalizeClass({ "text-blue-600": isActive("/home") })
+            onClick: _cache[1] || (_cache[1] = ($event) => navigateTo("/"))
           }, [
             createVNode(unref(HomeIcon), { class: "size-6" })
-          ], 2),
+          ]),
           createBaseVNode("button", {
-            onClick: _cache[2] || (_cache[2] = ($event) => navigateTo("/settings")),
-            class: normalizeClass({ "text-blue-600": isActive("/settings") })
+            onClick: _cache[2] || (_cache[2] = ($event) => navigateTo("/settings"))
           }, [
             createVNode(unref(SettingsIcon), { class: "size-6" })
-          ], 2)
+          ])
         ]);
       };
     }
@@ -14191,7 +14181,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     setup(__props) {
       const router2 = useRouter();
       const cacheCleared = ref(false);
-      const appVersion = ref("1.0.2");
+      const appVersion = ref("1.0.1");
       const clearingCache = ref(false);
       const clearCache = async () => {
         clearingCache.value = true;
@@ -14264,7 +14254,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   ], -1))
                 ])
               ]),
-              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6 mb-6" data-v-9d3d5505><h2 class="text-xl font-semibold mb-4" data-v-9d3d5505>Mentions légales</h2><div class="text-gray-600 text-sm" data-v-9d3d5505><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Droits d&#39;auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d&#39;auteur.</p><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n&#39;engage pas la responsabilité des créateurs de cette application.</p><p class="mb-2" data-v-9d3d5505>Cette application n&#39;est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p></div></div><div class="bg-white rounded-lg shadow-md p-6" data-v-9d3d5505><h2 class="text-xl font-semibold mb-4" data-v-9d3d5505>Assistance</h2><p class="text-gray-600 mb-4" data-v-9d3d5505> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-9d3d5505><li class="mb-2" data-v-9d3d5505>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-9d3d5505>Rafraîchir la page</li><li class="mb-2" data-v-9d3d5505>Vérifier votre connexion internet</li></ul></div>', 2))
+              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6 mb-6" data-v-f3d334cd><h2 class="text-xl font-semibold mb-4" data-v-f3d334cd>Mentions légales</h2><div class="text-gray-600 text-sm" data-v-f3d334cd><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Droits d&#39;auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d&#39;auteur.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n&#39;engage pas la responsabilité des créateurs de cette application.</p><p class="mb-2" data-v-f3d334cd>Cette application n&#39;est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p></div></div><div class="bg-white rounded-lg shadow-md p-6" data-v-f3d334cd><h2 class="text-xl font-semibold mb-4" data-v-f3d334cd>Assistance</h2><p class="text-gray-600 mb-4" data-v-f3d334cd> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-f3d334cd><li class="mb-2" data-v-f3d334cd>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-f3d334cd>Rafraîchir la page</li><li class="mb-2" data-v-f3d334cd>Vérifier votre connexion internet</li></ul></div>', 2))
             ])
           ]),
           createVNode(unref(_sfc_main$9))
@@ -14272,7 +14262,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-9d3d5505"]]);
+  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f3d334cd"]]);
   const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SettingsView
