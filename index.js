@@ -7763,7 +7763,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     return matcher;
   }
-  function createRouterMatcher(routes2, globalOptions) {
+  function createRouterMatcher(routes, globalOptions) {
     const matchers = [];
     const matcherMap = /* @__PURE__ */ new Map();
     globalOptions = mergeOptions({ strict: false, end: true, sensitive: false }, globalOptions);
@@ -7916,7 +7916,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         meta: mergeMetaFields(matched)
       };
     }
-    routes2.forEach((route) => addRoute(route));
+    routes.forEach((route) => addRoute(route));
     function clearRoutes() {
       matchers.length = 0;
       matcherMap.clear();
@@ -9281,7 +9281,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   VtInfoIcon_default.render = render4;
   var VtInfoIcon_default2 = VtInfoIcon_default;
   var VtWarningIcon_default = {};
-  var _hoisted_14$3 = {
+  var _hoisted_14$2 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9299,12 +9299,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     _hoisted_23
   ];
   function render5(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_14$3, _hoisted_33);
+    return openBlock(), createElementBlock("svg", _hoisted_14$2, _hoisted_33);
   }
   VtWarningIcon_default.render = render5;
   var VtWarningIcon_default2 = VtWarningIcon_default;
   var VtErrorIcon_default = {};
-  var _hoisted_15$2 = {
+  var _hoisted_15$1 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9322,7 +9322,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     _hoisted_24
   ];
   function render6(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_15$2, _hoisted_34);
+    return openBlock(), createElementBlock("svg", _hoisted_15$1, _hoisted_34);
   }
   VtErrorIcon_default.render = render6;
   var VtErrorIcon_default2 = VtErrorIcon_default;
@@ -9571,7 +9571,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   });
-  var _hoisted_16$2 = ["role"];
+  var _hoisted_16$1 = ["role"];
   function render8(_ctx, _cache) {
     const _component_Icon = resolveComponent("Icon");
     const _component_CloseButton = resolveComponent("CloseButton");
@@ -9598,7 +9598,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           key: 1,
           "toast-id": _ctx.id
         }, _ctx.hasProp(_ctx.content, "props") ? _ctx.content.props : {}, toHandlers(_ctx.hasProp(_ctx.content, "listeners") ? _ctx.content.listeners : {}), { onCloseToast: _ctx.closeToast }), null, 16, ["toast-id", "onCloseToast"]))
-      ], 10, _hoisted_16$2),
+      ], 10, _hoisted_16$1),
       !!_ctx.closeButton ? (openBlock(), createBlock(_component_CloseButton, {
         key: 1,
         component: _ctx.closeButton,
@@ -9933,41 +9933,33 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return baseModule().catch(handlePreloadError);
     });
   };
-  const routes = [
-    {
-      path: "/",
-      redirect: (to) => {
-        const landingPage = JSON.parse(localStorage.getItem("stan-preferences"));
-        if (!landingPage || !landingPage.landingPage) {
-          return "/home";
-        }
-        return `/${landingPage.landingPage}`;
-      }
-    },
-    {
-      path: "/home",
-      name: "Home",
-      component: () => __vitePreload(() => Promise.resolve().then(() => HomeView$1), false ? __VITE_PRELOAD__ : void 0)
-    },
-    {
-      path: "/favorites",
-      name: "Favorites",
-      component: () => __vitePreload(() => Promise.resolve().then(() => FavoritesView), false ? __VITE_PRELOAD__ : void 0)
-    },
-    {
-      path: "/settings",
-      name: "Settings",
-      component: () => __vitePreload(() => Promise.resolve().then(() => SettingsView$1), false ? __VITE_PRELOAD__ : void 0)
-    },
-    {
-      path: "/ligne/:ligneId",
-      name: "LigneDetail",
-      component: () => __vitePreload(() => Promise.resolve().then(() => LigneDetailView), false ? __VITE_PRELOAD__ : void 0)
-    }
-  ];
   const router = createRouter({
     history: createWebHistory("/stan-webapp/"),
-    routes
+    routes: [
+      {
+        name: "acceuil",
+        path: "/",
+        component: () => __vitePreload(() => Promise.resolve().then(() => HomeView$1), false ? __VITE_PRELOAD__ : void 0)
+      },
+      {
+        name: "ligne-detail",
+        path: "/ligne/:osmid_ligne",
+        component: () => __vitePreload(() => Promise.resolve().then(() => LigneDetailView), false ? __VITE_PRELOAD__ : void 0)
+      },
+      {
+        name: "favorites",
+        path: "/favorites",
+        component: () => __vitePreload(() => Promise.resolve().then(() => FavoritesView), false ? __VITE_PRELOAD__ : void 0)
+      },
+      {
+        name: "settings",
+        path: "/settings",
+        component: () => __vitePreload(() => Promise.resolve().then(() => SettingsView$1), false ? __VITE_PRELOAD__ : void 0)
+      }
+    ],
+    scrollBehavior(to, from, savedPosition) {
+      return { top: 0, behavior: "smooth" };
+    }
   });
   /*!
    * pinia v2.3.1
@@ -10291,12 +10283,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     let id;
     let options;
     const isSetupStore = typeof setup === "function";
-    if (typeof idOrOptions === "string") {
+    {
       id = idOrOptions;
       options = isSetupStore ? setupOptions : setup;
-    } else {
-      options = idOrOptions;
-      id = idOrOptions.id;
     }
     function useStore(pinia2, hot) {
       const hasContext = hasInjectionContext();
@@ -13189,7 +13178,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         router2.push(route2);
       };
       const isActive = (path) => {
-        if (path === "/home" && (route.path === "/" || route.path === "/home")) {
+        if (path === "/") {
           return true;
         }
         return route.path.startsWith(path);
@@ -13284,12 +13273,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const _hoisted_12$2 = { class: "font-semibold text-sm text-gray-700 mb-2" };
   const _hoisted_13$2 = { class: "relative h-[30px] ml-[20px]" };
-  const _hoisted_14$2 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
-  const _hoisted_15$1 = {
+  const _hoisted_14$1 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
+  const _hoisted_15 = {
     key: 0,
     class: "absolute top-0 left-[30%] flex flex-col items-center transform -translate-x-1/2"
   };
-  const _hoisted_16$1 = {
+  const _hoisted_16 = {
     key: 1,
     class: "absolute top-0 left-[70%] flex flex-col items-center transform -translate-x-1/2"
   };
@@ -13423,18 +13412,18 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                       createBaseVNode("div", {
                         class: normalizeClass(["absolute top-[15px] left-0 right-[30px] h-1 dotted-line", __props.color])
                       }, null, 2),
-                      createBaseVNode("div", _hoisted_14$2, [
+                      createBaseVNode("div", _hoisted_14$1, [
                         createBaseVNode("div", {
                           class: normalizeClass(["w-2 h-2 rounded-full", __props.color])
                         }, null, 2)
                       ]),
-                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_15$1, [
+                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_15, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[0].temps_theorique }])
                         }, toDisplayString(formatPassageTime(passages[0])), 3)
                       ])) : createCommentVNode("", true),
-                      passages.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_16$1, [
+                      passages.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_16, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[1].temps_theorique }])
@@ -13858,280 +13847,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     key: 1,
     class: "pb-20"
   };
-  const _hoisted_3$2 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
-  const _hoisted_4$2 = { class: "flex items-center justify-between h-20 px-4" };
-  const _hoisted_5$2 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_6$2 = {
-    key: 0,
-    class: "bg-white rounded-lg shadow-md p-8 text-center"
-  };
-  const _hoisted_7$2 = {
-    key: 1,
-    class: "bg-white rounded-lg shadow-md"
-  };
-  const _hoisted_8$2 = { class: "divide-y divide-gray-200" };
-  const _sfc_main$2 = {
-    __name: "FavoritesView",
-    setup(__props) {
-      const router2 = useRouter();
-      const favorites = useFavoritesStore();
-      const favoriteArrets = computed(() => favorites.getFavorites);
-      const loading = ref(true);
-      const selectedArret = ref(null);
-      const arretPassages = ref({});
-      const loadingArretId = ref(null);
-      onMounted(async () => {
-        loading.value = false;
-      });
-      const handleSelectArret = async (arret) => {
-        if (selectedArret.value === arret.osmid) {
-          selectedArret.value = null;
-          return;
-        }
-        selectedArret.value = arret.osmid;
-        loadingArretId.value = arret.osmid;
-        try {
-          const passages = await Stan.getProchainsPassages(arret);
-          arretPassages.value = { ...arretPassages.value, [arret.osmid]: passages };
-        } catch (error) {
-          console.error("Error loading passages:", error);
-        } finally {
-          loadingArretId.value = null;
-        }
-      };
-      const getPassagesForArret = (arret) => {
-        return selectedArret.value === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
-      };
-      const isArretLoading = (arret) => {
-        return loadingArretId.value === arret.osmid;
-      };
-      const handleRemoveFavorite = (arretId) => {
-        favorites.removeFavorite(arretId);
-        if (selectedArret.value === arretId) {
-          selectedArret.value = null;
-        }
-      };
-      return (_ctx, _cache) => {
-        return openBlock(), createElementBlock(Fragment, null, [
-          createBaseVNode("div", _hoisted_1$2, [
-            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2$2, [
-              createBaseVNode("header", _hoisted_3$2, [
-                createBaseVNode("div", _hoisted_4$2, [
-                  createBaseVNode("button", {
-                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
-                    class: "text-white p-2"
-                  }, [
-                    createVNode(unref(ChevronLeftIcon), { class: "size-6" })
-                  ]),
-                  _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Favoris", -1)),
-                  _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
-                ])
-              ]),
-              createBaseVNode("div", _hoisted_5$2, [
-                favoriteArrets.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$2, _cache[3] || (_cache[3] = [
-                  createBaseVNode("p", { class: "text-gray-500" }, "Vous n'avez pas encore d'arrêts favoris.", -1),
-                  createBaseVNode("p", { class: "text-gray-500 mt-2" }, "Ajoutez des arrêts à vos favoris pour les retrouver ici.", -1)
-                ]))) : (openBlock(), createElementBlock("div", _hoisted_7$2, [
-                  createBaseVNode("ul", _hoisted_8$2, [
-                    (openBlock(true), createElementBlock(Fragment, null, renderList(favoriteArrets.value, (arret, index2) => {
-                      return openBlock(), createBlock(unref(Arret), {
-                        key: arret.osmid,
-                        color: unref(getColor)(arret.ligne),
-                        arret,
-                        index: index2,
-                        passages: getPassagesForArret(arret),
-                        loading: isArretLoading(arret),
-                        "is-selected": selectedArret.value === arret.osmid,
-                        "is-favorite": true,
-                        onSelectArret: handleSelectArret,
-                        onToggleFavorite: ($event) => handleRemoveFavorite(arret.osmid)
-                      }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected", "onToggleFavorite"]);
-                    }), 128))
-                  ])
-                ]))
-              ])
-            ]))
-          ]),
-          createVNode(unref(_sfc_main$9))
-        ], 64);
-      };
-    }
-  };
-  const FavoritesView = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: _sfc_main$2
-  }, Symbol.toStringTag, { value: "Module" }));
-  const usePreferencesStore = /* @__PURE__ */ defineStore("preferences", {
-    state: () => ({
-      landingPage: "home"
-      // Default landing page is home
-    }),
-    actions: {
-      setLandingPage(page) {
-        this.landingPage = page;
-      }
-    },
-    persist: {
-      enabled: true,
-      strategies: [
-        {
-          key: "stan-preferences",
-          storage: localStorage
-        }
-      ]
-    }
-  });
-  const _hoisted_1$1 = { class: "min-h-screen bg-gray-100 pb-20" };
-  const _hoisted_2$1 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
-  const _hoisted_3$1 = { class: "flex items-center justify-between h-20 px-4" };
-  const _hoisted_4$1 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_5$1 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
-  const _hoisted_6$1 = { class: "grid grid-cols-2 gap-3" };
-  const _hoisted_7$1 = ["onClick"];
-  const _hoisted_8$1 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
-  const _hoisted_9$1 = { class: "flex flex-col" };
-  const _hoisted_10$1 = ["disabled"];
-  const _hoisted_11$1 = { key: 0 };
-  const _hoisted_12$1 = { key: 1 };
-  const _hoisted_13$1 = {
-    key: 0,
-    class: "mt-4 bg-green-100 text-green-700 p-3 rounded-md flex items-center"
-  };
-  const _hoisted_14$1 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
-  const _hoisted_15 = { class: "text-gray-600" };
-  const _hoisted_16 = { class: "mb-2" };
-  const _sfc_main$1 = {
-    __name: "SettingsView",
-    setup(__props) {
-      const router2 = useRouter();
-      const cacheCleared = ref(false);
-      const appVersion = ref("1.0.2");
-      const clearingCache = ref(false);
-      const preferencesStore = usePreferencesStore();
-      const selectedLandingPage = ref(preferencesStore.landingPage);
-      const landingPageOptions = [
-        { id: "home", label: "Accueil" },
-        { id: "favorites", label: "Favoris" }
-      ];
-      const clearCache = async () => {
-        clearingCache.value = true;
-        await new Promise((resolve2) => setTimeout(resolve2, 500));
-        Stan.clearCache();
-        cacheCleared.value = true;
-        clearingCache.value = false;
-        setTimeout(() => {
-          cacheCleared.value = false;
-        }, 3e3);
-      };
-      const updateLandingPage = (page) => {
-        preferencesStore.setLandingPage(page);
-        selectedLandingPage.value = page;
-      };
-      onMounted(() => {
-      });
-      return (_ctx, _cache) => {
-        return openBlock(), createElementBlock(Fragment, null, [
-          createBaseVNode("div", _hoisted_1$1, [
-            createBaseVNode("header", _hoisted_2$1, [
-              createBaseVNode("div", _hoisted_3$1, [
-                createBaseVNode("button", {
-                  onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
-                  class: "text-white p-2"
-                }, [
-                  createVNode(unref(ChevronLeftIcon), { class: "size-6" })
-                ]),
-                _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Paramètres", -1)),
-                _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
-              ])
-            ]),
-            createBaseVNode("div", _hoisted_4$1, [
-              createBaseVNode("div", _hoisted_5$1, [
-                _cache[3] || (_cache[3] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "Page d'accueil", -1)),
-                _cache[4] || (_cache[4] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " Choisissez la page qui s'affichera à l'ouverture de l'application. ", -1)),
-                createBaseVNode("div", _hoisted_6$1, [
-                  (openBlock(), createElementBlock(Fragment, null, renderList(landingPageOptions, (option) => {
-                    return createBaseVNode("button", {
-                      key: option.id,
-                      onClick: ($event) => updateLandingPage(option.id),
-                      class: normalizeClass(["border rounded-md p-3 text-center transition-all", selectedLandingPage.value === option.id ? "bg-blue-100 border-blue-500 text-blue-700" : "bg-white border-gray-300 text-gray-700"])
-                    }, toDisplayString(option.label), 11, _hoisted_7$1);
-                  }), 64))
-                ])
-              ]),
-              createBaseVNode("div", _hoisted_8$1, [
-                _cache[6] || (_cache[6] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "Gestion du cache", -1)),
-                _cache[7] || (_cache[7] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " L'application stocke les données des lignes et arrêts en cache pendant 2 semaines pour améliorer les performances. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet. ", -1)),
-                createBaseVNode("div", _hoisted_9$1, [
-                  createBaseVNode("button", {
-                    onClick: clearCache,
-                    disabled: clearingCache.value,
-                    class: normalizeClass(["bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-200", { "opacity-70 cursor-not-allowed": clearingCache.value }])
-                  }, [
-                    clearingCache.value ? (openBlock(), createElementBlock("span", _hoisted_11$1, "Suppression en cours...")) : (openBlock(), createElementBlock("span", _hoisted_12$1, "Vider le cache"))
-                  ], 10, _hoisted_10$1),
-                  cacheCleared.value ? (openBlock(), createElementBlock("div", _hoisted_13$1, _cache[5] || (_cache[5] = [
-                    createBaseVNode("svg", {
-                      xmlns: "http://www.w3.org/2000/svg",
-                      class: "h-5 w-5 mr-2",
-                      viewBox: "0 0 20 20",
-                      fill: "currentColor"
-                    }, [
-                      createBaseVNode("path", {
-                        "fill-rule": "evenodd",
-                        d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",
-                        "clip-rule": "evenodd"
-                      })
-                    ], -1),
-                    createTextVNode(" Cache vidé avec succès ! ")
-                  ]))) : createCommentVNode("", true)
-                ])
-              ]),
-              createBaseVNode("div", _hoisted_14$1, [
-                _cache[10] || (_cache[10] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "À propos", -1)),
-                createBaseVNode("div", _hoisted_15, [
-                  createBaseVNode("p", _hoisted_16, "Version: " + toDisplayString(appVersion.value), 1),
-                  _cache[8] || (_cache[8] = createBaseVNode("p", { class: "mb-2" }, "Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.", -1)),
-                  _cache[9] || (_cache[9] = createBaseVNode("p", { class: "mb-2" }, [
-                    createTextVNode("Les données sont récupérées depuis le site "),
-                    createBaseVNode("a", {
-                      href: "https://reseau-stan.com",
-                      class: "text-blue-500 hover:underline",
-                      target: "_blank"
-                    }, "reseau-stan.com")
-                  ], -1))
-                ])
-              ]),
-              _cache[11] || (_cache[11] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6 mb-6" data-v-4c9af75f><h2 class="text-xl font-semibold mb-4" data-v-4c9af75f>Mentions légales</h2><div class="text-gray-600 text-sm" data-v-4c9af75f><p class="mb-2" data-v-4c9af75f><strong data-v-4c9af75f>Droits d&#39;auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d&#39;auteur.</p><p class="mb-2" data-v-4c9af75f><strong data-v-4c9af75f>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p><p class="mb-2" data-v-4c9af75f><strong data-v-4c9af75f>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p><p class="mb-2" data-v-4c9af75f><strong data-v-4c9af75f>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n&#39;engage pas la responsabilité des créateurs de cette application.</p><p class="mb-2" data-v-4c9af75f>Cette application n&#39;est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p></div></div><div class="bg-white rounded-lg shadow-md p-6" data-v-4c9af75f><h2 class="text-xl font-semibold mb-4" data-v-4c9af75f>Assistance</h2><p class="text-gray-600 mb-4" data-v-4c9af75f> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-4c9af75f><li class="mb-2" data-v-4c9af75f>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-4c9af75f>Rafraîchir la page</li><li class="mb-2" data-v-4c9af75f>Vérifier votre connexion internet</li></ul></div>', 2))
-            ])
-          ]),
-          createVNode(unref(_sfc_main$9))
-        ], 64);
-      };
-    }
-  };
-  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-4c9af75f"]]);
-  const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
-    __proto__: null,
-    default: SettingsView
-  }, Symbol.toStringTag, { value: "Module" }));
-  const _hoisted_1 = { class: "min-h-screen bg-gray-100" };
-  const _hoisted_2 = {
-    key: 1,
-    class: "pb-20"
-  };
-  const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
-  const _hoisted_4 = { class: "text-xl font-bold text-white" };
-  const _hoisted_5 = ["disabled"];
-  const _hoisted_6 = ["disabled"];
-  const _hoisted_7 = { class: "container mx-auto px-4 mt-4" };
-  const _hoisted_8 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
-  const _hoisted_9 = ["src"];
-  const _hoisted_10 = { class: "font-bold text-lg" };
-  const _hoisted_11 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_12 = { class: "bg-white rounded-lg shadow-md" };
-  const _hoisted_13 = { class: "divide-y divide-gray-200" };
+  const _hoisted_3$2 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_4$2 = { class: "text-xl font-bold text-white" };
+  const _hoisted_5$2 = ["disabled"];
+  const _hoisted_6$2 = ["disabled"];
+  const _hoisted_7$2 = { class: "container mx-auto px-4 mt-4" };
+  const _hoisted_8$2 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
+  const _hoisted_9$1 = ["src"];
+  const _hoisted_10$1 = { class: "font-bold text-lg" };
+  const _hoisted_11$1 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_12$1 = { class: "bg-white rounded-lg shadow-md" };
+  const _hoisted_13$1 = { class: "divide-y divide-gray-200" };
   const _hoisted_14 = ["src"];
-  const _sfc_main = {
+  const _sfc_main$2 = {
     __name: "LigneDetailView",
     setup(__props) {
       const route = useRoute();
@@ -14242,19 +13970,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return (_ctx, _cache) => {
         var _a, _b;
         return openBlock(), createElementBlock(Fragment, null, [
-          createBaseVNode("div", _hoisted_1, [
-            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2, [
+          createBaseVNode("div", _hoisted_1$2, [
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2$2, [
               createBaseVNode("header", {
                 class: normalizeClass([unref(getColor)(ligne.value), "sticky top-0 z-10 shadow-md"])
               }, [
-                createBaseVNode("div", _hoisted_3, [
+                createBaseVNode("div", _hoisted_3$2, [
                   createBaseVNode("button", {
                     onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
                     class: "text-white p-2"
                   }, [
                     createVNode(unref(ChevronLeftIcon), { class: "size-6" })
                   ]),
-                  createBaseVNode("h1", _hoisted_4, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
+                  createBaseVNode("h1", _hoisted_4$2, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
                   createBaseVNode("div", null, [
                     createBaseVNode("button", {
                       onClick: refreshData,
@@ -14264,34 +13992,34 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                       createVNode(unref(RefreshIcon), {
                         class: normalizeClass([{ "animate-spin": refreshing.value }, "size-6"])
                       }, null, 8, ["class"])
-                    ], 8, _hoisted_5),
+                    ], 8, _hoisted_5$2),
                     createBaseVNode("button", {
                       onClick: _cache[1] || (_cache[1] = ($event) => showFancyModal.value = true),
                       class: "text-white p-2",
                       disabled: !ligne.value
                     }, [
                       createVNode(unref(MapIcon), { class: "size-6" })
-                    ], 8, _hoisted_6)
+                    ], 8, _hoisted_6$2)
                   ])
                 ])
               ], 2),
-              createBaseVNode("div", _hoisted_7, [
-                createBaseVNode("div", _hoisted_8, [
+              createBaseVNode("div", _hoisted_7$2, [
+                createBaseVNode("div", _hoisted_8$2, [
                   ((_a = ligne.value) == null ? void 0 : _a.image) ? (openBlock(), createElementBlock("img", {
                     key: 0,
                     src: ligne.value.image,
                     alt: "Line icon",
                     class: "h-12 mr-4"
-                  }, null, 8, _hoisted_9)) : createCommentVNode("", true),
+                  }, null, 8, _hoisted_9$1)) : createCommentVNode("", true),
                   createBaseVNode("div", null, [
-                    createBaseVNode("h2", _hoisted_10, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
+                    createBaseVNode("h2", _hoisted_10$1, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
                   ])
                 ])
               ]),
-              createBaseVNode("div", _hoisted_11, [
+              createBaseVNode("div", _hoisted_11$1, [
                 _cache[3] || (_cache[3] = createBaseVNode("h2", { class: "text-xl font-semibold mb-3" }, "Arrêts", -1)),
-                createBaseVNode("div", _hoisted_12, [
-                  createBaseVNode("ul", _hoisted_13, [
+                createBaseVNode("div", _hoisted_12$1, [
+                  createBaseVNode("ul", _hoisted_13$1, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(arrets.value, (arret, index2) => {
                       return openBlock(), createBlock(unref(Arret), {
                         key: arret.osmid,
@@ -14332,6 +14060,221 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const LigneDetailView = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
-    default: _sfc_main
+    default: _sfc_main$2
+  }, Symbol.toStringTag, { value: "Module" }));
+  const _hoisted_1$1 = { class: "min-h-screen bg-gray-100" };
+  const _hoisted_2$1 = {
+    key: 1,
+    class: "pb-20"
+  };
+  const _hoisted_3$1 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
+  const _hoisted_4$1 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_5$1 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_6$1 = {
+    key: 0,
+    class: "bg-white rounded-lg shadow-md p-8 text-center"
+  };
+  const _hoisted_7$1 = {
+    key: 1,
+    class: "bg-white rounded-lg shadow-md"
+  };
+  const _hoisted_8$1 = { class: "divide-y divide-gray-200" };
+  const _sfc_main$1 = {
+    __name: "FavoritesView",
+    setup(__props) {
+      const router2 = useRouter();
+      const favorites = useFavoritesStore();
+      const favoriteArrets = computed(() => favorites.getFavorites);
+      const loading = ref(true);
+      const selectedArret = ref(null);
+      const arretPassages = ref({});
+      const loadingArretId = ref(null);
+      onMounted(async () => {
+        loading.value = false;
+      });
+      const handleSelectArret = async (arret) => {
+        if (selectedArret.value === arret.osmid) {
+          selectedArret.value = null;
+          return;
+        }
+        selectedArret.value = arret.osmid;
+        loadingArretId.value = arret.osmid;
+        try {
+          const passages = await Stan.getProchainsPassages(arret);
+          arretPassages.value = { ...arretPassages.value, [arret.osmid]: passages };
+        } catch (error) {
+          console.error("Error loading passages:", error);
+        } finally {
+          loadingArretId.value = null;
+        }
+      };
+      const getPassagesForArret = (arret) => {
+        return selectedArret.value === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
+      };
+      const isArretLoading = (arret) => {
+        return loadingArretId.value === arret.osmid;
+      };
+      const handleRemoveFavorite = (arretId) => {
+        favorites.removeFavorite(arretId);
+        if (selectedArret.value === arretId) {
+          selectedArret.value = null;
+        }
+      };
+      return (_ctx, _cache) => {
+        return openBlock(), createElementBlock(Fragment, null, [
+          createBaseVNode("div", _hoisted_1$1, [
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2$1, [
+              createBaseVNode("header", _hoisted_3$1, [
+                createBaseVNode("div", _hoisted_4$1, [
+                  createBaseVNode("button", {
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
+                    class: "text-white p-2"
+                  }, [
+                    createVNode(unref(ChevronLeftIcon), { class: "size-6" })
+                  ]),
+                  _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Favoris", -1)),
+                  _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_5$1, [
+                favoriteArrets.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, _cache[3] || (_cache[3] = [
+                  createBaseVNode("p", { class: "text-gray-500" }, "Vous n'avez pas encore d'arrêts favoris.", -1),
+                  createBaseVNode("p", { class: "text-gray-500 mt-2" }, "Ajoutez des arrêts à vos favoris pour les retrouver ici.", -1)
+                ]))) : (openBlock(), createElementBlock("div", _hoisted_7$1, [
+                  createBaseVNode("ul", _hoisted_8$1, [
+                    (openBlock(true), createElementBlock(Fragment, null, renderList(favoriteArrets.value, (arret, index2) => {
+                      return openBlock(), createBlock(unref(Arret), {
+                        key: arret.osmid,
+                        color: unref(getColor)(arret.ligne),
+                        arret,
+                        index: index2,
+                        passages: getPassagesForArret(arret),
+                        loading: isArretLoading(arret),
+                        "is-selected": selectedArret.value === arret.osmid,
+                        "is-favorite": true,
+                        onSelectArret: handleSelectArret,
+                        onToggleFavorite: ($event) => handleRemoveFavorite(arret.osmid)
+                      }, null, 8, ["color", "arret", "index", "passages", "loading", "is-selected", "onToggleFavorite"]);
+                    }), 128))
+                  ])
+                ]))
+              ])
+            ]))
+          ]),
+          createVNode(unref(_sfc_main$9))
+        ], 64);
+      };
+    }
+  };
+  const FavoritesView = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    default: _sfc_main$1
+  }, Symbol.toStringTag, { value: "Module" }));
+  const _hoisted_1 = { class: "min-h-screen bg-gray-100 pb-20" };
+  const _hoisted_2 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
+  const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_4 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_5 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_6 = { class: "flex flex-col" };
+  const _hoisted_7 = ["disabled"];
+  const _hoisted_8 = { key: 0 };
+  const _hoisted_9 = { key: 1 };
+  const _hoisted_10 = {
+    key: 0,
+    class: "mt-4 bg-green-100 text-green-700 p-3 rounded-md flex items-center"
+  };
+  const _hoisted_11 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_12 = { class: "text-gray-600" };
+  const _hoisted_13 = { class: "mb-2" };
+  const _sfc_main = {
+    __name: "SettingsView",
+    setup(__props) {
+      const router2 = useRouter();
+      const cacheCleared = ref(false);
+      const appVersion = ref("1.0.2");
+      const clearingCache = ref(false);
+      const clearCache = async () => {
+        clearingCache.value = true;
+        await new Promise((resolve2) => setTimeout(resolve2, 500));
+        Stan.clearCache();
+        cacheCleared.value = true;
+        clearingCache.value = false;
+        setTimeout(() => {
+          cacheCleared.value = false;
+        }, 3e3);
+      };
+      onMounted(() => {
+      });
+      return (_ctx, _cache) => {
+        return openBlock(), createElementBlock(Fragment, null, [
+          createBaseVNode("div", _hoisted_1, [
+            createBaseVNode("header", _hoisted_2, [
+              createBaseVNode("div", _hoisted_3, [
+                createBaseVNode("button", {
+                  onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
+                  class: "text-white p-2"
+                }, [
+                  createVNode(unref(ChevronLeftIcon), { class: "size-6" })
+                ]),
+                _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Paramètres", -1)),
+                _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
+              ])
+            ]),
+            createBaseVNode("div", _hoisted_4, [
+              createBaseVNode("div", _hoisted_5, [
+                _cache[4] || (_cache[4] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "Gestion du cache", -1)),
+                _cache[5] || (_cache[5] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " L'application stocke les données des lignes et arrêts en cache pendant 2 semaines pour améliorer les performances. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet. ", -1)),
+                createBaseVNode("div", _hoisted_6, [
+                  createBaseVNode("button", {
+                    onClick: clearCache,
+                    disabled: clearingCache.value,
+                    class: normalizeClass(["bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-200", { "opacity-70 cursor-not-allowed": clearingCache.value }])
+                  }, [
+                    clearingCache.value ? (openBlock(), createElementBlock("span", _hoisted_8, "Suppression en cours...")) : (openBlock(), createElementBlock("span", _hoisted_9, "Vider le cache"))
+                  ], 10, _hoisted_7),
+                  cacheCleared.value ? (openBlock(), createElementBlock("div", _hoisted_10, _cache[3] || (_cache[3] = [
+                    createBaseVNode("svg", {
+                      xmlns: "http://www.w3.org/2000/svg",
+                      class: "h-5 w-5 mr-2",
+                      viewBox: "0 0 20 20",
+                      fill: "currentColor"
+                    }, [
+                      createBaseVNode("path", {
+                        "fill-rule": "evenodd",
+                        d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",
+                        "clip-rule": "evenodd"
+                      })
+                    ], -1),
+                    createTextVNode(" Cache vidé avec succès ! ")
+                  ]))) : createCommentVNode("", true)
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_11, [
+                _cache[8] || (_cache[8] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "À propos", -1)),
+                createBaseVNode("div", _hoisted_12, [
+                  createBaseVNode("p", _hoisted_13, "Version: " + toDisplayString(appVersion.value), 1),
+                  _cache[6] || (_cache[6] = createBaseVNode("p", { class: "mb-2" }, "Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.", -1)),
+                  _cache[7] || (_cache[7] = createBaseVNode("p", { class: "mb-2" }, [
+                    createTextVNode("Les données sont récupérées depuis le site "),
+                    createBaseVNode("a", {
+                      href: "https://reseau-stan.com",
+                      class: "text-blue-500 hover:underline",
+                      target: "_blank"
+                    }, "reseau-stan.com")
+                  ], -1))
+                ])
+              ]),
+              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6 mb-6" data-v-9d3d5505><h2 class="text-xl font-semibold mb-4" data-v-9d3d5505>Mentions légales</h2><div class="text-gray-600 text-sm" data-v-9d3d5505><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Droits d&#39;auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d&#39;auteur.</p><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p><p class="mb-2" data-v-9d3d5505><strong data-v-9d3d5505>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n&#39;engage pas la responsabilité des créateurs de cette application.</p><p class="mb-2" data-v-9d3d5505>Cette application n&#39;est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p></div></div><div class="bg-white rounded-lg shadow-md p-6" data-v-9d3d5505><h2 class="text-xl font-semibold mb-4" data-v-9d3d5505>Assistance</h2><p class="text-gray-600 mb-4" data-v-9d3d5505> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-9d3d5505><li class="mb-2" data-v-9d3d5505>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-9d3d5505>Rafraîchir la page</li><li class="mb-2" data-v-9d3d5505>Vérifier votre connexion internet</li></ul></div>', 2))
+            ])
+          ]),
+          createVNode(unref(_sfc_main$9))
+        ], 64);
+      };
+    }
+  };
+  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-9d3d5505"]]);
+  const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+    __proto__: null,
+    default: SettingsView
   }, Symbol.toStringTag, { value: "Module" }));
 })();
