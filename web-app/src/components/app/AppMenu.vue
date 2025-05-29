@@ -10,7 +10,7 @@ const navigateTo = (route) => {
 };
 
 const isActive = (path) => {
-    if (path === '/home' && (route.path === '/' || route.path === '/home')) {
+    if (path === '/') {
         return true;
     }
     return route.path.startsWith(path);

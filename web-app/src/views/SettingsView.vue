@@ -3,19 +3,11 @@ import { ref, onMounted } from 'vue';
 import { AppMenu, ChevronLeftIcon } from '@/components';
 import { useRouter } from 'vue-router';
 import { Stan } from '@/composables/stan';
-import { usePreferencesStore } from '@/stores/preferences';
 
 const router = useRouter();
 const cacheCleared = ref(false);
 const appVersion = ref('1.0.2'); 
 const clearingCache = ref(false);
-const preferencesStore = usePreferencesStore();
-const selectedLandingPage = ref(preferencesStore.landingPage);
-
-const landingPageOptions = [
-    { id: 'home', label: 'Accueil' },
-    { id: 'favorites', label: 'Favoris' }
-];
 
 const clearCache = async () => {
     clearingCache.value = true;
@@ -30,10 +22,6 @@ const clearCache = async () => {
     }, 3000);
 };
 
-const updateLandingPage = (page) => {
-    preferencesStore.setLandingPage(page);
-    selectedLandingPage.value = page;
-};
 
 onMounted(() => {
 });
@@ -52,25 +40,6 @@ onMounted(() => {
         </header>
 
         <div class="container mx-auto px-4 mt-6">
-
-            <!-- Landing Page Section -->
-            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                <h2 class="text-xl font-semibold mb-4">Page d'accueil</h2>
-                <p class="text-gray-600 mb-4">
-                    Choisissez la page qui s'affichera à l'ouverture de l'application.
-                </p>
-                <div class="grid grid-cols-2 gap-3">
-                    <button
-                        v-for="option in landingPageOptions"
-                        :key="option.id"
-                        @click="updateLandingPage(option.id)"
-                        class="border rounded-md p-3 text-center transition-all"
-                        :class="selectedLandingPage === option.id ? 'bg-blue-100 border-blue-500 text-blue-700' : 'bg-white border-gray-300 text-gray-700'"
-                    >
-                        {{ option.label }}
-                    </button>
-                </div>
-            </div>
 
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4">Gestion du cache</h2>
