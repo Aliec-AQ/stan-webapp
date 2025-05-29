@@ -12749,6 +12749,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     mergeConfig
   } = axios;
   const _Stan = class _Stan {
+    // HTTP client
+    static getInstance() {
+      return axios.create({
+        baseURL: "https://www.reseau-stan.com/?type=476",
+        headers: {
+          "X-Requested-With": "XMLHttpRequest"
+        }
+      });
+    }
+    // Cache management methods
     static saveToCache(key, data) {
       try {
         const cacheItem = {
@@ -12765,10 +12775,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         const cacheItem = localStorage.getItem(key);
         if (!cacheItem) return null;
         const { timestamp, data } = JSON.parse(cacheItem);
-        if (Date.now() - timestamp < this.CACHE_DURATION) {
-          return data;
-        }
-        return null;
+        return Date.now() - timestamp < this.CACHE_DURATION ? data : null;
       } catch (error) {
         console.error("Error reading from cache:", error);
         return null;
@@ -12777,69 +12784,61 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     static clearCache() {
       try {
         localStorage.removeItem("stan_lignes");
-        Object.keys(localStorage).forEach((key) => {
-          if (key.startsWith("stan_arrets_")) {
-            localStorage.removeItem(key);
-          }
-        });
+        Object.keys(localStorage).filter((key) => key.startsWith("stan_arrets_")).forEach((key) => localStorage.removeItem(key));
       } catch (error) {
         console.error("Error clearing cache:", error);
       }
     }
+    // Data fetch methods
     static async getLignes(forceRefresh = false) {
       if (!forceRefresh) {
         const cachedLignes = this.getFromCache("stan_lignes");
-        if (cachedLignes) {
-          return cachedLignes;
-        }
+        if (cachedLignes) return cachedLignes;
       }
-      const rep = (await _Stan.getInstance().get("https://www.reseau-stan.com/")).data;
-      const regex = /data-ligne="(\d+)" data-numlignepublic="([^"]+)" data-osmid="(line[^"+]+)" data-libelle="([^"]+)" value="[^"]+">/g;
+      const response = await _Stan.getInstance().get("https://www.reseau-stan.com/");
+      const htmlContent = response.data;
+      const ligneRegex = /data-ligne="(\d+)" data-numlignepublic="([^"]+)" data-osmid="(line[^"+]+)" data-libelle="([^"]+)" value="[^"]+">/g;
       const lignes = [];
-      const matches = rep.matchAll(regex);
-      for (const rawLigne of matches) {
+      for (const match of htmlContent.matchAll(ligneRegex)) {
+        const [_, id, numPublic, osmId, rawLibelle] = match;
         lignes.push({
-          id: parseInt(rawLigne[1]),
-          numlignepublic: rawLigne[2],
-          osmid: rawLigne[3],
-          libelle: rawLigne[4].replace("&lt;", "<").replace("&gt;", ">").replace(/&#039;/g, "'"),
-          image: `https://www.reseau-stan.com/typo3conf/ext/kg_package/Resources/Public/images/pictolignes/${rawLigne[2].replace(" ", "_")}.png`
+          id: parseInt(id),
+          numlignepublic: numPublic,
+          osmid: osmId,
+          libelle: this._decodeHtmlEntities(rawLibelle),
+          image: `https://www.reseau-stan.com/typo3conf/ext/kg_package/Resources/Public/images/pictolignes/${numPublic.replace(" ", "_")}.png`
         });
       }
       this.saveToCache("stan_lignes", lignes);
       return lignes;
     }
     static async getLigne(osmid, forceRefresh = false) {
-      const lignes = await _Stan.getLignes(forceRefresh);
-      return lignes.find((l) => l.osmid == osmid) || null;
+      const lignes = await this.getLignes(forceRefresh);
+      return lignes.find((ligne) => ligne.osmid === osmid) || null;
     }
     static async getArrets(ligne, forceRefresh = false) {
       const cacheKey = `stan_arrets_${ligne.id}`;
       if (!forceRefresh) {
         const cachedArrets = this.getFromCache(cacheKey);
-        if (cachedArrets) {
-          return cachedArrets;
-        }
+        if (cachedArrets) return cachedArrets;
       }
       const formData = new FormData();
       formData.append("requete", "tempsreel_arrets");
       formData.append("requete_val[ligne]", ligne.id);
       formData.append("requete_val[numlignepublic]", ligne.numlignepublic);
-      const rep = (await _Stan.getInstance().request({
+      const response = await this.getInstance().request({
         method: "POST",
         data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      })).data;
-      const regex = /data-libelle="([^"]+)" data-ligne="(\d+)" data-numlignepublic="([^"]+)" value="([^"]+)">([^<]+)<\/option>/g;
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      const arretRegex = /data-libelle="([^"]+)" data-ligne="(\d+)" data-numlignepublic="([^"]+)" value="([^"]+)">([^<]+)<\/option>/g;
       const arrets = [];
-      const matches = rep.matchAll(regex);
-      for (const rawArret of matches) {
+      for (const match of response.data.matchAll(arretRegex)) {
+        const [_, libelle, , , osmid] = match;
         arrets.push({
           ligne,
-          libelle: rawArret[1],
-          osmid: rawArret[4]
+          libelle,
+          osmid
         });
       }
       this.saveToCache(cacheKey, arrets);
@@ -12851,71 +12850,81 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       formData.append("requete", "tempsreel_submit");
       formData.append("requete_val[arret]", arret.osmid);
       formData.append("requete_val[ligne_omsid]", ((_a = arret.ligne) == null ? void 0 : _a.osmid) || "");
-      const rep = (await _Stan.getInstance().request({
+      const response = await this.getInstance().request({
         method: "POST",
         data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data"
-        }
-      })).data.split("<li>").slice(1);
+        headers: { "Content-Type": "multipart/form-data" }
+      });
+      const passageItems = response.data.split("<li>").slice(1);
       const passages = [];
-      for (const rawPassageLi of rep) {
-        const directionMatch = rawPassageLi.match(/<span>([^"]+)<\/span><\/span>/);
-        const ligneMatch = rawPassageLi.match(/<span id="ui-ligne-(\d+)".*\/pictolignes\/([^"]+).png'/);
+      for (const item of passageItems) {
+        const directionMatch = item.match(/<span>([^"]+)<\/span><\/span>/);
+        const ligneMatch = item.match(/<span id="ui-ligne-(\d+)".*\/pictolignes\/([^"]+).png'/);
         if (!directionMatch || !ligneMatch) continue;
         const direction = directionMatch[1];
         const ligneId = parseInt(ligneMatch[1], 10);
         const ligneNumPublic = ligneMatch[2];
-        const regexPassagesNow = /class="tpsreel-temps-item large-1 "><i class="icon-car1"><\/i><i title="Temps Réel" class="icon-wifi2"><\/i>/g;
-        const nowMatches = [...rawPassageLi.matchAll(regexPassagesNow)];
-        for (const _ of nowMatches) {
-          passages.push({
-            arret: { ligne: { ...arret.ligne, id: ligneId, numlignepublic: ligneNumPublic }, ...arret },
-            direction,
-            temps_min: 0,
-            temps_theorique: false
-          });
-        }
-        const regexPassagesMin = /class="tpsreel-temps-item large-1 ">(\d+) min/g;
-        const minMatches = [...rawPassageLi.matchAll(regexPassagesMin)];
-        for (const minMatch of minMatches) {
-          passages.push({
-            arret: { ligne: { ...arret.ligne, id: ligneId, numlignepublic: ligneNumPublic }, ...arret },
-            direction,
-            temps_min: parseInt(minMatch[1]),
-            temps_theorique: false
-          });
-        }
-        const regexPassagesH = /temps-item-heure">(\d+)h(\d+)(.*)<\/a>/g;
-        const hourMatches = [...rawPassageLi.matchAll(regexPassagesH)];
-        for (const hourMatch of hourMatches) {
-          passages.push({
-            arret: { ligne: { ...arret.ligne, id: ligneId, numlignepublic: ligneNumPublic }, ...arret },
-            direction,
-            temps_min: parseInt(hourMatch[1]) * 60 + parseInt(hourMatch[2]),
-            temps_theorique: hourMatch[0].includes("tpsreel-temps-item-tpstheorique")
-          });
-        }
+        const basePassage = {
+          arret: {
+            ligne: {
+              ...arret.ligne,
+              id: ligneId,
+              numlignepublic: ligneNumPublic
+            },
+            ...arret
+          },
+          direction
+        };
+        this._processNowPassages(item, basePassage, passages);
+        this._processMinutePassages(item, basePassage, passages);
+        this._processHourPassages(item, basePassage, passages);
       }
       return passages;
     }
     static getPlan(ligne) {
       if (!ligne || !ligne.osmid) return null;
-      const planUrl = this.plans[ligne.osmid];
-      if (!planUrl) return null;
-      return planUrl;
+      return this.plans[ligne.osmid] || null;
     }
-    static getInstance() {
-      return axios.create({
-        baseURL: "https://www.reseau-stan.com/?type=476",
-        headers: {
-          "X-Requested-With": "XMLHttpRequest"
-        }
-      });
+    // Helper methods
+    static _decodeHtmlEntities(text) {
+      return text.replace("&lt;", "<").replace("&gt;", ">").replace(/&#039;/g, "'");
+    }
+    static _processNowPassages(html, basePassage, passages) {
+      const nowRegex = /class="tpsreel-temps-item large-1 "><i class="icon-car1"><\/i><i title="Temps Réel" class="icon-wifi2"><\/i>/g;
+      for (const _ of html.matchAll(nowRegex)) {
+        passages.push({
+          ...basePassage,
+          temps_min: 0,
+          temps_theorique: false
+        });
+      }
+    }
+    static _processMinutePassages(html, basePassage, passages) {
+      const minutesRegex = /class="tpsreel-temps-item large-1 ">(\d+) min/g;
+      for (const match of html.matchAll(minutesRegex)) {
+        passages.push({
+          ...basePassage,
+          temps_min: parseInt(match[1]),
+          temps_theorique: false
+        });
+      }
+    }
+    static _processHourPassages(html, basePassage, passages) {
+      const hoursRegex = /temps-item-heure">(\d+)h(\d+)(.*)<\/a>/g;
+      for (const match of html.matchAll(hoursRegex)) {
+        const hours = parseInt(match[1]);
+        const minutes = parseInt(match[2]);
+        passages.push({
+          ...basePassage,
+          temps_min: hours * 60 + minutes,
+          temps_theorique: match[0].includes("tpsreel-temps-item-tpstheorique")
+        });
+      }
     }
   };
-  __publicField(_Stan, "CACHE_DURATION", 24 * 60 * 60 * 1e3);
-  // 24 heures en millisecondes
+  // Constants
+  __publicField(_Stan, "CACHE_DURATION", 14 * 24 * 60 * 60 * 1e3);
+  // 2 semaines en millisecondes
   __publicField(_Stan, "plans", {
     "line:GST:1-97": "https://tim.reseau-stan.com/tim/data/pdf/2283_Ligne Tempo 1.pdf",
     "line:GST:2-97": "https://tim.reseau-stan.com/tim/data/pdf/1372_Ligne Tempo 2.pdf",
@@ -13248,7 +13257,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     key: 0,
     class: "text-sm text-gray-500 py-2"
   };
-  const _hoisted_11$3 = {
+  const _hoisted_11$2 = {
     key: 1,
     class: "space-y-6"
   };
@@ -13382,7 +13391,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               ]),
               _cache[1] || (_cache[1] = createBaseVNode("p", { class: "mt-2 text-center text-sm text-gray-600" }, "Chargement des passages...", -1))
             ])) : (openBlock(), createElementBlock("div", _hoisted_9$5, [
-              Object.keys(passagesByDirection.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$4, " Aucun passage prévu prochainement ")) : (openBlock(), createElementBlock("div", _hoisted_11$3, [
+              Object.keys(passagesByDirection.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$4, " Aucun passage prévu prochainement ")) : (openBlock(), createElementBlock("div", _hoisted_11$2, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(passagesByDirection.value, (passages, direction) => {
                   return openBlock(), createElementBlock("div", {
                     key: direction,
@@ -13459,20 +13468,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const FancyModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-36d06f24"]]);
   const _hoisted_1$6 = { class: "custom-dropdown relative" };
-  const _hoisted_2$6 = { class: "text-gray-900" };
+  const _hoisted_2$6 = { class: "text-gray-900 text-base" };
   const _hoisted_3$6 = {
     key: 0,
-    class: "absolute z-10 mt-1 w-full bg-stone-50 shadow-lg max-h-60 text-base overflow-auto border border-gray-500 dropdown-menu"
+    class: "absolute left-0 right-0 z-50 mt-1 bg-stone-50 shadow-lg max-h-60 text-base overflow-auto border border-gray-500 dropdown-menu rounded-md transition-all duration-200 animate-dropdown"
   };
   const _hoisted_4$5 = { class: "sticky top-0 px-3 py-2 bg-stone-50 border-b border-gray-700" };
   const _hoisted_5$5 = { class: "relative" };
   const _hoisted_6$5 = { class: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" };
   const _hoisted_7$5 = ["onClick"];
   const _hoisted_8$5 = ["src", "alt"];
-  const _hoisted_9$4 = { class: "text-black" };
+  const _hoisted_9$4 = { class: "text-black text-base truncate" };
   const _hoisted_10$3 = {
     key: 0,
-    class: "px-3 py-4 text-center text-gray-400"
+    class: "px-4 py-4 text-center text-gray-500"
   };
   const _sfc_main$6 = {
     __name: "ItemSelector",
@@ -13527,35 +13536,44 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           searchQuery.value = "";
         }
       };
+      const preventZoom = (event) => {
+        var _a;
+        event.preventDefault();
+        (_a = searchInput.value) == null ? void 0 : _a.focus();
+      };
       return (_ctx, _cache) => {
         const _directive_click_outside = resolveDirective("click-outside");
         return withDirectives((openBlock(), createElementBlock("div", _hoisted_1$6, [
           createBaseVNode("button", {
             type: "button",
             onClick: toggleDropdown,
-            class: "w-full bg-stone-50 border border-gray-600 rounded-md px-3 py-2 text-white flex items-center justify-between"
+            class: "w-full bg-stone-50 border border-gray-600 rounded-md px-4 py-3 text-white flex items-center justify-between transition-all duration-200 hover:bg-stone-100"
           }, [
             createBaseVNode("span", _hoisted_2$6, toDisplayString(props.label || "Sélectionner une ligne"), 1),
             createVNode(unref(ChevronDownIcon), {
-              class: normalizeClass(["size-5 text-gray-400", { "transform rotate-180": isOpen.value }])
+              class: normalizeClass(["size-5 text-gray-500 transition-transform duration-200", { "transform rotate-180": isOpen.value }])
             }, null, 8, ["class"])
           ]),
           isOpen.value ? (openBlock(), createElementBlock("div", _hoisted_3$6, [
             createBaseVNode("div", _hoisted_4$5, [
               createBaseVNode("div", _hoisted_5$5, [
                 createBaseVNode("div", _hoisted_6$5, [
-                  createVNode(unref(SearchIcon), { class: "size-4 text-gray-400" })
+                  createVNode(unref(SearchIcon), { class: "size-5 text-gray-400" })
                 ]),
                 withDirectives(createBaseVNode("input", {
                   ref_key: "searchInput",
                   ref: searchInput,
                   "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => searchQuery.value = $event),
                   type: "text",
-                  class: "w-full pl-10 pr-3 py-1 bg-stone-200 border border-gray-600 rounded-md text-sm text-black",
+                  autocomplete: "off",
+                  autocorrect: "off",
+                  autocapitalize: "off",
+                  spellcheck: "false",
+                  class: "w-full pl-10 pr-3 py-2.5 bg-stone-200 border border-gray-600 rounded-md text-base text-black font-normal",
                   placeholder: "Rechercher...",
-                  onClick: _cache[1] || (_cache[1] = withModifiers(() => {
-                  }, ["stop"]))
-                }, null, 512), [
+                  onClick: withModifiers(preventZoom, ["stop"]),
+                  onTouchstart: withModifiers(preventZoom, ["stop"])
+                }, null, 544), [
                   [vModelText, searchQuery.value]
                 ])
               ])
@@ -13564,7 +13582,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               return openBlock(), createElementBlock("div", {
                 key: item.id,
                 onClick: ($event) => selectItem(item),
-                class: "flex items-center px-3 py-2 cursor-pointer hover:bg-stone-300"
+                class: "flex items-center px-4 py-3 cursor-pointer hover:bg-stone-300 transition-colors duration-150"
               }, [
                 createBaseVNode("img", {
                   src: item.image,
@@ -13582,7 +13600,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const ItemSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-a284d4ea"]]);
+  const ItemSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-df78dc39"]]);
   const getColor = (ligne) => {
     if (!ligne || !ligne.numlignepublic) return "bg-gray-500";
     if (ligne.numlignepublic.startsWith("T")) {
@@ -13687,25 +13705,21 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const LineLoader = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-bd0cfbc1"]]);
   const _hoisted_1$3 = { class: "min-h-screen bg-gray-100" };
-  const _hoisted_2$3 = { class: "sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100" };
-  const _hoisted_3$3 = { class: "max-w-7xl mx-auto" };
+  const _hoisted_2$3 = { class: "sticky top-0 z-20 shadow-md bg-white py-3 px-4 border-t" };
+  const _hoisted_3$3 = { class: "pl-10 max-w-7xl mx-auto relative" };
   const _hoisted_4$3 = {
-    id: "search-container",
-    class: "relative"
-  };
-  const _hoisted_5$3 = {
     key: 1,
     class: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8"
   };
-  const _hoisted_6$3 = {
+  const _hoisted_5$3 = {
     id: "lignes",
     class: "space-y-16"
   };
-  const _hoisted_7$3 = { class: "category-header mb-6 relative" };
-  const _hoisted_8$3 = { class: "text-2xl font-bold text-gray-800 inline-block pb-2 border-b-4 border-blue-500" };
-  const _hoisted_9$2 = { class: "lines-container" };
-  const _hoisted_10$2 = { class: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" };
-  const _hoisted_11$2 = {
+  const _hoisted_6$3 = { class: "category-header mb-6 relative" };
+  const _hoisted_7$3 = { class: "text-2xl font-bold text-gray-800 inline-block pb-2 border-b-4 border-blue-500" };
+  const _hoisted_8$3 = { class: "lines-container" };
+  const _hoisted_9$2 = { class: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" };
+  const _hoisted_10$2 = {
     key: 0,
     class: "text-center py-16"
   };
@@ -13765,30 +13779,28 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           createBaseVNode("main", _hoisted_1$3, [
             createBaseVNode("header", _hoisted_2$3, [
               createBaseVNode("div", _hoisted_3$3, [
-                _cache[0] || (_cache[0] = createBaseVNode("p", { class: "text-sm text-blue-700 font-medium mb-1" }, "Trouvez votre ligne", -1)),
-                createBaseVNode("div", _hoisted_4$3, [
-                  createVNode(unref(SearchIcon), { class: "h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" }),
-                  createVNode(unref(ItemSelector), {
-                    class: "w-full pl-10 z-10 shadow-sm",
-                    items: lignes.value,
-                    onSelect: goToLigneDetail
-                  }, null, 8, ["items"])
-                ])
+                createVNode(unref(SearchIcon), { class: "h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" }),
+                createVNode(unref(ItemSelector), {
+                  class: "w-full shadow-sm z-10",
+                  items: lignes.value,
+                  label: "Trouver une ligne",
+                  onSelect: goToLigneDetail
+                }, null, 8, ["items"])
               ])
             ]),
-            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_5$3, [
-              createBaseVNode("div", _hoisted_6$3, [
+            loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_4$3, [
+              createBaseVNode("div", _hoisted_5$3, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(categorizedLignes.value, (lines, category) => {
                   return withDirectives((openBlock(), createElementBlock("div", {
                     key: category,
                     class: "category-section"
                   }, [
-                    createBaseVNode("div", _hoisted_7$3, [
-                      createBaseVNode("h2", _hoisted_8$3, toDisplayString(category), 1),
-                      _cache[1] || (_cache[1] = createBaseVNode("div", { class: "absolute bottom-0 left-0 w-full h-px bg-gray-200" }, null, -1))
+                    createBaseVNode("div", _hoisted_6$3, [
+                      createBaseVNode("h2", _hoisted_7$3, toDisplayString(category), 1),
+                      _cache[0] || (_cache[0] = createBaseVNode("div", { class: "absolute bottom-0 left-0 w-full h-px bg-gray-200" }, null, -1))
                     ]),
-                    createBaseVNode("div", _hoisted_9$2, [
-                      createBaseVNode("div", _hoisted_10$2, [
+                    createBaseVNode("div", _hoisted_8$3, [
+                      createBaseVNode("div", _hoisted_9$2, [
                         (openBlock(true), createElementBlock(Fragment, null, renderList(lines, (ligne) => {
                           return openBlock(), createBlock(unref(Ligne), {
                             key: ligne.id,
@@ -13803,9 +13815,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                     [vShow, lines.length > 0]
                   ]);
                 }), 128)),
-                Object.values(categorizedLignes.value).every((arr) => arr.length === 0) ? (openBlock(), createElementBlock("div", _hoisted_11$2, [
+                Object.values(categorizedLignes.value).every((arr) => arr.length === 0) ? (openBlock(), createElementBlock("div", _hoisted_10$2, [
                   createVNode(unref(SadIcon), { class: "h-16 w-16 mx-auto text-gray-400 mb-4" }),
-                  _cache[2] || (_cache[2] = createBaseVNode("p", { class: "text-gray-500 text-lg" }, "Aucune ligne ne correspond à votre recherche", -1))
+                  _cache[1] || (_cache[1] = createBaseVNode("p", { class: "text-gray-500 text-lg" }, "Aucune ligne ne correspond à votre recherche", -1))
                 ])) : createCommentVNode("", true)
               ])
             ]))
@@ -13815,7 +13827,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const HomeView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-6df98904"]]);
+  const HomeView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-88703073"]]);
   const HomeView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: HomeView
@@ -13955,7 +13967,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               }, [
                 createBaseVNode("div", _hoisted_3$2, [
                   createBaseVNode("button", {
-                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
                     class: "text-white p-2"
                   }, [
                     createVNode(unref(ChevronLeftIcon), { class: "size-6" })
@@ -14105,7 +14117,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               createBaseVNode("header", _hoisted_3$1, [
                 createBaseVNode("div", _hoisted_4$1, [
                   createBaseVNode("button", {
-                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
                     class: "text-white p-2"
                   }, [
                     createVNode(unref(ChevronLeftIcon), { class: "size-6" })
@@ -14169,7 +14181,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     setup(__props) {
       const router2 = useRouter();
       const cacheCleared = ref(false);
-      const appVersion = ref("1.0.0");
+      const appVersion = ref("1.0.1");
       const clearingCache = ref(false);
       const clearCache = async () => {
         clearingCache.value = true;
@@ -14189,7 +14201,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             createBaseVNode("header", _hoisted_2, [
               createBaseVNode("div", _hoisted_3, [
                 createBaseVNode("button", {
-                  onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
+                  onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
                   class: "text-white p-2"
                 }, [
                   createVNode(unref(ChevronLeftIcon), { class: "size-6" })
@@ -14201,7 +14213,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             createBaseVNode("div", _hoisted_4, [
               createBaseVNode("div", _hoisted_5, [
                 _cache[4] || (_cache[4] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "Gestion du cache", -1)),
-                _cache[5] || (_cache[5] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " L'application stocke les données des lignes et arrêts en cache pour améliorer les performances pendant 24h. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet. ", -1)),
+                _cache[5] || (_cache[5] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " L'application stocke les données des lignes et arrêts en cache pendant 2 semaines pour améliorer les performances. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet. ", -1)),
                 createBaseVNode("div", _hoisted_6, [
                   createBaseVNode("button", {
                     onClick: clearCache,
@@ -14232,10 +14244,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 createBaseVNode("div", _hoisted_12, [
                   createBaseVNode("p", _hoisted_13, "Version: " + toDisplayString(appVersion.value), 1),
                   _cache[6] || (_cache[6] = createBaseVNode("p", { class: "mb-2" }, "Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.", -1)),
-                  _cache[7] || (_cache[7] = createBaseVNode("p", null, "Les données sont récupérées depuis le site reseau-stan.com.", -1))
+                  _cache[7] || (_cache[7] = createBaseVNode("p", { class: "mb-2" }, [
+                    createTextVNode("Les données sont récupérées depuis le site "),
+                    createBaseVNode("a", {
+                      href: "https://reseau-stan.com",
+                      class: "text-blue-500 hover:underline",
+                      target: "_blank"
+                    }, "reseau-stan.com")
+                  ], -1))
                 ])
               ]),
-              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6" data-v-757b37ac><h2 class="text-xl font-semibold mb-4" data-v-757b37ac>Assistance</h2><p class="text-gray-600 mb-4" data-v-757b37ac> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-757b37ac><li class="mb-2" data-v-757b37ac>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-757b37ac>Rafraîchir la page</li><li class="mb-2" data-v-757b37ac>Vérifier votre connexion internet</li></ul></div>', 1))
+              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6 mb-6" data-v-f3d334cd><h2 class="text-xl font-semibold mb-4" data-v-f3d334cd>Mentions légales</h2><div class="text-gray-600 text-sm" data-v-f3d334cd><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Droits d&#39;auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d&#39;auteur.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n&#39;engage pas la responsabilité des créateurs de cette application.</p><p class="mb-2" data-v-f3d334cd>Cette application n&#39;est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p></div></div><div class="bg-white rounded-lg shadow-md p-6" data-v-f3d334cd><h2 class="text-xl font-semibold mb-4" data-v-f3d334cd>Assistance</h2><p class="text-gray-600 mb-4" data-v-f3d334cd> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-f3d334cd><li class="mb-2" data-v-f3d334cd>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-f3d334cd>Rafraîchir la page</li><li class="mb-2" data-v-f3d334cd>Vérifier votre connexion internet</li></ul></div>', 2))
             ])
           ]),
           createVNode(unref(_sfc_main$9))
@@ -14243,7 +14262,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-757b37ac"]]);
+  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f3d334cd"]]);
   const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SettingsView

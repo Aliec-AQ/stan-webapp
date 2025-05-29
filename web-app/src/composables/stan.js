@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export class Stan {
-  
-  static CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 heures en millisecondes
+  // Constants
+  static CACHE_DURATION = 14 * 24 * 60 * 60 * 1000; // 2 semaines en millisecondes
   
   static plans = {
     "line:GST:1-97" : "https://tim.reseau-stan.com/tim/data/pdf/2283_Ligne Tempo 1.pdf",
@@ -49,7 +49,18 @@ export class Stan {
     "line:GST:41-97": "https://tim.reseau-stan.com/tim/data/pdf/2299_Citadine Nancy.pdf",
     "line:GST:42-97": "https://tim.reseau-stan.com/tim/data/pdf/1484_Citadine Vandoeuvre.pdf",
   }
+  
+  // HTTP client
+  static getInstance() {
+    return axios.create({
+      baseURL: 'https://www.reseau-stan.com/?type=476',
+      headers: {
+        'X-Requested-With': 'XMLHttpRequest'
+      }
+    });
+  }
 
+  // Cache management methods
   static saveToCache(key, data) {
     try {
       const cacheItem = {
@@ -69,11 +80,7 @@ export class Stan {
       
       const { timestamp, data } = JSON.parse(cacheItem);
       
-      // Vérifier si les données en cache sont encore valides
-      if (Date.now() - timestamp < this.CACHE_DURATION) {
-        return data;
-      }
-      return null;
+      return Date.now() - timestamp < this.CACHE_DURATION ? data : null;
     } catch (error) {
       console.error('Error reading from cache:', error);
       return null;
@@ -84,113 +91,117 @@ export class Stan {
     try {
       localStorage.removeItem('stan_lignes');
       
-      Object.keys(localStorage).forEach(key => {
-        if (key.startsWith('stan_arrets_')) {
-          localStorage.removeItem(key);
-        }
-      });
+      Object.keys(localStorage)
+        .filter(key => key.startsWith('stan_arrets_'))
+        .forEach(key => localStorage.removeItem(key));
     } catch (error) {
       console.error('Error clearing cache:', error);
     }
   }
   
+  // Data fetch methods
   static async getLignes(forceRefresh = false) {
-    // Essayer d'obtenir les lignes depuis le cache si on ne force pas le rafraîchissement
+    // Try to get from cache unless refresh is forced
     if (!forceRefresh) {
       const cachedLignes = this.getFromCache('stan_lignes');
-      if (cachedLignes) {
-        return cachedLignes;
-      }
+      if (cachedLignes) return cachedLignes;
     }
     
-    // Si pas en cache ou refresh forcé, faire l'appel API
-    const rep = (await Stan.getInstance().get('https://www.reseau-stan.com/')).data;
-    const regex = /data-ligne="(\d+)" data-numlignepublic="([^"]+)" data-osmid="(line[^"+]+)" data-libelle="([^"]+)" value="[^"]+">/g;
+    // Fetch from API
+    const response = await Stan.getInstance().get('https://www.reseau-stan.com/');
+    const htmlContent = response.data;
+    
+    // Parse lines data using regex
+    const ligneRegex = /data-ligne="(\d+)" data-numlignepublic="([^"]+)" data-osmid="(line[^"+]+)" data-libelle="([^"]+)" value="[^"]+">/g;
     const lignes = [];
     
-    const matches = rep.matchAll(regex);
-    for (const rawLigne of matches) {
+    for (const match of htmlContent.matchAll(ligneRegex)) {
+      const [_, id, numPublic, osmId, rawLibelle] = match;
+      
       lignes.push({
-        id: parseInt(rawLigne[1]),
-        numlignepublic: rawLigne[2],
-        osmid: rawLigne[3],
-        libelle: rawLigne[4].replace('&lt;', '<').replace('&gt;', '>').replace(/&#039;/g, "'"),
-        image: `https://www.reseau-stan.com/typo3conf/ext/kg_package/Resources/Public/images/pictolignes/${rawLigne[2].replace(' ','_')}.png`
+        id: parseInt(id),
+        numlignepublic: numPublic,
+        osmid: osmId,
+        libelle: this._decodeHtmlEntities(rawLibelle),
+        image: `https://www.reseau-stan.com/typo3conf/ext/kg_package/Resources/Public/images/pictolignes/${numPublic.replace(' ','_')}.png`
       });
     }
     
-    // Sauvegarder les données dans le cache
+    // Save to cache
     this.saveToCache('stan_lignes', lignes);
     
     return lignes;
   }
 
   static async getLigne(osmid, forceRefresh = false) {
-    const lignes = await Stan.getLignes(forceRefresh);
-    return lignes.find(l => l.osmid == osmid) || null;
+    const lignes = await this.getLignes(forceRefresh);
+    return lignes.find(ligne => ligne.osmid === osmid) || null;
   }
 
   static async getArrets(ligne, forceRefresh = false) {
-    // Essayer d'obtenir les arrêts depuis le cache si on ne force pas le rafraîchissement
+    // Try to get from cache unless refresh is forced
     const cacheKey = `stan_arrets_${ligne.id}`;
     if (!forceRefresh) {
       const cachedArrets = this.getFromCache(cacheKey);
-      if (cachedArrets) {
-        return cachedArrets;
-      }
+      if (cachedArrets) return cachedArrets;
     }
     
+    // Prepare form data for request
     const formData = new FormData();
     formData.append('requete', 'tempsreel_arrets');
     formData.append('requete_val[ligne]', ligne.id);
     formData.append('requete_val[numlignepublic]', ligne.numlignepublic);
     
-    const rep = (await Stan.getInstance().request({
+    // Make request
+    const response = await this.getInstance().request({
       method: 'POST',
       data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })).data;
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
     
-    const regex = /data-libelle="([^"]+)" data-ligne="(\d+)" data-numlignepublic="([^"]+)" value="([^"]+)">([^<]+)<\/option>/g;
+    // Parse stops data using regex
+    const arretRegex = /data-libelle="([^"]+)" data-ligne="(\d+)" data-numlignepublic="([^"]+)" value="([^"]+)">([^<]+)<\/option>/g;
     const arrets = [];
     
-    const matches = rep.matchAll(regex);
-    for (const rawArret of matches) {
+    for (const match of response.data.matchAll(arretRegex)) {
+      const [_, libelle, , , osmid] = match;
+      
       arrets.push({
         ligne,
-        libelle: rawArret[1],
-        osmid: rawArret[4]
+        libelle,
+        osmid
       });
     }
     
-    // Sauvegarder dans le cache
+    // Save to cache
     this.saveToCache(cacheKey, arrets);
     
     return arrets;
   }
 
   static async getProchainsPassages(arret) {
-    // On ne met pas en cache les prochains passages car ils changent constamment
+    // Prepare form data for request
     const formData = new FormData();
     formData.append('requete', 'tempsreel_submit');
     formData.append('requete_val[arret]', arret.osmid);
     formData.append('requete_val[ligne_omsid]', arret.ligne?.osmid || '');
     
-    const rep = (await Stan.getInstance().request({
+    // Make request
+    const response = await this.getInstance().request({
       method: 'POST',
       data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      }
-    })).data.split('<li>').slice(1)
+      headers: { 'Content-Type': 'multipart/form-data' }
+    });
     
-    const passages = []
-
-    for (const rawPassageLi of rep) {
-      const directionMatch = rawPassageLi.match(/<span>([^"]+)<\/span><\/span>/);
-      const ligneMatch = rawPassageLi.match(/<span id="ui-ligne-(\d+)".*\/pictolignes\/([^"]+).png'/);
+    // Split response by list items
+    const passageItems = response.data.split('<li>').slice(1);
+    const passages = [];
+    
+    // Process each passage item
+    for (const item of passageItems) {
+      // Extract direction and line information
+      const directionMatch = item.match(/<span>([^"]+)<\/span><\/span>/);
+      const ligneMatch = item.match(/<span id="ui-ligne-(\d+)".*\/pictolignes\/([^"]+).png'/);
       
       if (!directionMatch || !ligneMatch) continue;
       
@@ -198,60 +209,81 @@ export class Stan {
       const ligneId = parseInt(ligneMatch[1], 10);
       const ligneNumPublic = ligneMatch[2];
       
+      // Create base passage object
+      const basePassage = {
+        arret: { 
+          ligne: { 
+            ...arret.ligne, 
+            id: ligneId, 
+            numlignepublic: ligneNumPublic 
+          }, 
+          ...arret 
+        },
+        direction
+      };
+      
       // Process "now" passages
-      const regexPassagesNow = /class="tpsreel-temps-item large-1 "><i class="icon-car1"><\/i><i title="Temps Réel" class="icon-wifi2"><\/i>/g;
-      const nowMatches = [...rawPassageLi.matchAll(regexPassagesNow)];
-      for (const _ of nowMatches) {
-        passages.push({
-          arret: { ligne: { ...arret.ligne, id: ligneId, numlignepublic: ligneNumPublic }, ...arret },
-          direction: direction,
-          temps_min: 0,
-          temps_theorique: false
-        });
-      }
+      this._processNowPassages(item, basePassage, passages);
       
       // Process "X min" passages
-      const regexPassagesMin = /class="tpsreel-temps-item large-1 ">(\d+) min/g;
-      const minMatches = [...rawPassageLi.matchAll(regexPassagesMin)];
-      for (const minMatch of minMatches) {
-        passages.push({
-          arret: { ligne: { ...arret.ligne, id: ligneId, numlignepublic: ligneNumPublic }, ...arret },
-          direction: direction,
-          temps_min: parseInt(minMatch[1]),
-          temps_theorique: false
-        });
-      }
+      this._processMinutePassages(item, basePassage, passages);
       
       // Process "HH:MM" passages
-      const regexPassagesH = /temps-item-heure">(\d+)h(\d+)(.*)<\/a>/g;
-      const hourMatches = [...rawPassageLi.matchAll(regexPassagesH)];
-      for (const hourMatch of hourMatches) {
-        passages.push({
-          arret: { ligne: { ...arret.ligne, id: ligneId, numlignepublic: ligneNumPublic }, ...arret },
-          direction: direction,
-          temps_min: parseInt(hourMatch[1]) * 60 + parseInt(hourMatch[2]),
-          temps_theorique: hourMatch[0].includes('tpsreel-temps-item-tpstheorique')
-        });
-      }
+      this._processHourPassages(item, basePassage, passages);
     }
-    return passages
+    
+    return passages;
   }
 
   static getPlan(ligne) {
     if (!ligne || !ligne.osmid) return null;
-    
-    const planUrl = this.plans[ligne.osmid];
-    if (!planUrl) return null;
-    
-    return planUrl;
+    return this.plans[ligne.osmid] || null;
   }
   
-  static getInstance() {
-    return axios.create({
-      baseURL: 'https://www.reseau-stan.com/?type=476',
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    });
+  // Helper methods
+  static _decodeHtmlEntities(text) {
+    return text
+      .replace('&lt;', '<')
+      .replace('&gt;', '>')
+      .replace(/&#039;/g, "'");
+  }
+  
+  static _processNowPassages(html, basePassage, passages) {
+    const nowRegex = /class="tpsreel-temps-item large-1 "><i class="icon-car1"><\/i><i title="Temps Réel" class="icon-wifi2"><\/i>/g;
+    
+    for (const _ of html.matchAll(nowRegex)) {
+      passages.push({
+        ...basePassage,
+        temps_min: 0,
+        temps_theorique: false
+      });
+    }
+  }
+  
+  static _processMinutePassages(html, basePassage, passages) {
+    const minutesRegex = /class="tpsreel-temps-item large-1 ">(\d+) min/g;
+    
+    for (const match of html.matchAll(minutesRegex)) {
+      passages.push({
+        ...basePassage,
+        temps_min: parseInt(match[1]),
+        temps_theorique: false
+      });
+    }
+  }
+  
+  static _processHourPassages(html, basePassage, passages) {
+    const hoursRegex = /temps-item-heure">(\d+)h(\d+)(.*)<\/a>/g;
+    
+    for (const match of html.matchAll(hoursRegex)) {
+      const hours = parseInt(match[1]);
+      const minutes = parseInt(match[2]);
+      
+      passages.push({
+        ...basePassage,
+        temps_min: hours * 60 + minutes,
+        temps_theorique: match[0].includes('tpsreel-temps-item-tpstheorique')
+      });
+    }
   }
 }
