@@ -2,7 +2,7 @@
   "name": "stan-web-app",
   "description": "Stan Web Application",
   "author": "Aliec-AQ",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "license": "MIT",
   "type": "module",
   "scripts": {

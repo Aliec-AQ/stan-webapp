@@ -6,7 +6,7 @@ import { Stan } from '@/composables/stan';
 
 const router = useRouter();
 const cacheCleared = ref(false);
-const appVersion = ref('1.0.2'); 
+const appVersion = ref('1.0.1'); 
 const clearingCache = ref(false);
 
 const clearCache = async () => {
@@ -21,7 +21,6 @@ const clearCache = async () => {
         cacheCleared.value = false;
     }, 3000);
 };
-
 
 onMounted(() => {
 });
