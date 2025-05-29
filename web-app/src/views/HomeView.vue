@@ -75,18 +75,16 @@ const toggleMobileMenu = () => {
 
 <template>
   <main class="min-h-screen bg-gray-100">
-    <header class="sticky top-0 z-20 shadow-md bg-blue-50 py-3 px-4 border-t border-blue-100">
-      <div class="max-w-7xl mx-auto">
-        <p class="text-sm text-blue-700 font-medium mb-1">Trouvez votre ligne</p>
-        <div id="search-container" class="relative">
-          <SearchIcon class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
-          <ItemSelector
-            class="w-full pl-10 z-10 shadow-sm"
-            :items="lignes"
-            @select="goToLigneDetail"
-          />
-        </div>
-      </div>
+    <header class="sticky top-0 z-20 shadow-md bg-white py-3 px-4 border-t">
+      <div class="pl-10 max-w-7xl mx-auto relative">
+            <SearchIcon class="h-5 w-5 absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
+            <ItemSelector
+              class="w-full shadow-sm z-10"
+              :items="lignes"
+              :label="'Trouver une ligne'"
+              @select="goToLigneDetail"
+            />
+          </div>
   </header>
   
   <LineLoader v-if="loading"/>
@@ -191,18 +189,5 @@ const toggleMobileMenu = () => {
 
 .animate-slideDown {
   animation: slideDown 0.2s ease-out forwards;
-}
-
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin {
-  animation: spin 1s linear infinite;
 }
 </style>

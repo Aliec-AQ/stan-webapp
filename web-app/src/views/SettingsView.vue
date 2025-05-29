@@ -6,7 +6,7 @@ import { Stan } from '@/composables/stan';
 
 const router = useRouter();
 const cacheCleared = ref(false);
-const appVersion = ref('1.0.0'); 
+const appVersion = ref('1.0.1'); 
 const clearingCache = ref(false);
 
 const clearCache = async () => {
@@ -30,7 +30,7 @@ onMounted(() => {
     <div class="min-h-screen bg-gray-100 pb-20">
         <header class="sticky top-0 z-10 shadow-md bg-gray-700">
             <div class="flex items-center justify-between h-20 px-4">
-                <button @click="router.back()" class="text-white p-2">
+                <button @click="router.push('/')" class="text-white p-2">
                     <ChevronLeftIcon class="size-6" />
                 </button>
                 <h1 class="text-xl font-bold text-white">Paramètres</h1>
@@ -43,7 +43,7 @@ onMounted(() => {
             <div class="bg-white rounded-lg shadow-md p-6 mb-6">
                 <h2 class="text-xl font-semibold mb-4">Gestion du cache</h2>
                 <p class="text-gray-600 mb-4">
-                    L'application stocke les données des lignes et arrêts en cache pour améliorer les performances pendant 24h.
+                    L'application stocke les données des lignes et arrêts en cache pendant 2 semaines pour améliorer les performances.
                     Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet.
                 </p>
                 <div class="flex flex-col">
@@ -74,7 +74,23 @@ onMounted(() => {
                 <div class="text-gray-600">
                     <p class="mb-2">Version: {{ appVersion }}</p>
                     <p class="mb-2">Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.</p>
-                    <p>Les données sont récupérées depuis le site reseau-stan.com.</p>
+                    <p class="mb-2">Les données sont récupérées depuis le site <a href="https://reseau-stan.com" class="text-blue-500 hover:underline" target="_blank">reseau-stan.com</a></p>
+                </div>
+            </div>
+
+            <!-- Legal Section -->
+            <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                <h2 class="text-xl font-semibold mb-4">Mentions légales</h2>
+                <div class="text-gray-600 text-sm">
+                    <p class="mb-2"><strong>Droits d'auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d'auteur.</p>
+                    
+                    <p class="mb-2"><strong>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p>
+                    
+                    <p class="mb-2"><strong>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p>
+                    
+                    <p class="mb-2"><strong>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n'engage pas la responsabilité des créateurs de cette application.</p>
+                    
+                    <p class="mb-2">Cette application n'est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p>
                 </div>
             </div>
 
