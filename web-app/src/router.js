@@ -4,8 +4,11 @@ const routes = [
   {
     path: '/',
     redirect: to => {
-      const landingPage = JSON.parse(localStorage.getItem('stan-preferences')).landingPage || 'home';
-      return `/${landingPage}`;
+      const landingPage = JSON.parse(localStorage.getItem('stan-preferences'));
+      if (!landingPage || !landingPage.landingPage) {
+        return '/home';
+      }
+      return `/${landingPage.landingPage}`;
     }
   },
   {
