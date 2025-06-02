@@ -3,6 +3,7 @@ import { onMounted, computed, ref } from 'vue';
 import { Stan } from '@/composables/stan';
 import {Ligne, ItemSelector, SadIcon, SearchIcon, AppMenu, LineLoader} from '@/components';
 import { useRouter } from 'vue-router';
+import t from '@/i18n';
 
 const loading = ref(true);
 const lignes = ref([]);
@@ -81,7 +82,7 @@ const toggleMobileMenu = () => {
             <ItemSelector
               class="w-full shadow-sm z-10"
               :items="lignes"
-              :label="'Trouver une ligne'"
+              :label="t('home.search')"
               @select="goToLigneDetail"
             />
           </div>
@@ -107,7 +108,7 @@ const toggleMobileMenu = () => {
       
       <div v-if="Object.values(categorizedLignes).every(arr => arr.length === 0)" class="text-center py-16">
         <SadIcon class="h-16 w-16 mx-auto text-gray-400 mb-4" />
-        <p class="text-gray-500 text-lg">Aucune ligne ne correspond à votre recherche</p>
+        <p class="text-gray-500 text-lg">{{ t('home.notFound') }}</p>
       </div>
     </div>
   </div>

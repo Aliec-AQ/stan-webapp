@@ -5,6 +5,7 @@ import { useFavoritesStore } from '@/stores/favorites';
 import { Arret, AppMenu, ChevronLeftIcon, LineLoader } from '@/components';
 import { Stan } from '@/composables/stan';
 import { getColor } from '@/utils/stan';
+import t from '@/i18n';
 
 const router = useRouter();
 const favorites = useFavoritesStore();
@@ -64,15 +65,15 @@ const handleRemoveFavorite = (arretId) => {
           <button @click="router.push('/')" class="text-white p-2">
             <ChevronLeftIcon class="size-6" />
           </button>
-          <h1 class="text-xl font-bold text-white">Favoris</h1>
+          <h1 class="text-xl font-bold text-white">{{t('favorites.title')}}</h1>
           <div class="w-10"></div>
         </div>
       </header>
 
       <div class="container mx-auto px-4 mt-6">
         <div v-if="favoriteArrets.length === 0" class="bg-white rounded-lg shadow-md p-8 text-center">
-          <p class="text-gray-500">Vous n'avez pas encore d'arrêts favoris.</p>
-          <p class="text-gray-500 mt-2">Ajoutez des arrêts à vos favoris pour les retrouver ici.</p>
+          <p class="text-gray-500">{{ t('favorites.empty') }}</p>
+          <p class="text-gray-500 mt-2">{{t('favorites.emptyDescription')}}</p>
         </div>
         
         <div v-else class="bg-white rounded-lg shadow-md">

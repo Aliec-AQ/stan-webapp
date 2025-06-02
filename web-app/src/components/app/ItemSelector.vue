@@ -1,6 +1,7 @@
 <script setup>
 import { computed, ref, nextTick } from 'vue';
 import { ChevronDownIcon, SearchIcon } from '@/components/icons';
+import t from '@/i18n';
 
 const props = defineProps({
   items: {
@@ -102,7 +103,7 @@ const preventZoom = (event) => {
             autocapitalize="off"
             spellcheck="false"
             class="w-full pl-10 pr-3 py-2.5 bg-stone-200 border border-gray-600 rounded-md text-base text-black font-normal"
-            :placeholder="'Rechercher...'"
+            :placeholder="t('ligne.search')"
             @click.stop="preventZoom"
             @touchstart.stop="preventZoom"
           />
@@ -126,7 +127,7 @@ const preventZoom = (event) => {
       
       <!-- Empty state -->
       <div v-if="filteredItems.length === 0" class="px-4 py-4 text-center text-gray-500">
-        Aucune ligne trouvée
+        {{ t('ligne.notFound') }}
       </div>
     </div>
   </div>

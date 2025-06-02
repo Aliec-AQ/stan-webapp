@@ -1,6 +1,8 @@
 <script setup>
 import { getColor } from '@/utils/stan';
 import { BusIcon, ChevronRightIcon } from '@/components/icons';
+import t from '@/i18n';
+
 const props = defineProps({
     ligne: {
         type: Object,
@@ -46,7 +48,7 @@ const goToLineDetail = (ligne) => {
 
         <div class="px-4 py-3 bg-gray-50 flex items-center justify-between">
             <span class="text-sm font-medium text-blue-600 group-hover:text-blue-800 transition-colors duration-200 flex items-center">
-                Voir détails
+                {{ t('ligne.detail') }}
             </span>
             <ChevronRightIcon class="size-5 text-blue-600" />
         </div>
