@@ -1,6 +1,7 @@
 <script setup>
 import { ChevronDownIcon, ChevronUpIcon, BusIcon, StarIcon, StarOutlineIcon } from '@/components/icons';
 import { computed } from 'vue';
+import t from '@/i18n';
 import { useFavoritesStore } from '@/stores/favorites';
 
 const favorites = useFavoritesStore();
@@ -36,7 +37,7 @@ const emit = defineEmits(['selectArret', 'toggleFavorite'])
 
 const formatPassageTime = (passage) => {
     if (passage.temps_min === 0) {
-        return 'À l\'approche';
+        return t('arret.passageImediat');
     } else if (passage.temps_min < 60) {
         return `${passage.temps_min} min`;
     } else {
@@ -107,12 +108,12 @@ const handleToggleFavorite = (e) => {
                         <div :class="[color, 'loader-highlight']"></div>
                     </div>
                 </div>
-                <p class="mt-2 text-center text-sm text-gray-600">Chargement des passages...</p>
+                <p class="mt-2 text-center text-sm text-gray-600">{{ t('arret.loading') }}</p>
             </div>
             
             <div v-else>
                 <div v-if="Object.keys(passagesByDirection).length === 0" class="text-sm text-gray-500 py-2">
-                    Aucun passage prévu prochainement
+                    {{ t('arret.noPassages') }}
                 </div>
                 <div v-else class="space-y-6">
                     <div v-for="(passages, direction) in passagesByDirection" :key="direction" class="py-4 relative">

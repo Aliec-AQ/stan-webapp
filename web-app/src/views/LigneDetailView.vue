@@ -2,6 +2,7 @@
 import { onMounted, ref, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { LineLoader, Arret, RefreshIcon, ChevronLeftIcon, FancyModal, MapIcon, AppMenu } from '@/components';
+import t from '@/i18n';
 import { Stan } from '@/composables/stan';
 import { getColor } from '@/utils/stan';
 import { useFavoritesStore } from '@/stores/favorites';
@@ -20,7 +21,6 @@ const refreshing = ref(false);
 
 const selectedArret = ref(null);
 const arretPassages = ref({});
-const loadingPassages = ref(false);
 
 const loadingArretId = ref(null);
 const autoRefreshInterval = ref(null);
@@ -42,11 +42,12 @@ const clearAutoRefresh = () => {
 
 const loadData = async (forceRefresh = false) => {
   loading.value = true;
+
   try {
     ligne.value = await Stan.getLigne(route.params.osmid_ligne, forceRefresh);
     arrets.value = await Stan.getArrets(ligne.value, forceRefresh);
   } catch (error) {
-    console.error('Error loading data:', error);
+    router.push('/home');
   } finally {
     loading.value = false;
   }
@@ -155,7 +156,7 @@ watch(() => route.path, () => {
             <button @click="router.push('/')" class="text-white p-2">
               <ChevronLeftIcon class="size-6" />
             </button>
-            <h1 class="text-xl font-bold text-white">Ligne {{ ligne.numlignepublic }}</h1>
+            <h1 class="text-xl font-bold text-white">{{ t('ligne.title') }} {{ ligne.numlignepublic }}</h1>
             <div>
               <button 
               @click="refreshData" 
@@ -185,7 +186,7 @@ watch(() => route.path, () => {
       </div>
 
       <div class="container mx-auto px-4 mt-6">
-        <h2 class="text-xl font-semibold mb-3">Arrêts</h2>
+        <h2 class="text-xl font-semibold mb-3">{{ t('arret.title') }}</h2>
         <div class="bg-white rounded-lg shadow-md">
           <ul class="divide-y divide-gray-200">
             <Arret

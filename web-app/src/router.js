@@ -4,8 +4,24 @@ const router = createRouter({
   history: createWebHistory("/stan-webapp/"),
   routes: [
     {
-      name: 'acceuil',
+      name: 'root',
       path: '/',
+      redirect: () => {
+        const preferences = localStorage.getItem('preferences');
+
+        if (!preferences) {
+          localStorage.setItem('preferences', JSON.stringify({ home: 'accueil', language: 'fr' }));
+        }
+
+        const savedPreferences = JSON.parse(localStorage.getItem('preferences'));
+        const savedHome = savedPreferences && savedPreferences.home ? savedPreferences.home : null;
+
+        return { name: savedHome || 'accueil' };
+      }
+    },
+    {
+      name: 'accueil',
+      path: '/home',
       component: () => import('@/views/HomeView.vue'),
     },
     {
@@ -22,11 +38,34 @@ const router = createRouter({
       name: 'settings',
       path: '/settings',
       component: () => import('@/views/SettingsView.vue'),
-    }    
+    }
   ],
-  scrollBehavior(to, from, savedPosition) {
+  scrollBehavior() {
     return { top: 0, behavior: 'smooth' }
   },
+})
+
+router.beforeEach((to, _, next) => {
+  const query = to.query
+  if(query && query.vrrp) {
+    const vrrp = query.vrrp
+    
+    const matchedRoute = router.resolve(vrrp)
+    if (matchedRoute && matchedRoute.matched.length > 0) {
+      to.query = {}
+      router.push(vrrp)
+      return
+    }
+  }
+  next()
+});
+
+router.beforeEach((to, _, next) => {
+  if (to.matched.length === 0) {
+    next({ name: 'accueil' })
+  } else {
+    next()
+  }
 })
 
 export default router

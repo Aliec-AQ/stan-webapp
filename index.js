@@ -30,34 +30,34 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       arr.splice(i, 1);
     }
   };
-  const hasOwnProperty$2 = Object.prototype.hasOwnProperty;
-  const hasOwn = (val, key) => hasOwnProperty$2.call(val, key);
-  const isArray$2 = Array.isArray;
-  const isMap = (val) => toTypeString(val) === "[object Map]";
-  const isSet = (val) => toTypeString(val) === "[object Set]";
-  const isFunction$2 = (val) => typeof val === "function";
-  const isString$2 = (val) => typeof val === "string";
+  const hasOwnProperty$3 = Object.prototype.hasOwnProperty;
+  const hasOwn$1 = (val, key) => hasOwnProperty$3.call(val, key);
+  const isArray$3 = Array.isArray;
+  const isMap = (val) => toTypeString$1(val) === "[object Map]";
+  const isSet = (val) => toTypeString$1(val) === "[object Set]";
+  const isFunction$3 = (val) => typeof val === "function";
+  const isString$3 = (val) => typeof val === "string";
   const isSymbol = (val) => typeof val === "symbol";
-  const isObject$2 = (val) => val !== null && typeof val === "object";
-  const isPromise = (val) => {
-    return (isObject$2(val) || isFunction$2(val)) && isFunction$2(val.then) && isFunction$2(val.catch);
+  const isObject$3 = (val) => val !== null && typeof val === "object";
+  const isPromise$1 = (val) => {
+    return (isObject$3(val) || isFunction$3(val)) && isFunction$3(val.then) && isFunction$3(val.catch);
   };
-  const objectToString = Object.prototype.toString;
-  const toTypeString = (value) => objectToString.call(value);
+  const objectToString$1 = Object.prototype.toString;
+  const toTypeString$1 = (value) => objectToString$1.call(value);
   const toRawType = (value) => {
-    return toTypeString(value).slice(8, -1);
+    return toTypeString$1(value).slice(8, -1);
   };
-  const isPlainObject$2 = (val) => toTypeString(val) === "[object Object]";
-  const isIntegerKey = (key) => isString$2(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
+  const isPlainObject$3 = (val) => toTypeString$1(val) === "[object Object]";
+  const isIntegerKey = (key) => isString$3(key) && key !== "NaN" && key[0] !== "-" && "" + parseInt(key, 10) === key;
   const isReservedProp = /* @__PURE__ */ makeMap(
     // the leading comma is intentional so empty string "" is also included
     ",key,ref,ref_for,ref_key,onVnodeBeforeMount,onVnodeMounted,onVnodeBeforeUpdate,onVnodeUpdated,onVnodeBeforeUnmount,onVnodeUnmounted"
   );
   const cacheStringFunction = (fn) => {
-    const cache = /* @__PURE__ */ Object.create(null);
+    const cache2 = /* @__PURE__ */ Object.create(null);
     return (str) => {
-      const hit = cache[str];
-      return hit || (cache[str] = fn(str));
+      const hit = cache2[str];
+      return hit || (cache2[str] = fn(str));
     };
   };
   const camelizeRE = /-(\w)/g;
@@ -70,12 +70,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const hyphenate = cacheStringFunction(
     (str) => str.replace(hyphenateRE, "-$1").toLowerCase()
   );
-  const capitalize = cacheStringFunction((str) => {
+  const capitalize$1 = cacheStringFunction((str) => {
     return str.charAt(0).toUpperCase() + str.slice(1);
   });
   const toHandlerKey = cacheStringFunction(
     (str) => {
-      const s = str ? `on${capitalize(str)}` : ``;
+      const s = str ? `on${capitalize$1(str)}` : ``;
       return s;
     }
   );
@@ -98,19 +98,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return isNaN(n) ? val : n;
   };
   const toNumber = (val) => {
-    const n = isString$2(val) ? Number(val) : NaN;
+    const n = isString$3(val) ? Number(val) : NaN;
     return isNaN(n) ? val : n;
   };
-  let _globalThis;
-  const getGlobalThis = () => {
-    return _globalThis || (_globalThis = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {});
+  let _globalThis$1;
+  const getGlobalThis$1 = () => {
+    return _globalThis$1 || (_globalThis$1 = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : {});
   };
   function normalizeStyle(value) {
-    if (isArray$2(value)) {
+    if (isArray$3(value)) {
       const res = {};
       for (let i = 0; i < value.length; i++) {
         const item = value[i];
-        const normalized = isString$2(item) ? parseStringStyle(item) : normalizeStyle(item);
+        const normalized = isString$3(item) ? parseStringStyle(item) : normalizeStyle(item);
         if (normalized) {
           for (const key in normalized) {
             res[key] = normalized[key];
@@ -118,7 +118,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
       }
       return res;
-    } else if (isString$2(value) || isObject$2(value)) {
+    } else if (isString$3(value) || isObject$3(value)) {
       return value;
     }
   }
@@ -137,16 +137,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function normalizeClass(value) {
     let res = "";
-    if (isString$2(value)) {
+    if (isString$3(value)) {
       res = value;
-    } else if (isArray$2(value)) {
+    } else if (isArray$3(value)) {
       for (let i = 0; i < value.length; i++) {
         const normalized = normalizeClass(value[i]);
         if (normalized) {
           res += normalized + " ";
         }
       }
-    } else if (isObject$2(value)) {
+    } else if (isObject$3(value)) {
       for (const name in value) {
         if (value[name]) {
           res += name + " ";
@@ -163,8 +163,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const isRef$1 = (val) => {
     return !!(val && val["__v_isRef"] === true);
   };
-  const toDisplayString = (val) => {
-    return isString$2(val) ? val : val == null ? "" : isArray$2(val) || isObject$2(val) && (val.toString === objectToString || !isFunction$2(val.toString)) ? isRef$1(val) ? toDisplayString(val.value) : JSON.stringify(val, replacer, 2) : String(val);
+  const toDisplayString$1 = (val) => {
+    return isString$3(val) ? val : val == null ? "" : isArray$3(val) || isObject$3(val) && (val.toString === objectToString$1 || !isFunction$3(val.toString)) ? isRef$1(val) ? toDisplayString$1(val.value) : JSON.stringify(val, replacer, 2) : String(val);
   };
   const replacer = (_key, val) => {
     if (isRef$1(val)) {
@@ -185,7 +185,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     } else if (isSymbol(val)) {
       return stringifySymbol(val);
-    } else if (isObject$2(val) && !isArray$2(val) && !isPlainObject$2(val)) {
+    } else if (isObject$3(val) && !isArray$3(val) && !isPlainObject$3(val)) {
       return String(val);
     }
     return val;
@@ -733,7 +733,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (type === "clear") {
       depsMap.forEach(run);
     } else {
-      const targetIsArray = isArray$2(target);
+      const targetIsArray = isArray$3(target);
       const isArrayIndex = targetIsArray && isIntegerKey(key);
       if (targetIsArray && key === "length") {
         const newLength = Number(newValue);
@@ -799,7 +799,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     },
     concat(...args) {
       return reactiveReadArray(this).concat(
-        ...args.map((x) => isArray$2(x) ? reactiveReadArray(x) : x)
+        ...args.map((x) => isArray$3(x) ? reactiveReadArray(x) : x)
       );
     },
     entries() {
@@ -809,26 +809,26 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       });
     },
     every(fn, thisArg) {
-      return apply(this, "every", fn, thisArg, void 0, arguments);
+      return apply$1(this, "every", fn, thisArg, void 0, arguments);
     },
     filter(fn, thisArg) {
-      return apply(this, "filter", fn, thisArg, (v) => v.map(toReactive), arguments);
+      return apply$1(this, "filter", fn, thisArg, (v) => v.map(toReactive), arguments);
     },
     find(fn, thisArg) {
-      return apply(this, "find", fn, thisArg, toReactive, arguments);
+      return apply$1(this, "find", fn, thisArg, toReactive, arguments);
     },
     findIndex(fn, thisArg) {
-      return apply(this, "findIndex", fn, thisArg, void 0, arguments);
+      return apply$1(this, "findIndex", fn, thisArg, void 0, arguments);
     },
     findLast(fn, thisArg) {
-      return apply(this, "findLast", fn, thisArg, toReactive, arguments);
+      return apply$1(this, "findLast", fn, thisArg, toReactive, arguments);
     },
     findLastIndex(fn, thisArg) {
-      return apply(this, "findLastIndex", fn, thisArg, void 0, arguments);
+      return apply$1(this, "findLastIndex", fn, thisArg, void 0, arguments);
     },
     // flat, flatMap could benefit from ARRAY_ITERATE but are not straight-forward to implement
     forEach(fn, thisArg) {
-      return apply(this, "forEach", fn, thisArg, void 0, arguments);
+      return apply$1(this, "forEach", fn, thisArg, void 0, arguments);
     },
     includes(...args) {
       return searchProxy(this, "includes", args);
@@ -844,7 +844,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return searchProxy(this, "lastIndexOf", args);
     },
     map(fn, thisArg) {
-      return apply(this, "map", fn, thisArg, void 0, arguments);
+      return apply$1(this, "map", fn, thisArg, void 0, arguments);
     },
     pop() {
       return noTracking(this, "pop");
@@ -863,7 +863,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     },
     // slice could use ARRAY_ITERATE but also seems to beg for range tracking
     some(fn, thisArg) {
-      return apply(this, "some", fn, thisArg, void 0, arguments);
+      return apply$1(this, "some", fn, thisArg, void 0, arguments);
     },
     splice(...args) {
       return noTracking(this, "splice", args);
@@ -900,7 +900,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return iter;
   }
   const arrayProto = Array.prototype;
-  function apply(self2, method, fn, thisArg, wrappedRetFn, args) {
+  function apply$1(self2, method, fn, thisArg, wrappedRetFn, args) {
     const arr = shallowReadArray(self2);
     const needsWrap = arr !== self2 && !isShallow(self2);
     const methodFn = arr[method];
@@ -961,7 +961,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const builtInSymbols = new Set(
     /* @__PURE__ */ Object.getOwnPropertyNames(Symbol).filter((key) => key !== "arguments" && key !== "caller").map((key) => Symbol[key]).filter(isSymbol)
   );
-  function hasOwnProperty$1(key) {
+  function hasOwnProperty$2(key) {
     if (!isSymbol(key)) key = String(key);
     const obj = toRaw(this);
     track(obj, "has", key);
@@ -989,14 +989,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
         return;
       }
-      const targetIsArray = isArray$2(target);
+      const targetIsArray = isArray$3(target);
       if (!isReadonly2) {
         let fn;
         if (targetIsArray && (fn = arrayInstrumentations[key])) {
           return fn;
         }
         if (key === "hasOwnProperty") {
-          return hasOwnProperty$1;
+          return hasOwnProperty$2;
         }
       }
       const res = Reflect.get(
@@ -1019,7 +1019,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (isRef(res)) {
         return targetIsArray && isIntegerKey(key) ? res : res.value;
       }
-      if (isObject$2(res)) {
+      if (isObject$3(res)) {
         return isReadonly2 ? readonly(res) : reactive(res);
       }
       return res;
@@ -1037,7 +1037,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           oldValue = toRaw(oldValue);
           value = toRaw(value);
         }
-        if (!isArray$2(target) && isRef(oldValue) && !isRef(value)) {
+        if (!isArray$3(target) && isRef(oldValue) && !isRef(value)) {
           if (isOldValueReadonly) {
             return false;
           } else {
@@ -1046,7 +1046,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           }
         }
       }
-      const hadKey = isArray$2(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn(target, key);
+      const hadKey = isArray$3(target) && isIntegerKey(key) ? Number(key) < target.length : hasOwn$1(target, key);
       const result = Reflect.set(
         target,
         key,
@@ -1063,7 +1063,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return result;
     }
     deleteProperty(target, key) {
-      const hadKey = hasOwn(target, key);
+      const hadKey = hasOwn$1(target, key);
       target[key];
       const result = Reflect.deleteProperty(target, key);
       if (result && hadKey) {
@@ -1082,7 +1082,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       track(
         target,
         "iterate",
-        isArray$2(target) ? "length" : ITERATE_KEY
+        isArray$3(target) ? "length" : ITERATE_KEY
       );
       return Reflect.ownKeys(target);
     }
@@ -1283,7 +1283,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         return target;
       }
       return Reflect.get(
-        hasOwn(instrumentations, key) && key in target ? instrumentations : target,
+        hasOwn$1(instrumentations, key) && key in target ? instrumentations : target,
         key,
         receiver
       );
@@ -1362,7 +1362,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     );
   }
   function createReactiveObject(target, isReadonly2, baseHandlers, collectionHandlers, proxyMap) {
-    if (!isObject$2(target)) {
+    if (!isObject$3(target)) {
       return target;
     }
     if (target["__v_raw"] && !(isReadonly2 && target["__v_isReactive"])) {
@@ -1403,13 +1403,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return raw ? toRaw(raw) : observed;
   }
   function markRaw(value) {
-    if (!hasOwn(value, "__v_skip") && Object.isExtensible(value)) {
+    if (!hasOwn$1(value, "__v_skip") && Object.isExtensible(value)) {
       def(value, "__v_skip", true);
     }
     return value;
   }
-  const toReactive = (value) => isObject$2(value) ? reactive(value) : value;
-  const toReadonly = (value) => isObject$2(value) ? readonly(value) : value;
+  const toReactive = (value) => isObject$3(value) ? reactive(value) : value;
+  const toReadonly = (value) => isObject$3(value) ? readonly(value) : value;
   function isRef(r) {
     return r ? r["__v_isRef"] === true : false;
   }
@@ -1472,7 +1472,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return isReactive(objectWithRefs) ? objectWithRefs : new Proxy(objectWithRefs, shallowUnwrapHandlers);
   }
   function toRefs(object) {
-    const ret = isArray$2(object) ? new Array(object.length) : {};
+    const ret = isArray$3(object) ? new Array(object.length) : {};
     for (const key in object) {
       ret[key] = propertyToRef(object, key);
     }
@@ -1545,7 +1545,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function computed$1(getterOrOptions, debugOptions, isSSR = false) {
     let getter;
     let setter;
-    if (isFunction$2(getterOrOptions)) {
+    if (isFunction$3(getterOrOptions)) {
       getter = getterOrOptions;
     } else {
       getter = getterOrOptions.get;
@@ -1584,7 +1584,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     } else if (isReactive(source)) {
       getter = () => reactiveGetter(source);
       forceTrigger = true;
-    } else if (isArray$2(source)) {
+    } else if (isArray$3(source)) {
       isMultiSource = true;
       forceTrigger = source.some((s) => isReactive(s) || isShallow(s));
       getter = () => source.map((s) => {
@@ -1592,11 +1592,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           return s.value;
         } else if (isReactive(s)) {
           return reactiveGetter(s);
-        } else if (isFunction$2(s)) {
+        } else if (isFunction$3(s)) {
           return call ? call(s, 2) : s();
         } else ;
       });
-    } else if (isFunction$2(source)) {
+    } else if (isFunction$3(source)) {
       if (cb) {
         getter = call ? () => call(source, 2) : source;
       } else {
@@ -1707,7 +1707,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return watchHandle;
   }
   function traverse(value, depth = Infinity, seen2) {
-    if (depth <= 0 || !isObject$2(value) || value["__v_skip"]) {
+    if (depth <= 0 || !isObject$3(value) || value["__v_skip"]) {
       return value;
     }
     seen2 = seen2 || /* @__PURE__ */ new Set();
@@ -1718,7 +1718,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     depth--;
     if (isRef(value)) {
       traverse(value.value, depth, seen2);
-    } else if (isArray$2(value)) {
+    } else if (isArray$3(value)) {
       for (let i = 0; i < value.length; i++) {
         traverse(value[i], depth, seen2);
       }
@@ -1726,7 +1726,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       value.forEach((v) => {
         traverse(v, depth, seen2);
       });
-    } else if (isPlainObject$2(value)) {
+    } else if (isPlainObject$3(value)) {
       for (const key in value) {
         traverse(value[key], depth, seen2);
       }
@@ -1834,7 +1834,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return res;
   }
   function formatProp(key, value, raw) {
-    if (isString$2(value)) {
+    if (isString$3(value)) {
       value = JSON.stringify(value);
       return raw ? value : [`${key}=${value}`];
     } else if (typeof value === "number" || typeof value === "boolean" || value == null) {
@@ -1842,7 +1842,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     } else if (isRef(value)) {
       value = formatProp(key, toRaw(value.value), true);
       return raw ? value : [`${key}=Ref<`, value, `>`];
-    } else if (isFunction$2(value)) {
+    } else if (isFunction$3(value)) {
       return [`${key}=fn${value.name ? `<${value.name}>` : ``}`];
     } else {
       value = toRaw(value);
@@ -1857,16 +1857,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function callWithAsyncErrorHandling(fn, instance, type, args) {
-    if (isFunction$2(fn)) {
+    if (isFunction$3(fn)) {
       const res = callWithErrorHandling(fn, instance, type, args);
-      if (res && isPromise(res)) {
+      if (res && isPromise$1(res)) {
         res.catch((err) => {
           handleError(err, instance, type);
         });
       }
       return res;
     }
-    if (isArray$2(fn)) {
+    if (isArray$3(fn)) {
       const values = [];
       for (let i = 0; i < fn.length; i++) {
         values.push(callWithAsyncErrorHandling(fn[i], instance, type, args));
@@ -1958,7 +1958,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function queuePostFlushCb(cb) {
-    if (!isArray$2(cb)) {
+    if (!isArray$3(cb)) {
       if (activePostFlushCbs && cb.id === -1) {
         activePostFlushCbs.splice(postFlushIndex + 1, 0, cb);
       } else if (!(cb.flags & 1)) {
@@ -2091,7 +2091,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     for (let i = 0; i < directives.length; i++) {
       let [dir, value, arg, modifiers = EMPTY_OBJ] = directives[i];
       if (dir) {
-        if (isFunction$2(dir)) {
+        if (isFunction$3(dir)) {
           dir = {
             mounted: dir,
             updated: dir
@@ -2213,7 +2213,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const callAsyncHook = (hook, args) => {
       const done = args[1];
       callHook2(hook, args);
-      if (isArray$2(hook)) {
+      if (isArray$3(hook)) {
         if (hook.every((hook2) => hook2.length <= 1)) done();
       } else if (hook.length <= 1) {
         done();
@@ -2358,7 +2358,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   /*! #__NO_SIDE_EFFECTS__ */
   // @__NO_SIDE_EFFECTS__
   function defineComponent(options, extraOptions) {
-    return isFunction$2(options) ? (
+    return isFunction$3(options) ? (
       // #8236: extend call and options.name access are considered side-effects
       // by Rollup, so we have to wrap it in a pure-annotated IIFE.
       /* @__PURE__ */ (() => extend$1({ name: options.name }, extraOptions, { setup: options }))()
@@ -2368,11 +2368,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     instance.ids = [instance.ids[0] + instance.ids[2]++ + "-", 0, 0];
   }
   function setRef(rawRef, oldRawRef, parentSuspense, vnode, isUnmount = false) {
-    if (isArray$2(rawRef)) {
+    if (isArray$3(rawRef)) {
       rawRef.forEach(
         (r, i) => setRef(
           r,
-          oldRawRef && (isArray$2(oldRawRef) ? oldRawRef[i] : oldRawRef),
+          oldRawRef && (isArray$3(oldRawRef) ? oldRawRef[i] : oldRawRef),
           parentSuspense,
           vnode,
           isUnmount
@@ -2394,10 +2394,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const setupState = owner.setupState;
     const rawSetupState = toRaw(setupState);
     const canSetSetupRef = setupState === EMPTY_OBJ ? () => false : (key) => {
-      return hasOwn(rawSetupState, key);
+      return hasOwn$1(rawSetupState, key);
     };
     if (oldRef != null && oldRef !== ref3) {
-      if (isString$2(oldRef)) {
+      if (isString$3(oldRef)) {
         refs[oldRef] = null;
         if (canSetSetupRef(oldRef)) {
           setupState[oldRef] = null;
@@ -2406,19 +2406,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         oldRef.value = null;
       }
     }
-    if (isFunction$2(ref3)) {
+    if (isFunction$3(ref3)) {
       callWithErrorHandling(ref3, owner, 12, [value, refs]);
     } else {
-      const _isString = isString$2(ref3);
+      const _isString = isString$3(ref3);
       const _isRef = isRef(ref3);
       if (_isString || _isRef) {
         const doSet = () => {
           if (rawRef.f) {
             const existing = _isString ? canSetSetupRef(ref3) ? setupState[ref3] : refs[ref3] : ref3.value;
             if (isUnmount) {
-              isArray$2(existing) && remove(existing, refValue);
+              isArray$3(existing) && remove(existing, refValue);
             } else {
-              if (!isArray$2(existing)) {
+              if (!isArray$3(existing)) {
                 if (_isString) {
                   refs[ref3] = [refValue];
                   if (canSetSetupRef(ref3)) {
@@ -2451,8 +2451,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   }
-  getGlobalThis().requestIdleCallback || ((cb) => setTimeout(cb, 1));
-  getGlobalThis().cancelIdleCallback || ((id) => clearTimeout(id));
+  getGlobalThis$1().requestIdleCallback || ((cb) => setTimeout(cb, 1));
+  getGlobalThis$1().cancelIdleCallback || ((id) => clearTimeout(id));
   const isAsyncWrapper = (i) => !!i.type.__asyncLoader;
   const isKeepAlive = (vnode) => vnode.type.__isKeepAlive;
   function onActivated(hook, target) {
@@ -2544,7 +2544,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   const NULL_DYNAMIC_COMPONENT = Symbol.for("v-ndc");
   function resolveDynamicComponent(component) {
-    if (isString$2(component)) {
+    if (isString$3(component)) {
       return resolveAsset(COMPONENTS, component, false) || component;
     } else {
       return component || NULL_DYNAMIC_COMPONENT;
@@ -2562,7 +2562,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           Component,
           false
         );
-        if (selfName && (selfName === name || selfName === camelize(name) || selfName === capitalize(camelize(name)))) {
+        if (selfName && (selfName === name || selfName === camelize(name) || selfName === capitalize$1(camelize(name)))) {
           return Component;
         }
       }
@@ -2579,13 +2579,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function resolve(registry, name) {
-    return registry && (registry[name] || registry[camelize(name)] || registry[capitalize(camelize(name))]);
+    return registry && (registry[name] || registry[camelize(name)] || registry[capitalize$1(camelize(name))]);
   }
-  function renderList(source, renderItem, cache, index2) {
+  function renderList(source, renderItem, cache2, index2) {
     let ret;
-    const cached = cache;
-    const sourceIsArray = isArray$2(source);
-    if (sourceIsArray || isString$2(source)) {
+    const cached = cache2;
+    const sourceIsArray = isArray$3(source);
+    if (sourceIsArray || isString$3(source)) {
       const sourceIsReactiveArray = sourceIsArray && isReactive(source);
       let needsWrap = false;
       let isReadonlySource = false;
@@ -2608,7 +2608,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       for (let i = 0; i < source; i++) {
         ret[i] = renderItem(i + 1, i, void 0, cached);
       }
-    } else if (isObject$2(source)) {
+    } else if (isObject$3(source)) {
       if (source[Symbol.iterator]) {
         ret = Array.from(
           source,
@@ -2664,7 +2664,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function ensureValidVNode(vnodes) {
     return vnodes.some((child) => {
-      if (!isVNode(child)) return true;
+      if (!isVNode$1(child)) return true;
       if (child.type === Comment) return false;
       if (child.type === Fragment && !ensureValidVNode(child.children))
         return false;
@@ -2706,7 +2706,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       $watch: (i) => instanceWatch.bind(i)
     })
   );
-  const hasSetupBinding = (state, key) => state !== EMPTY_OBJ && !state.__isScriptSetup && hasOwn(state, key);
+  const hasSetupBinding = (state, key) => state !== EMPTY_OBJ && !state.__isScriptSetup && hasOwn$1(state, key);
   const PublicInstanceProxyHandlers = {
     get({ _: instance }, key) {
       if (key === "__v_skip") {
@@ -2730,17 +2730,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         } else if (hasSetupBinding(setupState, key)) {
           accessCache[key] = 1;
           return setupState[key];
-        } else if (data !== EMPTY_OBJ && hasOwn(data, key)) {
+        } else if (data !== EMPTY_OBJ && hasOwn$1(data, key)) {
           accessCache[key] = 2;
           return data[key];
         } else if (
           // only cache other properties when instance has declared (thus stable)
           // props
-          (normalizedProps = instance.propsOptions[0]) && hasOwn(normalizedProps, key)
+          (normalizedProps = instance.propsOptions[0]) && hasOwn$1(normalizedProps, key)
         ) {
           accessCache[key] = 3;
           return props[key];
-        } else if (ctx !== EMPTY_OBJ && hasOwn(ctx, key)) {
+        } else if (ctx !== EMPTY_OBJ && hasOwn$1(ctx, key)) {
           accessCache[key] = 4;
           return ctx[key];
         } else if (shouldCacheAccess) {
@@ -2759,12 +2759,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         (cssModule = type.__cssModules) && (cssModule = cssModule[key])
       ) {
         return cssModule;
-      } else if (ctx !== EMPTY_OBJ && hasOwn(ctx, key)) {
+      } else if (ctx !== EMPTY_OBJ && hasOwn$1(ctx, key)) {
         accessCache[key] = 4;
         return ctx[key];
       } else if (
         // global properties
-        globalProperties = appContext.config.globalProperties, hasOwn(globalProperties, key)
+        globalProperties = appContext.config.globalProperties, hasOwn$1(globalProperties, key)
       ) {
         {
           return globalProperties[key];
@@ -2776,10 +2776,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (hasSetupBinding(setupState, key)) {
         setupState[key] = value;
         return true;
-      } else if (data !== EMPTY_OBJ && hasOwn(data, key)) {
+      } else if (data !== EMPTY_OBJ && hasOwn$1(data, key)) {
         data[key] = value;
         return true;
-      } else if (hasOwn(instance.props, key)) {
+      } else if (hasOwn$1(instance.props, key)) {
         return false;
       }
       if (key[0] === "$" && key.slice(1) in instance) {
@@ -2795,19 +2795,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       _: { data, setupState, accessCache, ctx, appContext, propsOptions }
     }, key) {
       let normalizedProps;
-      return !!accessCache[key] || data !== EMPTY_OBJ && hasOwn(data, key) || hasSetupBinding(setupState, key) || (normalizedProps = propsOptions[0]) && hasOwn(normalizedProps, key) || hasOwn(ctx, key) || hasOwn(publicPropertiesMap, key) || hasOwn(appContext.config.globalProperties, key);
+      return !!accessCache[key] || data !== EMPTY_OBJ && hasOwn$1(data, key) || hasSetupBinding(setupState, key) || (normalizedProps = propsOptions[0]) && hasOwn$1(normalizedProps, key) || hasOwn$1(ctx, key) || hasOwn$1(publicPropertiesMap, key) || hasOwn$1(appContext.config.globalProperties, key);
     },
     defineProperty(target, key, descriptor) {
       if (descriptor.get != null) {
         target._.accessCache[key] = 0;
-      } else if (hasOwn(descriptor, "value")) {
+      } else if (hasOwn$1(descriptor, "value")) {
         this.set(target, key, descriptor.value, null);
       }
       return Reflect.defineProperty(target, key, descriptor);
     }
   };
   function normalizePropsOrEmits(props) {
-    return isArray$2(props) ? props.reduce(
+    return isArray$3(props) ? props.reduce(
       (normalized, p2) => (normalized[p2] = null, normalized),
       {}
     ) : props;
@@ -2861,7 +2861,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (methods) {
       for (const key in methods) {
         const methodHandler = methods[key];
-        if (isFunction$2(methodHandler)) {
+        if (isFunction$3(methodHandler)) {
           {
             ctx[key] = methodHandler.bind(publicThis);
           }
@@ -2870,7 +2870,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     if (dataOptions) {
       const data = dataOptions.call(publicThis, publicThis);
-      if (!isObject$2(data)) ;
+      if (!isObject$3(data)) ;
       else {
         instance.data = reactive(data);
       }
@@ -2879,8 +2879,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (computedOptions) {
       for (const key in computedOptions) {
         const opt = computedOptions[key];
-        const get = isFunction$2(opt) ? opt.bind(publicThis, publicThis) : isFunction$2(opt.get) ? opt.get.bind(publicThis, publicThis) : NOOP;
-        const set = !isFunction$2(opt) && isFunction$2(opt.set) ? opt.set.bind(publicThis) : NOOP;
+        const get = isFunction$3(opt) ? opt.bind(publicThis, publicThis) : isFunction$3(opt.get) ? opt.get.bind(publicThis, publicThis) : NOOP;
+        const set = !isFunction$3(opt) && isFunction$3(opt.set) ? opt.set.bind(publicThis) : NOOP;
         const c = computed({
           get,
           set
@@ -2899,7 +2899,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
     if (provideOptions) {
-      const provides = isFunction$2(provideOptions) ? provideOptions.call(publicThis) : provideOptions;
+      const provides = isFunction$3(provideOptions) ? provideOptions.call(publicThis) : provideOptions;
       Reflect.ownKeys(provides).forEach((key) => {
         provide(key, provides[key]);
       });
@@ -2908,7 +2908,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       callHook$1(created, instance, "c");
     }
     function registerLifecycleHook(register, hook) {
-      if (isArray$2(hook)) {
+      if (isArray$3(hook)) {
         hook.forEach((_hook) => register(_hook.bind(publicThis)));
       } else if (hook) {
         register(hook.bind(publicThis));
@@ -2926,7 +2926,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     registerLifecycleHook(onBeforeUnmount, beforeUnmount);
     registerLifecycleHook(onUnmounted, unmounted);
     registerLifecycleHook(onServerPrefetch, serverPrefetch);
-    if (isArray$2(expose)) {
+    if (isArray$3(expose)) {
       if (expose.length) {
         const exposed = instance.exposed || (instance.exposed = {});
         expose.forEach((key) => {
@@ -2952,13 +2952,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function resolveInjections(injectOptions, ctx, checkDuplicateProperties = NOOP) {
-    if (isArray$2(injectOptions)) {
+    if (isArray$3(injectOptions)) {
       injectOptions = normalizeInject(injectOptions);
     }
     for (const key in injectOptions) {
       const opt = injectOptions[key];
       let injected;
-      if (isObject$2(opt)) {
+      if (isObject$3(opt)) {
         if ("default" in opt) {
           injected = inject(
             opt.from || key,
@@ -2985,30 +2985,30 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function callHook$1(hook, instance, type) {
     callWithAsyncErrorHandling(
-      isArray$2(hook) ? hook.map((h2) => h2.bind(instance.proxy)) : hook.bind(instance.proxy),
+      isArray$3(hook) ? hook.map((h2) => h2.bind(instance.proxy)) : hook.bind(instance.proxy),
       instance,
       type
     );
   }
   function createWatcher(raw, ctx, publicThis, key) {
     let getter = key.includes(".") ? createPathGetter(publicThis, key) : () => publicThis[key];
-    if (isString$2(raw)) {
+    if (isString$3(raw)) {
       const handler = ctx[raw];
-      if (isFunction$2(handler)) {
+      if (isFunction$3(handler)) {
         {
           watch(getter, handler);
         }
       }
-    } else if (isFunction$2(raw)) {
+    } else if (isFunction$3(raw)) {
       {
         watch(getter, raw.bind(publicThis));
       }
-    } else if (isObject$2(raw)) {
-      if (isArray$2(raw)) {
+    } else if (isObject$3(raw)) {
+      if (isArray$3(raw)) {
         raw.forEach((r) => createWatcher(r, ctx, publicThis, key));
       } else {
-        const handler = isFunction$2(raw.handler) ? raw.handler.bind(publicThis) : ctx[raw.handler];
-        if (isFunction$2(handler)) {
+        const handler = isFunction$3(raw.handler) ? raw.handler.bind(publicThis) : ctx[raw.handler];
+        if (isFunction$3(handler)) {
           watch(getter, handler, raw);
         }
       }
@@ -3019,10 +3019,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const { mixins, extends: extendsOptions } = base;
     const {
       mixins: globalMixins,
-      optionsCache: cache,
+      optionsCache: cache2,
       config: { optionMergeStrategies }
     } = instance.appContext;
-    const cached = cache.get(base);
+    const cached = cache2.get(base);
     let resolved;
     if (cached) {
       resolved = cached;
@@ -3039,8 +3039,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       mergeOptions$1(resolved, base, optionMergeStrategies);
     }
-    if (isObject$2(base)) {
-      cache.set(base, resolved);
+    if (isObject$3(base)) {
+      cache2.set(base, resolved);
     }
     return resolved;
   }
@@ -3103,8 +3103,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
     return function mergedDataFn() {
       return extend$1(
-        isFunction$2(to) ? to.call(this, this) : to,
-        isFunction$2(from) ? from.call(this, this) : from
+        isFunction$3(to) ? to.call(this, this) : to,
+        isFunction$3(from) ? from.call(this, this) : from
       );
     };
   }
@@ -3112,7 +3112,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return mergeObjectOptions(normalizeInject(to), normalizeInject(from));
   }
   function normalizeInject(raw) {
-    if (isArray$2(raw)) {
+    if (isArray$3(raw)) {
       const res = {};
       for (let i = 0; i < raw.length; i++) {
         res[raw[i]] = raw[i];
@@ -3129,7 +3129,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function mergeEmitsOrPropsOptions(to, from) {
     if (to) {
-      if (isArray$2(to) && isArray$2(from)) {
+      if (isArray$3(to) && isArray$3(from)) {
         return [.../* @__PURE__ */ new Set([...to, ...from])];
       }
       return extend$1(
@@ -3174,10 +3174,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   let uid$1 = 0;
   function createAppAPI(render11, hydrate) {
     return function createApp2(rootComponent, rootProps = null) {
-      if (!isFunction$2(rootComponent)) {
+      if (!isFunction$3(rootComponent)) {
         rootComponent = extend$1({}, rootComponent);
       }
-      if (rootProps != null && !isObject$2(rootProps)) {
+      if (rootProps != null && !isObject$3(rootProps)) {
         rootProps = null;
       }
       const context = createAppContext();
@@ -3199,10 +3199,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         },
         use(plugin, ...options) {
           if (installedPlugins.has(plugin)) ;
-          else if (plugin && isFunction$2(plugin.install)) {
+          else if (plugin && isFunction$3(plugin.install)) {
             installedPlugins.add(plugin);
             plugin.install(app2, ...options);
-          } else if (isFunction$2(plugin)) {
+          } else if (isFunction$3(plugin)) {
             installedPlugins.add(plugin);
             plugin(app2, ...options);
           } else ;
@@ -3298,7 +3298,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (provides && key in provides) {
         return provides[key];
       } else if (arguments.length > 1) {
-        return treatDefaultAsFactory && isFunction$2(defaultValue) ? defaultValue.call(instance && instance.proxy) : defaultValue;
+        return treatDefaultAsFactory && isFunction$3(defaultValue) ? defaultValue.call(instance && instance.proxy) : defaultValue;
       } else ;
     }
   }
@@ -3353,7 +3353,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           }
           const value = rawProps[key];
           if (options) {
-            if (hasOwn(attrs, key)) {
+            if (hasOwn$1(attrs, key)) {
               if (value !== attrs[key]) {
                 attrs[key] = value;
                 hasAttrsChanged = true;
@@ -3384,9 +3384,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       let kebabKey;
       for (const key in rawCurrentProps) {
         if (!rawProps || // for camelCase
-        !hasOwn(rawProps, key) && // it's possible the original props was passed in as kebab-case
+        !hasOwn$1(rawProps, key) && // it's possible the original props was passed in as kebab-case
         // and converted to camelCase (#955)
-        ((kebabKey = hyphenate(key)) === key || !hasOwn(rawProps, kebabKey))) {
+        ((kebabKey = hyphenate(key)) === key || !hasOwn$1(rawProps, kebabKey))) {
           if (options) {
             if (rawPrevProps && // for camelCase
             (rawPrevProps[key] !== void 0 || // for kebab-case
@@ -3407,7 +3407,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       if (attrs !== rawCurrentProps) {
         for (const key in attrs) {
-          if (!rawProps || !hasOwn(rawProps, key) && true) {
+          if (!rawProps || !hasOwn$1(rawProps, key) && true) {
             delete attrs[key];
             hasAttrsChanged = true;
           }
@@ -3429,7 +3429,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
         const value = rawProps[key];
         let camelKey;
-        if (options && hasOwn(options, camelKey = camelize(key))) {
+        if (options && hasOwn$1(options, camelKey = camelize(key))) {
           if (!needCastKeys || !needCastKeys.includes(camelKey)) {
             props[camelKey] = value;
           } else {
@@ -3454,7 +3454,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           key,
           castValues[key],
           instance,
-          !hasOwn(castValues, key)
+          !hasOwn$1(castValues, key)
         );
       }
     }
@@ -3463,10 +3463,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function resolvePropValue(options, props, key, value, instance, isAbsent) {
     const opt = options[key];
     if (opt != null) {
-      const hasDefault = hasOwn(opt, "default");
+      const hasDefault = hasOwn$1(opt, "default");
       if (hasDefault && value === void 0) {
         const defaultValue = opt.default;
-        if (opt.type !== Function && !opt.skipFactory && isFunction$2(defaultValue)) {
+        if (opt.type !== Function && !opt.skipFactory && isFunction$3(defaultValue)) {
           const { propsDefaults } = instance;
           if (key in propsDefaults) {
             value = propsDefaults[key];
@@ -3503,8 +3503,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   const mixinPropsCache = /* @__PURE__ */ new WeakMap();
   function normalizePropsOptions(comp, appContext, asMixin = false) {
-    const cache = asMixin ? mixinPropsCache : appContext.propsCache;
-    const cached = cache.get(comp);
+    const cache2 = asMixin ? mixinPropsCache : appContext.propsCache;
+    const cached = cache2.get(comp);
     if (cached) {
       return cached;
     }
@@ -3512,7 +3512,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const normalized = {};
     const needCastKeys = [];
     let hasExtends = false;
-    if (!isFunction$2(comp)) {
+    if (!isFunction$3(comp)) {
       const extendProps = (raw2) => {
         hasExtends = true;
         const [props, keys] = normalizePropsOptions(raw2, appContext, true);
@@ -3530,12 +3530,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
     if (!raw && !hasExtends) {
-      if (isObject$2(comp)) {
-        cache.set(comp, EMPTY_ARR);
+      if (isObject$3(comp)) {
+        cache2.set(comp, EMPTY_ARR);
       }
       return EMPTY_ARR;
     }
-    if (isArray$2(raw)) {
+    if (isArray$3(raw)) {
       for (let i = 0; i < raw.length; i++) {
         const normalizedKey = camelize(raw[i]);
         if (validatePropName(normalizedKey)) {
@@ -3547,14 +3547,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         const normalizedKey = camelize(key);
         if (validatePropName(normalizedKey)) {
           const opt = raw[key];
-          const prop = normalized[normalizedKey] = isArray$2(opt) || isFunction$2(opt) ? { type: opt } : extend$1({}, opt);
+          const prop = normalized[normalizedKey] = isArray$3(opt) || isFunction$3(opt) ? { type: opt } : extend$1({}, opt);
           const propType = prop.type;
           let shouldCast = false;
           let shouldCastTrue = true;
-          if (isArray$2(propType)) {
+          if (isArray$3(propType)) {
             for (let index2 = 0; index2 < propType.length; ++index2) {
               const type = propType[index2];
-              const typeName = isFunction$2(type) && type.name;
+              const typeName = isFunction$3(type) && type.name;
               if (typeName === "Boolean") {
                 shouldCast = true;
                 break;
@@ -3563,7 +3563,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               }
             }
           } else {
-            shouldCast = isFunction$2(propType) && propType.name === "Boolean";
+            shouldCast = isFunction$3(propType) && propType.name === "Boolean";
           }
           prop[
             0
@@ -3573,15 +3573,15 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             1
             /* shouldCastTrue */
           ] = shouldCastTrue;
-          if (shouldCast || hasOwn(prop, "default")) {
+          if (shouldCast || hasOwn$1(prop, "default")) {
             needCastKeys.push(normalizedKey);
           }
         }
       }
     }
     const res = [normalized, needCastKeys];
-    if (isObject$2(comp)) {
-      cache.set(comp, res);
+    if (isObject$3(comp)) {
+      cache2.set(comp, res);
     }
     return res;
   }
@@ -3592,7 +3592,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return false;
   }
   const isInternalKey = (key) => key[0] === "_" || key === "$stable";
-  const normalizeSlotValue = (value) => isArray$2(value) ? value.map(normalizeVNode) : [normalizeVNode(value)];
+  const normalizeSlotValue = (value) => isArray$3(value) ? value.map(normalizeVNode) : [normalizeVNode(value)];
   const normalizeSlot$1 = (key, rawSlot, ctx) => {
     if (rawSlot._n) {
       return rawSlot;
@@ -3609,7 +3609,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     for (const key in rawSlots) {
       if (isInternalKey(key)) continue;
       const value = rawSlots[key];
-      if (isFunction$2(value)) {
+      if (isFunction$3(value)) {
         slots[key] = normalizeSlot$1(key, value, ctx);
       } else if (value != null) {
         const normalized = normalizeSlotValue(value);
@@ -3678,7 +3678,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return baseCreateRenderer(options);
   }
   function baseCreateRenderer(options, createHydrationFns) {
-    const target = getGlobalThis();
+    const target = getGlobalThis$1();
     target.__VUE__ = true;
     const {
       insert: hostInsert,
@@ -4843,7 +4843,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (bum) {
         invokeArrayFns(bum);
       }
-      if (parent && isArray$2(slotCacheKeys)) {
+      if (parent && isArray$3(slotCacheKeys)) {
         slotCacheKeys.forEach((v) => {
           parent.renderCache[v] = void 0;
         });
@@ -4944,7 +4944,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function traverseStaticChildren(n1, n2, shallow = false) {
     const ch1 = n1.children;
     const ch2 = n2.children;
-    if (isArray$2(ch1) && isArray$2(ch2)) {
+    if (isArray$3(ch1) && isArray$3(ch2)) {
       for (let i = 0; i < ch1.length; i++) {
         const c1 = ch1[i];
         let c2 = ch2[i];
@@ -5090,9 +5090,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function instanceWatch(source, value, options) {
     const publicThis = this.proxy;
-    const getter = isString$2(source) ? source.includes(".") ? createPathGetter(publicThis, source) : () => publicThis[source] : source.bind(publicThis, publicThis);
+    const getter = isString$3(source) ? source.includes(".") ? createPathGetter(publicThis, source) : () => publicThis[source] : source.bind(publicThis, publicThis);
     let cb;
-    if (isFunction$2(value)) {
+    if (isFunction$3(value)) {
       cb = value;
     } else {
       cb = value.handler;
@@ -5124,7 +5124,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const modifiers = isModelListener2 && getModelModifiers(props, event.slice(7));
     if (modifiers) {
       if (modifiers.trim) {
-        args = rawArgs.map((a) => isString$2(a) ? a.trim() : a);
+        args = rawArgs.map((a) => isString$3(a) ? a.trim() : a);
       }
       if (modifiers.number) {
         args = rawArgs.map(looseToNumber);
@@ -5161,15 +5161,15 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function normalizeEmitsOptions(comp, appContext, asMixin = false) {
-    const cache = appContext.emitsCache;
-    const cached = cache.get(comp);
+    const cache2 = appContext.emitsCache;
+    const cached = cache2.get(comp);
     if (cached !== void 0) {
       return cached;
     }
     const raw = comp.emits;
     let normalized = {};
     let hasExtends = false;
-    if (!isFunction$2(comp)) {
+    if (!isFunction$3(comp)) {
       const extendEmits = (raw2) => {
         const normalizedFromExtend = normalizeEmitsOptions(raw2, appContext, true);
         if (normalizedFromExtend) {
@@ -5188,18 +5188,18 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
     if (!raw && !hasExtends) {
-      if (isObject$2(comp)) {
-        cache.set(comp, null);
+      if (isObject$3(comp)) {
+        cache2.set(comp, null);
       }
       return null;
     }
-    if (isArray$2(raw)) {
+    if (isArray$3(raw)) {
       raw.forEach((key) => normalized[key] = null);
     } else {
       extend$1(normalized, raw);
     }
-    if (isObject$2(comp)) {
-      cache.set(comp, normalized);
+    if (isObject$3(comp)) {
+      cache2.set(comp, normalized);
     }
     return normalized;
   }
@@ -5208,7 +5208,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return false;
     }
     key = key.slice(2).replace(/Once$/, "");
-    return hasOwn(options, key[0].toLowerCase() + key.slice(1)) || hasOwn(options, hyphenate(key)) || hasOwn(options, key);
+    return hasOwn$1(options, key[0].toLowerCase() + key.slice(1)) || hasOwn$1(options, hyphenate(key)) || hasOwn$1(options, key);
   }
   function markAttrsAccessed() {
   }
@@ -5405,7 +5405,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const isSuspense = (type) => type.__isSuspense;
   function queueEffectWithSuspense(fn, suspense) {
     if (suspense && suspense.pendingBranch) {
-      if (isArray$2(fn)) {
+      if (isArray$3(fn)) {
         suspense.effects.push(...fn);
       } else {
         suspense.effects.push(fn);
@@ -5467,7 +5467,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       )
     );
   }
-  function isVNode(value) {
+  function isVNode$1(value) {
     return value ? value.__v_isVNode === true : false;
   }
   function isSameVNodeType(n1, n2) {
@@ -5482,7 +5482,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (typeof ref3 === "number") {
       ref3 = "" + ref3;
     }
-    return ref3 != null ? isString$2(ref3) || isRef(ref3) || isFunction$2(ref3) ? { i: currentRenderingInstance, r: ref3, k: ref_key, f: !!ref_for } : ref3 : null;
+    return ref3 != null ? isString$3(ref3) || isRef(ref3) || isFunction$3(ref3) ? { i: currentRenderingInstance, r: ref3, k: ref_key, f: !!ref_for } : ref3 : null;
   };
   function createBaseVNode(type, props = null, children = null, patchFlag = 0, dynamicProps = null, shapeFlag = type === Fragment ? 0 : 1, isBlockNode = false, needFullChildrenNormalization = false) {
     const vnode = {
@@ -5520,7 +5520,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         type.normalize(vnode);
       }
     } else if (children) {
-      vnode.shapeFlag |= isString$2(children) ? 8 : 16;
+      vnode.shapeFlag |= isString$3(children) ? 8 : 16;
     }
     if (isBlockTreeEnabled > 0 && // avoid a block node from tracking itself
     !isBlockNode && // has current parent block
@@ -5540,7 +5540,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (!type || type === NULL_DYNAMIC_COMPONENT) {
       type = Comment;
     }
-    if (isVNode(type)) {
+    if (isVNode$1(type)) {
       const cloned = cloneVNode(
         type,
         props,
@@ -5566,17 +5566,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (props) {
       props = guardReactiveProps(props);
       let { class: klass, style } = props;
-      if (klass && !isString$2(klass)) {
+      if (klass && !isString$3(klass)) {
         props.class = normalizeClass(klass);
       }
-      if (isObject$2(style)) {
-        if (isProxy(style) && !isArray$2(style)) {
+      if (isObject$3(style)) {
+        if (isProxy(style) && !isArray$3(style)) {
           style = extend$1({}, style);
         }
         props.style = normalizeStyle(style);
       }
     }
-    const shapeFlag = isString$2(type) ? 1 : isSuspense(type) ? 128 : isTeleport(type) ? 64 : isObject$2(type) ? 4 : isFunction$2(type) ? 2 : 0;
+    const shapeFlag = isString$3(type) ? 1 : isSuspense(type) ? 128 : isTeleport(type) ? 64 : isObject$3(type) ? 4 : isFunction$3(type) ? 2 : 0;
     return createBaseVNode(
       type,
       props,
@@ -5605,7 +5605,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         // #2078 in the case of <component :is="vnode" ref="extra"/>
         // if the vnode itself already has a ref, cloneVNode will need to merge
         // the refs so the single vnode can be set on multiple refs
-        mergeRef && ref3 ? isArray$2(ref3) ? ref3.concat(normalizeRef(extraProps)) : [ref3, normalizeRef(extraProps)] : normalizeRef(extraProps)
+        mergeRef && ref3 ? isArray$3(ref3) ? ref3.concat(normalizeRef(extraProps)) : [ref3, normalizeRef(extraProps)] : normalizeRef(extraProps)
       ) : ref3,
       scopeId: vnode.scopeId,
       slotScopeIds: vnode.slotScopeIds,
@@ -5649,25 +5649,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function createTextVNode(text = " ", flag = 0) {
     return createVNode(Text, null, text, flag);
   }
-  function createStaticVNode(content, numberOfNodes) {
-    const vnode = createVNode(Static, null, content);
-    vnode.staticCount = numberOfNodes;
-    return vnode;
-  }
   function createCommentVNode(text = "", asBlock = false) {
     return asBlock ? (openBlock(), createBlock(Comment, null, text)) : createVNode(Comment, null, text);
   }
   function normalizeVNode(child) {
     if (child == null || typeof child === "boolean") {
       return createVNode(Comment);
-    } else if (isArray$2(child)) {
+    } else if (isArray$3(child)) {
       return createVNode(
         Fragment,
         null,
         // #3666, avoid reference pollution when reusing vnode
         child.slice()
       );
-    } else if (isVNode(child)) {
+    } else if (isVNode$1(child)) {
       return cloneIfMounted(child);
     } else {
       return createVNode(Text, null, String(child));
@@ -5681,7 +5676,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const { shapeFlag } = vnode;
     if (children == null) {
       children = null;
-    } else if (isArray$2(children)) {
+    } else if (isArray$3(children)) {
       type = 16;
     } else if (typeof children === "object") {
       if (shapeFlag & (1 | 64)) {
@@ -5706,7 +5701,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           }
         }
       }
-    } else if (isFunction$2(children)) {
+    } else if (isFunction$3(children)) {
       children = { default: children, _ctx: currentRenderingInstance };
       type = 32;
     } else {
@@ -5735,7 +5730,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         } else if (isOn(key)) {
           const existing = ret[key];
           const incoming = toMerge[key];
-          if (incoming && existing !== incoming && !(isArray$2(existing) && existing.includes(incoming))) {
+          if (incoming && existing !== incoming && !(isArray$3(existing) && existing.includes(incoming))) {
             ret[key] = existing ? [].concat(existing, incoming) : incoming;
           }
         } else if (key !== "") {
@@ -5847,7 +5842,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   let internalSetCurrentInstance;
   let setInSSRSetupState;
   {
-    const g = getGlobalThis();
+    const g = getGlobalThis$1();
     const registerGlobalSetter = (key, setter) => {
       let setters;
       if (!(setters = g[key])) setters = g[key] = [];
@@ -5911,7 +5906,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           setupContext
         ]
       );
-      const isAsyncSetup = isPromise(setupResult);
+      const isAsyncSetup = isPromise$1(setupResult);
       resetTracking();
       reset();
       if ((isAsyncSetup || instance.sp) && !isAsyncWrapper(instance)) {
@@ -5936,13 +5931,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function handleSetupResult(instance, setupResult, isSSR) {
-    if (isFunction$2(setupResult)) {
+    if (isFunction$3(setupResult)) {
       if (instance.type.__ssrInlineRender) {
         instance.ssrRender = setupResult;
       } else {
         instance.render = setupResult;
       }
-    } else if (isObject$2(setupResult)) {
+    } else if (isObject$3(setupResult)) {
       instance.setupState = proxyRefs(setupResult);
     } else ;
     finishComponentSetup(instance);
@@ -6003,7 +5998,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const classifyRE = /(?:^|[-_])(\w)/g;
   const classify = (str) => str.replace(classifyRE, (c) => c.toUpperCase()).replace(/[-_]/g, "");
   function getComponentName(Component, includeInferred = true) {
-    return isFunction$2(Component) ? Component.displayName || Component.name : Component.name || includeInferred && Component.__name;
+    return isFunction$3(Component) ? Component.displayName || Component.name : Component.name || includeInferred && Component.__name;
   }
   function formatComponentName(instance, Component, isRoot = false) {
     let name = getComponentName(Component);
@@ -6028,7 +6023,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return name ? classify(name) : isRoot ? `App` : `Anonymous`;
   }
   function isClassComponent(value) {
-    return isFunction$2(value) && "__vccOpts" in value;
+    return isFunction$3(value) && "__vccOpts" in value;
   }
   const computed = (getterOrOptions, debugOptions) => {
     const c = computed$1(getterOrOptions, debugOptions, isInSSRComponentSetup);
@@ -6037,8 +6032,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function h(type, propsOrChildren, children) {
     const l = arguments.length;
     if (l === 2) {
-      if (isObject$2(propsOrChildren) && !isArray$2(propsOrChildren)) {
-        if (isVNode(propsOrChildren)) {
+      if (isObject$3(propsOrChildren) && !isArray$3(propsOrChildren)) {
+        if (isVNode$1(propsOrChildren)) {
           return createVNode(type, null, [propsOrChildren]);
         }
         return createVNode(type, propsOrChildren);
@@ -6048,7 +6043,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     } else {
       if (l > 3) {
         children = Array.prototype.slice.call(arguments, 2);
-      } else if (l === 3 && isVNode(children)) {
+      } else if (l === 3 && isVNode$1(children)) {
         children = [children];
       }
       return createVNode(type, propsOrChildren, children);
@@ -6166,14 +6161,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     DOMTransitionPropsValidators
   );
   const callHook = (hook, args = []) => {
-    if (isArray$2(hook)) {
+    if (isArray$3(hook)) {
       hook.forEach((h2) => h2(...args));
     } else if (hook) {
       hook(...args);
     }
   };
   const hasExplicitCallback = (hook) => {
-    return hook ? isArray$2(hook) ? hook.some((h2) => h2.length > 1) : hook.length > 1 : false;
+    return hook ? isArray$3(hook) ? hook.some((h2) => h2.length > 1) : hook.length > 1 : false;
   };
   function resolveTransitionProps(rawProps) {
     const baseProps = {};
@@ -6292,7 +6287,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   function normalizeDuration(duration) {
     if (duration == null) {
       return null;
-    } else if (isObject$2(duration)) {
+    } else if (isObject$3(duration)) {
       return [NumberOf(duration.enter), NumberOf(duration.leave)];
     } else {
       const n = NumberOf(duration);
@@ -6464,11 +6459,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const displayRE = /(^|;)\s*display\s*:/;
   function patchStyle(el, prev, next) {
     const style = el.style;
-    const isCssString = isString$2(next);
+    const isCssString = isString$3(next);
     let hasControlledDisplay = false;
     if (next && !isCssString) {
       if (prev) {
-        if (!isString$2(prev)) {
+        if (!isString$3(prev)) {
           for (const key in prev) {
             if (next[key] == null) {
               setStyle(style, key, "");
@@ -6512,7 +6507,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   const importantRE = /\s*!important$/;
   function setStyle(style, name, val) {
-    if (isArray$2(val)) {
+    if (isArray$3(val)) {
       val.forEach((v) => setStyle(style, name, v));
     } else {
       if (val == null) val = "";
@@ -6543,7 +6538,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (name !== "filter" && name in style) {
       return prefixCache[rawName] = name;
     }
-    name = capitalize(name);
+    name = capitalize$1(name);
     for (let i = 0; i < prefixes.length; i++) {
       const prefixed = prefixes[i] + name;
       if (prefixed in style) {
@@ -6677,7 +6672,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return invoker;
   }
   function patchStopImmediatePropagation(e, value) {
-    if (isArray$2(value)) {
+    if (isArray$3(value)) {
       const originalStop = e.stopImmediatePropagation;
       e.stopImmediatePropagation = () => {
         originalStop.call(e);
@@ -6709,7 +6704,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     } else if (
       // #11081 force set props for possible async custom element
-      el._isVueCE && (/[A-Z]/.test(key) || !isString$2(nextValue))
+      el._isVueCE && (/[A-Z]/.test(key) || !isString$3(nextValue))
     ) {
       patchDOMProp(el, camelize(key), nextValue, parentComponent, key);
     } else {
@@ -6726,7 +6721,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       if (key === "innerHTML" || key === "textContent") {
         return true;
       }
-      if (key in el && isNativeOn(key) && isFunction$2(value)) {
+      if (key in el && isNativeOn(key) && isFunction$3(value)) {
         return true;
       }
       return false;
@@ -6749,7 +6744,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         return false;
       }
     }
-    if (isNativeOn(key) && isString$2(value)) {
+    if (isNativeOn(key) && isString$3(value)) {
       return false;
     }
     return key in el;
@@ -6758,9 +6753,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const newPositionMap = /* @__PURE__ */ new WeakMap();
   const moveCbKey = Symbol("_moveCb");
   const enterCbKey = Symbol("_enterCb");
-  const decorate = (t) => {
-    delete t.props.mode;
-    return t;
+  const decorate = (t2) => {
+    delete t2.props.mode;
+    return t2;
   };
   const TransitionGroupImpl = /* @__PURE__ */ decorate({
     name: "TransitionGroup",
@@ -6892,7 +6887,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   const getModelAssigner = (vnode) => {
     const fn = vnode.props["onUpdate:modelValue"] || false;
-    return isArray$2(fn) ? (value) => invokeArrayFns(fn, value) : fn;
+    return isArray$3(fn) ? (value) => invokeArrayFns(fn, value) : fn;
   };
   function onCompositionStart(e) {
     e.target.composing = true;
@@ -6906,9 +6901,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   const assignKey = Symbol("_assign");
   const vModelText = {
-    created(el, { modifiers: { lazy, trim: trim2, number } }, vnode) {
+    created(el, { modifiers: { lazy, trim: trim2, number: number2 } }, vnode) {
       el[assignKey] = getModelAssigner(vnode);
-      const castToNumber = number || vnode.props && vnode.props.type === "number";
+      const castToNumber = number2 || vnode.props && vnode.props.type === "number";
       addEventListener$1(el, lazy ? "change" : "input", (e) => {
         if (e.target.composing) return;
         let domValue = el.value;
@@ -6935,10 +6930,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     mounted(el, { value }) {
       el.value = value == null ? "" : value;
     },
-    beforeUpdate(el, { value, oldValue, modifiers: { lazy, trim: trim2, number } }, vnode) {
+    beforeUpdate(el, { value, oldValue, modifiers: { lazy, trim: trim2, number: number2 } }, vnode) {
       el[assignKey] = getModelAssigner(vnode);
       if (el.composing) return;
-      const elValue = (number || el.type === "number") && !/^0\d/.test(el.value) ? looseToNumber(el.value) : el.value;
+      const elValue = (number2 || el.type === "number") && !/^0\d/.test(el.value) ? looseToNumber(el.value) : el.value;
       const newValue = value == null ? "" : value;
       if (elValue === newValue) {
         return;
@@ -6969,9 +6964,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     exact: (e, modifiers) => systemModifiers.some((m) => e[`${m}Key`] && !modifiers.includes(m))
   };
   const withModifiers = (fn, modifiers) => {
-    const cache = fn._withMods || (fn._withMods = {});
+    const cache2 = fn._withMods || (fn._withMods = {});
     const cacheKey = modifiers.join(".");
-    return cache[cacheKey] || (cache[cacheKey] = (event, ...args) => {
+    return cache2[cacheKey] || (cache2[cacheKey] = (event, ...args) => {
       for (let i = 0; i < modifiers.length; i++) {
         const guard = modifierGuards[modifiers[i]];
         if (guard && guard(event, modifiers)) return;
@@ -6991,7 +6986,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const container = normalizeContainer(containerOrSelector);
       if (!container) return;
       const component = app2._component;
-      if (!isFunction$2(component) && !component.render && !component.template) {
+      if (!isFunction$3(component) && !component.render && !component.template) {
         component.template = container.innerHTML;
       }
       if (container.nodeType === 1) {
@@ -7015,7 +7010,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     }
   }
   function normalizeContainer(container) {
-    if (isString$2(container)) {
+    if (isString$3(container)) {
       const res = document.querySelector(container);
       return res;
     }
@@ -7035,18 +7030,18 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     // add the Module string tag
     obj.default && isRouteComponent(obj.default);
   }
-  const assign$1 = Object.assign;
+  const assign$2 = Object.assign;
   function applyToParams(fn, params) {
     const newParams = {};
     for (const key in params) {
       const value = params[key];
-      newParams[key] = isArray$1(value) ? value.map(fn) : fn(value);
+      newParams[key] = isArray$2(value) ? value.map(fn) : fn(value);
     }
     return newParams;
   }
   const noop$2 = () => {
   };
-  const isArray$1 = Array.isArray;
+  const isArray$2 = Array.isArray;
   const HASH_RE = /#/g;
   const AMPERSAND_RE = /&/g;
   const SLASH_RE = /\//g;
@@ -7139,10 +7134,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return true;
   }
   function isSameRouteLocationParamsValue(a, b) {
-    return isArray$1(a) ? isEquivalentArray(a, b) : isArray$1(b) ? isEquivalentArray(b, a) : a === b;
+    return isArray$2(a) ? isEquivalentArray(a, b) : isArray$2(b) ? isEquivalentArray(b, a) : a === b;
   }
   function isEquivalentArray(a, b) {
-    return isArray$1(b) ? a.length === b.length && a.every((value, i) => value === b[i]) : a.length === 1 && a[0] === b;
+    return isArray$2(b) ? a.length === b.length && a.every((value, i) => value === b[i]) : a.length === 1 && a[0] === b;
   }
   function resolveRelativePath(to, from) {
     if (to.startsWith("/"))
@@ -7315,7 +7310,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const { history: history2 } = window;
       if (!history2.state)
         return;
-      history2.replaceState(assign$1({}, history2.state, { scroll: computeScrollPosition() }), "");
+      history2.replaceState(assign$2({}, history2.state, { scroll: computeScrollPosition() }), "");
     }
     function destroy() {
       for (const teardown of teardowns)
@@ -7377,7 +7372,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
     function replace(to, data) {
-      const state = assign$1({}, history2.state, buildState(
+      const state = assign$2({}, history2.state, buildState(
         historyState.value.back,
         // keep back and forward entries but override current position
         to,
@@ -7388,7 +7383,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       currentLocation.value = to;
     }
     function push(to, data) {
-      const currentState = assign$1(
+      const currentState = assign$2(
         {},
         // use current history state to gracefully handle a wrong call to
         // history.replaceState
@@ -7401,7 +7396,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
       );
       changeLocation(currentState.current, currentState, true);
-      const state = assign$1({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
+      const state = assign$2({}, buildState(currentLocation.value, to, null), { position: currentState.position + 1 }, data);
       changeLocation(to, state, false);
       currentLocation.value = to;
     }
@@ -7421,7 +7416,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         historyListeners.pauseListeners();
       history.go(delta);
     }
-    const routerHistory = assign$1({
+    const routerHistory = assign$2({
       // it's overridden right after
       location: "",
       base,
@@ -7453,7 +7448,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   })(NavigationFailureType || (NavigationFailureType = {}));
   function createRouterError(type, params) {
     {
-      return assign$1(new Error(), {
+      return assign$2(new Error(), {
         type,
         [NavigationFailureSymbol]: true
       }, params);
@@ -7471,7 +7466,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const REGEX_CHARS_RE = /[.+*?^${}()[\]/\\]/g;
   function tokensToParser(segments, extraOptions) {
-    const options = assign$1({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
+    const options = assign$2({}, BASE_PATH_PARSER_OPTIONS, extraOptions);
     const score = [];
     let pattern = options.start ? "^" : "";
     const keys = [];
@@ -7537,7 +7532,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     else if (options.strict && !pattern.endsWith("/"))
       pattern += "(?:/|$)";
     const re = new RegExp(pattern, options.sensitive ? "" : "i");
-    function parse(path) {
+    function parse2(path) {
       const match = path.match(re);
       const params = {};
       if (!match)
@@ -7562,10 +7557,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           } else if (token.type === 1) {
             const { value, repeatable, optional } = token;
             const param = value in params ? params[value] : "";
-            if (isArray$1(param) && !repeatable) {
+            if (isArray$2(param) && !repeatable) {
               throw new Error(`Provided param "${value}" is an array but it is not repeatable (* or + modifiers)`);
             }
-            const text = isArray$1(param) ? param.join("/") : param;
+            const text = isArray$2(param) ? param.join("/") : param;
             if (!text) {
               if (optional) {
                 if (segment.length < 2) {
@@ -7587,7 +7582,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       re,
       score,
       keys,
-      parse,
+      parse: parse2,
       stringify
     };
   }
@@ -7750,7 +7745,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function createRouteRecordMatcher(record, parent, options) {
     const parser = tokensToParser(tokenizePath(record.path), options);
-    const matcher = assign$1(parser, {
+    const matcher = assign$2(parser, {
       record,
       parent,
       // these needs to be populated by the parent
@@ -7782,7 +7777,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           normalizedRecords.push(
             // we need to normalize again to ensure the `mods` property
             // being non enumerable
-            normalizeRouteRecord(assign$1({}, mainNormalizedRecord, {
+            normalizeRouteRecord(assign$2({}, mainNormalizedRecord, {
               // this allows us to hold a copy of the `components` option
               // so that async components cache is hold on the original record
               components: originalRecord ? originalRecord.record.components : mainNormalizedRecord.components,
@@ -7871,7 +7866,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             location: location2
           });
         name = matcher.record.name;
-        params = assign$1(
+        params = assign$2(
           // paramsFromLocation is a new object
           paramsFromLocation(
             currentLocation.params,
@@ -7899,7 +7894,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             currentLocation
           });
         name = matcher.record.name;
-        params = assign$1({}, currentLocation.params, location2.params);
+        params = assign$2({}, currentLocation.params, location2.params);
         path = matcher.stringify(params);
       }
       const matched = [];
@@ -7981,7 +7976,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     return false;
   }
   function mergeMetaFields(matched) {
-    return matched.reduce((meta, record) => assign$1(meta, record.meta), {});
+    return matched.reduce((meta, record) => assign$2(meta, record.meta), {});
   }
   function mergeOptions(defaults2, partialOptions) {
     const options = {};
@@ -8033,7 +8028,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const value = eqPos < 0 ? null : decode(searchParam.slice(eqPos + 1));
       if (key in query) {
         let currentValue = query[key];
-        if (!isArray$1(currentValue)) {
+        if (!isArray$2(currentValue)) {
           currentValue = query[key] = [currentValue];
         }
         currentValue.push(value);
@@ -8054,7 +8049,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
         continue;
       }
-      const values = isArray$1(value) ? value.map((v) => v && encodeQueryValue(v)) : [value && encodeQueryValue(value)];
+      const values = isArray$2(value) ? value.map((v) => v && encodeQueryValue(v)) : [value && encodeQueryValue(value)];
       values.forEach((value2) => {
         if (value2 !== void 0) {
           search += (search.length ? "&" : "") + key;
@@ -8070,7 +8065,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     for (const key in query) {
       const value = query[key];
       if (value !== void 0) {
-        normalizedQuery[key] = isArray$1(value) ? value.map((v) => v == null ? null : "" + v) : value == null ? value : "" + value;
+        normalizedQuery[key] = isArray$2(value) ? value.map((v) => v == null ? null : "" + v) : value == null ? value : "" + value;
       }
     }
     return normalizedQuery;
@@ -8282,7 +8277,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         if (innerValue !== outerValue)
           return false;
       } else {
-        if (!isArray$1(outerValue) || outerValue.length !== innerValue.length || innerValue.some((value, i) => value !== outerValue[i]))
+        if (!isArray$2(outerValue) || outerValue.length !== innerValue.length || innerValue.some((value, i) => value !== outerValue[i]))
           return false;
       }
     }
@@ -8357,7 +8352,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             matchedRoute.instances[currentName] = null;
           }
         };
-        const component = h(ViewComponent, assign$1({}, routeProps, attrs, {
+        const component = h(ViewComponent, assign$2({}, routeProps, attrs, {
           onVnodeUnmounted,
           ref: viewRef
         }));
@@ -8419,12 +8414,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return !!matcher.getRecordMatcher(name);
     }
     function resolve2(rawLocation, currentLocation) {
-      currentLocation = assign$1({}, currentLocation || currentRoute.value);
+      currentLocation = assign$2({}, currentLocation || currentRoute.value);
       if (typeof rawLocation === "string") {
         const locationNormalized = parseURL(parseQuery$1, rawLocation, currentLocation.path);
         const matchedRoute2 = matcher.resolve({ path: locationNormalized.path }, currentLocation);
         const href2 = routerHistory.createHref(locationNormalized.fullPath);
-        return assign$1(locationNormalized, matchedRoute2, {
+        return assign$2(locationNormalized, matchedRoute2, {
           params: decodeParams(matchedRoute2.params),
           hash: decode(locationNormalized.hash),
           redirectedFrom: void 0,
@@ -8433,17 +8428,17 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       let matcherLocation;
       if (rawLocation.path != null) {
-        matcherLocation = assign$1({}, rawLocation, {
+        matcherLocation = assign$2({}, rawLocation, {
           path: parseURL(parseQuery$1, rawLocation.path, currentLocation.path).path
         });
       } else {
-        const targetParams = assign$1({}, rawLocation.params);
+        const targetParams = assign$2({}, rawLocation.params);
         for (const key in targetParams) {
           if (targetParams[key] == null) {
             delete targetParams[key];
           }
         }
-        matcherLocation = assign$1({}, rawLocation, {
+        matcherLocation = assign$2({}, rawLocation, {
           params: encodeParams(targetParams)
         });
         currentLocation.params = encodeParams(currentLocation.params);
@@ -8451,12 +8446,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const matchedRoute = matcher.resolve(matcherLocation, currentLocation);
       const hash = rawLocation.hash || "";
       matchedRoute.params = normalizeParams(decodeParams(matchedRoute.params));
-      const fullPath = stringifyURL(stringifyQuery$1, assign$1({}, rawLocation, {
+      const fullPath = stringifyURL(stringifyQuery$1, assign$2({}, rawLocation, {
         hash: encodeHash(hash),
         path: matchedRoute.path
       }));
       const href = routerHistory.createHref(fullPath);
-      return assign$1({
+      return assign$2({
         fullPath,
         // keep the hash encoded so fullPath is effectively path + encodedQuery +
         // hash
@@ -8475,7 +8470,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       });
     }
     function locationAsObject(to) {
-      return typeof to === "string" ? parseURL(parseQuery$1, to, currentRoute.value.path) : assign$1({}, to);
+      return typeof to === "string" ? parseURL(parseQuery$1, to, currentRoute.value.path) : assign$2({}, to);
     }
     function checkCanceledNavigation(to, from) {
       if (pendingLocation !== to) {
@@ -8489,7 +8484,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       return pushWithRedirect(to);
     }
     function replace(to) {
-      return push(assign$1(locationAsObject(to), { replace: true }));
+      return push(assign$2(locationAsObject(to), { replace: true }));
     }
     function handleRedirectRecord(to) {
       const lastMatched = to.matched[to.matched.length - 1];
@@ -8503,7 +8498,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           );
           newTargetLocation.params = {};
         }
-        return assign$1({
+        return assign$2({
           query: to.query,
           hash: to.hash,
           // avoid transferring params if the redirect has a path
@@ -8520,8 +8515,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const shouldRedirect = handleRedirectRecord(targetLocation);
       if (shouldRedirect)
         return pushWithRedirect(
-          assign$1(locationAsObject(shouldRedirect), {
-            state: typeof shouldRedirect === "object" ? assign$1({}, data, shouldRedirect.state) : data,
+          assign$2(locationAsObject(shouldRedirect), {
+            state: typeof shouldRedirect === "object" ? assign$2({}, data, shouldRedirect.state) : data,
             force,
             replace: replace2
           }),
@@ -8563,11 +8558,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           )) {
             return pushWithRedirect(
               // keep options
-              assign$1({
+              assign$2({
                 // preserve an existing replacement but allow the redirect to override it
                 replace: replace2
               }, locationAsObject(failure2.to), {
-                state: typeof failure2.to === "object" ? assign$1({}, data, failure2.to.state) : data,
+                state: typeof failure2.to === "object" ? assign$2({}, data, failure2.to.state) : data,
                 force
               }),
               // preserve the original redirectedFrom if any
@@ -8620,7 +8615,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         guards = [];
         for (const record of enteringRecords) {
           if (record.beforeEnter) {
-            if (isArray$1(record.beforeEnter)) {
+            if (isArray$2(record.beforeEnter)) {
               for (const beforeEnter of record.beforeEnter)
                 guards.push(guardToPromiseFn(beforeEnter, to, from));
             } else {
@@ -8659,7 +8654,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const state = !isBrowser$1 ? {} : history.state;
       if (isPush) {
         if (replace2 || isFirstNavigation)
-          routerHistory.replace(toLocation.fullPath, assign$1({
+          routerHistory.replace(toLocation.fullPath, assign$2({
             scroll: isFirstNavigation && state && state.scroll
           }, data));
         else
@@ -8679,7 +8674,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         const toLocation = resolve2(to);
         const shouldRedirect = handleRedirectRecord(toLocation);
         if (shouldRedirect) {
-          pushWithRedirect(assign$1(shouldRedirect, { replace: true, force: true }), toLocation).catch(noop$2);
+          pushWithRedirect(assign$2(shouldRedirect, { replace: true, force: true }), toLocation).catch(noop$2);
           return;
         }
         pendingLocation = toLocation;
@@ -8701,7 +8696,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             /* ErrorTypes.NAVIGATION_GUARD_REDIRECT */
           )) {
             pushWithRedirect(
-              assign$1(locationAsObject(error.to), {
+              assign$2(locationAsObject(error.to), {
                 force: true
               }),
               toLocation
@@ -8907,19 +8902,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     return a;
   };
-  var isFunction$1 = (value) => typeof value === "function";
-  var isString$1 = (value) => typeof value === "string";
-  var isNonEmptyString = (value) => isString$1(value) && value.trim().length > 0;
-  var isNumber$1 = (value) => typeof value === "number";
+  var isFunction$2 = (value) => typeof value === "function";
+  var isString$2 = (value) => typeof value === "string";
+  var isNonEmptyString = (value) => isString$2(value) && value.trim().length > 0;
+  var isNumber$2 = (value) => typeof value === "number";
   var isUndefined$1 = (value) => typeof value === "undefined";
-  var isObject$1 = (value) => typeof value === "object" && value !== null;
+  var isObject$2 = (value) => typeof value === "object" && value !== null;
   var isJSX = (obj) => hasProp(obj, "tag") && isNonEmptyString(obj.tag);
   var isTouchEvent = (event) => window.TouchEvent && event instanceof TouchEvent;
   var isToastComponent = (obj) => hasProp(obj, "component") && isToastContent(obj.component);
-  var isVueComponent = (c) => isFunction$1(c) || isObject$1(c);
-  var isToastContent = (obj) => !isUndefined$1(obj) && (isString$1(obj) || isVueComponent(obj) || isToastComponent(obj));
-  var isDOMRect = (obj) => isObject$1(obj) && ["height", "width", "right", "left", "top", "bottom"].every((p2) => isNumber$1(obj[p2]));
-  var hasProp = (obj, propKey) => (isObject$1(obj) || isFunction$1(obj)) && propKey in obj;
+  var isVueComponent = (c) => isFunction$2(c) || isObject$2(c);
+  var isToastContent = (obj) => !isUndefined$1(obj) && (isString$2(obj) || isVueComponent(obj) || isToastComponent(obj));
+  var isDOMRect = (obj) => isObject$2(obj) && ["height", "width", "right", "left", "top", "bottom"].every((p2) => isNumber$2(obj[p2]));
+  var hasProp = (obj, propKey) => (isObject$2(obj) || isFunction$2(obj)) && propKey in obj;
   var getId = /* @__PURE__ */ ((i) => () => i++)(0);
   function getX(event) {
     return isTouchEvent(event) ? event.targetTouches[0].clientX : event.clientX;
@@ -8951,8 +8946,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     if (typeof obj === "string") {
       return obj;
     }
-    const props = hasProp(obj, "props") && isObject$1(obj.props) ? obj.props : {};
-    const listeners = hasProp(obj, "listeners") && isObject$1(obj.listeners) ? obj.listeners : {};
+    const props = hasProp(obj, "props") && isObject$2(obj.props) ? obj.props : {};
+    const listeners = hasProp(obj, "listeners") && isObject$2(obj.listeners) ? obj.listeners : {};
     return { component: getVueComponentFromObj(obj), props, listeners };
   };
   var isBrowser = () => typeof window !== "undefined";
@@ -8977,7 +8972,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       handlers.forEach((handler) => handler(event));
     }
   };
-  var isEventBusInterface = (e) => ["on", "off", "emit"].every((f) => hasProp(e, f) && isFunction$1(e[f]));
+  var isEventBusInterface = (e) => ["on", "off", "emit"].every((f) => hasProp(e, f) && isFunction$2(e[f]));
   var TYPE;
   (function(TYPE2) {
     TYPE2["SUCCESS"] = "success";
@@ -9268,20 +9263,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512"
   };
-  var _hoisted_22 = /* @__PURE__ */ createBaseVNode("path", {
+  var _hoisted_22$1 = /* @__PURE__ */ createBaseVNode("path", {
     fill: "currentColor",
     d: "M256 8C119.043 8 8 119.083 8 256c0 136.997 111.043 248 248 248s248-111.003 248-248C504 119.083 392.957 8 256 8zm0 110c23.196 0 42 18.804 42 42s-18.804 42-42 42-42-18.804-42-42 18.804-42 42-42zm56 254c0 6.627-5.373 12-12 12h-88c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h12v-64h-12c-6.627 0-12-5.373-12-12v-24c0-6.627 5.373-12 12-12h64c6.627 0 12 5.373 12 12v100h12c6.627 0 12 5.373 12 12v24z"
   }, null, -1);
-  var _hoisted_32 = [
-    _hoisted_22
+  var _hoisted_32$1 = [
+    _hoisted_22$1
   ];
   function render4(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_13$3, _hoisted_32);
+    return openBlock(), createElementBlock("svg", _hoisted_13$3, _hoisted_32$1);
   }
   VtInfoIcon_default.render = render4;
   var VtInfoIcon_default2 = VtInfoIcon_default;
   var VtWarningIcon_default = {};
-  var _hoisted_14$2 = {
+  var _hoisted_14$3 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9291,20 +9286,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 512 512"
   };
-  var _hoisted_23 = /* @__PURE__ */ createBaseVNode("path", {
+  var _hoisted_23$1 = /* @__PURE__ */ createBaseVNode("path", {
     fill: "currentColor",
     d: "M504 256c0 136.997-111.043 248-248 248S8 392.997 8 256C8 119.083 119.043 8 256 8s248 111.083 248 248zm-248 50c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"
   }, null, -1);
-  var _hoisted_33 = [
-    _hoisted_23
+  var _hoisted_33$1 = [
+    _hoisted_23$1
   ];
   function render5(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_14$2, _hoisted_33);
+    return openBlock(), createElementBlock("svg", _hoisted_14$3, _hoisted_33$1);
   }
   VtWarningIcon_default.render = render5;
   var VtWarningIcon_default2 = VtWarningIcon_default;
   var VtErrorIcon_default = {};
-  var _hoisted_15$1 = {
+  var _hoisted_15$3 = {
     "aria-hidden": "true",
     focusable: "false",
     "data-prefix": "fas",
@@ -9314,15 +9309,15 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     xmlns: "http://www.w3.org/2000/svg",
     viewBox: "0 0 576 512"
   };
-  var _hoisted_24 = /* @__PURE__ */ createBaseVNode("path", {
+  var _hoisted_24$1 = /* @__PURE__ */ createBaseVNode("path", {
     fill: "currentColor",
     d: "M569.517 440.013C587.975 472.007 564.806 512 527.94 512H48.054c-36.937 0-59.999-40.055-41.577-71.987L246.423 23.985c18.467-32.009 64.72-31.951 83.154 0l239.94 416.028zM288 354c-25.405 0-46 20.595-46 46s20.595 46 46 46 46-20.595 46-46-20.595-46-46-46zm-43.673-165.346l7.418 136c.347 6.364 5.609 11.346 11.982 11.346h48.546c6.373 0 11.635-4.982 11.982-11.346l7.418-136c.375-6.874-5.098-12.654-11.982-12.654h-63.383c-6.884 0-12.356 5.78-11.981 12.654z"
   }, null, -1);
-  var _hoisted_34 = [
-    _hoisted_24
+  var _hoisted_34$1 = [
+    _hoisted_24$1
   ];
   function render6(_ctx, _cache) {
-    return openBlock(), createElementBlock("svg", _hoisted_15$1, _hoisted_34);
+    return openBlock(), createElementBlock("svg", _hoisted_15$3, _hoisted_34$1);
   }
   VtErrorIcon_default.render = render6;
   var VtErrorIcon_default2 = VtErrorIcon_default;
@@ -9334,7 +9329,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         return hasProp(this.customIcon, "iconChildren") ? this.trimValue(this.customIcon.iconChildren) : "";
       },
       customIconClass() {
-        if (isString$1(this.customIcon)) {
+        if (isString$2(this.customIcon)) {
           return this.trimValue(this.customIcon);
         } else if (hasProp(this.customIcon, "iconClass")) {
           return this.trimValue(this.customIcon.iconClass);
@@ -9388,7 +9383,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       class: normalizeClass(_ctx.iconClasses)
     }, {
       default: withCtx(() => [
-        createTextVNode(toDisplayString(_ctx.customIconChildren), 1)
+        createTextVNode(toDisplayString$1(_ctx.customIconChildren), 1)
       ]),
       _: 1
     }, 8, ["class"]);
@@ -9428,7 +9423,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       },
       bodyClasses() {
         const classes = [
-          `${VT_NAMESPACE}__toast-${isString$1(this.content) ? "body" : "component-body"}`
+          `${VT_NAMESPACE}__toast-${isString$2(this.content) ? "body" : "component-body"}`
         ].concat(this.bodyClassName);
         return classes;
       },
@@ -9571,7 +9566,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
     }
   });
-  var _hoisted_16$1 = ["role"];
+  var _hoisted_16$2 = ["role"];
   function render8(_ctx, _cache) {
     const _component_Icon = resolveComponent("Icon");
     const _component_CloseButton = resolveComponent("CloseButton");
@@ -9593,12 +9588,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         class: normalizeClass(_ctx.bodyClasses)
       }, [
         typeof _ctx.content === "string" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
-          createTextVNode(toDisplayString(_ctx.content), 1)
+          createTextVNode(toDisplayString$1(_ctx.content), 1)
         ], 2112)) : (openBlock(), createBlock(resolveDynamicComponent(_ctx.getVueComponentFromObj(_ctx.content)), mergeProps({
           key: 1,
           "toast-id": _ctx.id
         }, _ctx.hasProp(_ctx.content, "props") ? _ctx.content.props : {}, toHandlers(_ctx.hasProp(_ctx.content, "listeners") ? _ctx.content.listeners : {}), { onCloseToast: _ctx.closeToast }), null, 16, ["toast-id", "onCloseToast"]))
-      ], 10, _hoisted_16$1),
+      ], 10, _hoisted_16$2),
       !!_ctx.closeButton ? (openBlock(), createBlock(_component_CloseButton, {
         key: 1,
         component: _ctx.closeButton,
@@ -9688,7 +9683,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     },
     methods: {
       async setup(container) {
-        if (isFunction$1(container)) {
+        if (isFunction$2(container)) {
           container = await container();
         }
         removeElement(this.$el);
@@ -9730,14 +9725,14 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       updateToast({
         id,
         options,
-        create
+        create: create2
       }) {
         if (this.toasts[id]) {
           if (options.timeout && options.timeout === this.toasts[id].timeout) {
             options.timeout++;
           }
           this.setToast(Object.assign({}, this.toasts[id], options));
-        } else if (create) {
+        } else if (create2) {
           this.addToast(Object.assign({}, { id }, options));
         }
       },
@@ -9810,12 +9805,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     toast.dismiss = (id) => {
       events.emit(EVENTS.DISMISS, id);
     };
-    function updateToast(id, { content, options }, create = false) {
+    function updateToast(id, { content, options }, create2 = false) {
       const opt = Object.assign({}, options, { content });
       events.emit(EVENTS.UPDATE, {
         id,
         options: opt,
-        create
+        create: create2
       });
     }
     toast.update = updateToast;
@@ -9937,8 +9932,21 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     history: createWebHistory("/stan-webapp/"),
     routes: [
       {
-        name: "acceuil",
+        name: "root",
         path: "/",
+        redirect: () => {
+          const preferences = localStorage.getItem("preferences");
+          if (!preferences) {
+            localStorage.setItem("preferences", JSON.stringify({ home: "accueil", language: "fr" }));
+          }
+          const savedPreferences = JSON.parse(localStorage.getItem("preferences"));
+          const savedHome = savedPreferences && savedPreferences.home ? savedPreferences.home : null;
+          return { name: savedHome || "accueil" };
+        }
+      },
+      {
+        name: "accueil",
+        path: "/home",
         component: () => __vitePreload(() => Promise.resolve().then(() => HomeView$1), false ? __VITE_PRELOAD__ : void 0)
       },
       {
@@ -9957,8 +9965,28 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         component: () => __vitePreload(() => Promise.resolve().then(() => SettingsView$1), false ? __VITE_PRELOAD__ : void 0)
       }
     ],
-    scrollBehavior(to, from, savedPosition) {
+    scrollBehavior() {
       return { top: 0, behavior: "smooth" };
+    }
+  });
+  router.beforeEach((to, _, next) => {
+    const query = to.query;
+    if (query && query.vrrp) {
+      const vrrp = query.vrrp;
+      const matchedRoute = router.resolve(vrrp);
+      if (matchedRoute && matchedRoute.matched.length > 0) {
+        to.query = {};
+        router.push(vrrp);
+        return;
+      }
+    }
+    next();
+  });
+  router.beforeEach((to, _, next) => {
+    if (to.matched.length === 0) {
+      next({ name: "accueil" });
+    } else {
+      next();
     }
   });
   /*!
@@ -9972,7 +10000,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     /* istanbul ignore next */
     Symbol()
   );
-  function isPlainObject$1(o) {
+  function isPlainObject$2(o) {
     return o && typeof o === "object" && Object.prototype.toString.call(o) === "[object Object]" && typeof o.toJSON !== "function";
   }
   var MutationType;
@@ -10050,7 +10078,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         continue;
       const subPatch = patchToApply[key];
       const targetValue = target[key];
-      if (isPlainObject$1(targetValue) && isPlainObject$1(subPatch) && target.hasOwnProperty(key) && !isRef(subPatch) && !isReactive(subPatch)) {
+      if (isPlainObject$2(targetValue) && isPlainObject$2(subPatch) && target.hasOwnProperty(key) && !isRef(subPatch) && !isReactive(subPatch)) {
         target[key] = mergeReactiveObjects(targetValue, subPatch);
       } else {
         target[key] = subPatch;
@@ -10063,9 +10091,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     Symbol()
   );
   function shouldHydrate(obj) {
-    return !isPlainObject$1(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
+    return !isPlainObject$2(obj) || !obj.hasOwnProperty(skipHydrateSymbol);
   }
-  const { assign } = Object;
+  const { assign: assign$1 } = Object;
   function isComputed(o) {
     return !!(isRef(o) && o.effect);
   }
@@ -10080,7 +10108,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
         }
       }
       const localState = toRefs(pinia2.state.value[id]);
-      return assign(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
+      return assign$1(localState, actions, Object.keys(getters || {}).reduce((computedGetters, name) => {
         computedGetters[name] = markRaw(computed(() => {
           setActivePinia(pinia2);
           const store2 = pinia2._s.get(id);
@@ -10094,7 +10122,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }
   function createSetupStore($id, setup, options = {}, pinia2, hot, isOptionsStore) {
     let scope;
-    const optionsForPlugin = assign({ actions: {} }, options);
+    const optionsForPlugin = assign$1({ actions: {} }, options);
     const $subscribeOptions = { deep: true };
     let isListening;
     let isSyncListening;
@@ -10141,7 +10169,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const { state } = options;
       const newState = state ? state() : {};
       this.$patch(($state) => {
-        assign($state, newState);
+        assign$1($state, newState);
       });
     } : (
       /* istanbul ignore next */
@@ -10216,7 +10244,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               events: debuggerEvents
             }, state);
           }
-        }, assign({}, $subscribeOptions, options2)));
+        }, assign$1({}, $subscribeOptions, options2)));
         return removeSubscription;
       },
       $dispose
@@ -10249,20 +10277,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       } else ;
     }
     {
-      assign(store, setupStore);
-      assign(toRaw(store), setupStore);
+      assign$1(store, setupStore);
+      assign$1(toRaw(store), setupStore);
     }
     Object.defineProperty(store, "$state", {
       get: () => pinia2.state.value[$id],
       set: (state) => {
         $patch(($state) => {
-          assign($state, state);
+          assign$1($state, state);
         });
       }
     });
     pinia2._p.forEach((extender) => {
       {
-        assign(store, scope.run(() => extender({
+        assign$1(store, scope.run(() => extender({
           store,
           app: pinia2._a,
           pinia: pinia2,
@@ -10347,6 +10375,4504 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const pinia = createPinia();
   pinia.use(index);
+  /*!
+    * shared v11.1.5
+    * (c) 2025 kazuya kawaguchi
+    * Released under the MIT License.
+    */
+  const inBrowser = typeof window !== "undefined";
+  const makeSymbol = (name, shareable = false) => !shareable ? Symbol(name) : Symbol.for(name);
+  const generateFormatCacheKey = (locale, key, source) => friendlyJSONstringify({ l: locale, k: key, s: source });
+  const friendlyJSONstringify = (json) => JSON.stringify(json).replace(/\u2028/g, "\\u2028").replace(/\u2029/g, "\\u2029").replace(/\u0027/g, "\\u0027");
+  const isNumber$1 = (val) => typeof val === "number" && isFinite(val);
+  const isDate$1 = (val) => toTypeString(val) === "[object Date]";
+  const isRegExp$1 = (val) => toTypeString(val) === "[object RegExp]";
+  const isEmptyObject = (val) => isPlainObject$1(val) && Object.keys(val).length === 0;
+  const assign = Object.assign;
+  const _create = Object.create;
+  const create = (obj = null) => _create(obj);
+  let _globalThis;
+  const getGlobalThis = () => {
+    return _globalThis || (_globalThis = typeof globalThis !== "undefined" ? globalThis : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : create());
+  };
+  function escapeHtml(rawText) {
+    return rawText.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&apos;");
+  }
+  const hasOwnProperty$1 = Object.prototype.hasOwnProperty;
+  function hasOwn(obj, key) {
+    return hasOwnProperty$1.call(obj, key);
+  }
+  const isArray$1 = Array.isArray;
+  const isFunction$1 = (val) => typeof val === "function";
+  const isString$1 = (val) => typeof val === "string";
+  const isBoolean$1 = (val) => typeof val === "boolean";
+  const isObject$1 = (val) => val !== null && typeof val === "object";
+  const isPromise = (val) => {
+    return isObject$1(val) && isFunction$1(val.then) && isFunction$1(val.catch);
+  };
+  const objectToString = Object.prototype.toString;
+  const toTypeString = (value) => objectToString.call(value);
+  const isPlainObject$1 = (val) => toTypeString(val) === "[object Object]";
+  const toDisplayString = (val) => {
+    return val == null ? "" : isArray$1(val) || isPlainObject$1(val) && val.toString === objectToString ? JSON.stringify(val, null, 2) : String(val);
+  };
+  function join(items, separator = "") {
+    return items.reduce((str, item, index2) => index2 === 0 ? str + item : str + separator + item, "");
+  }
+  function warn(msg, err) {
+    if (typeof console !== "undefined") {
+      console.warn(`[intlify] ` + msg);
+      if (err) {
+        console.warn(err.stack);
+      }
+    }
+  }
+  const isNotObjectOrIsArray = (val) => !isObject$1(val) || isArray$1(val);
+  function deepCopy(src, des) {
+    if (isNotObjectOrIsArray(src) || isNotObjectOrIsArray(des)) {
+      throw new Error("Invalid value");
+    }
+    const stack2 = [{ src, des }];
+    while (stack2.length) {
+      const { src: src2, des: des2 } = stack2.pop();
+      Object.keys(src2).forEach((key) => {
+        if (key === "__proto__") {
+          return;
+        }
+        if (isObject$1(src2[key]) && !isObject$1(des2[key])) {
+          des2[key] = Array.isArray(src2[key]) ? [] : create();
+        }
+        if (isNotObjectOrIsArray(des2[key]) || isNotObjectOrIsArray(src2[key])) {
+          des2[key] = src2[key];
+        } else {
+          stack2.push({ src: src2[key], des: des2[key] });
+        }
+      });
+    }
+  }
+  /*!
+    * message-compiler v11.1.5
+    * (c) 2025 kazuya kawaguchi
+    * Released under the MIT License.
+    */
+  function createPosition(line, column, offset) {
+    return { line, column, offset };
+  }
+  function createLocation(start, end, source) {
+    const loc = { start, end };
+    return loc;
+  }
+  const CompileErrorCodes = {
+    // tokenizer error codes
+    EXPECTED_TOKEN: 1,
+    INVALID_TOKEN_IN_PLACEHOLDER: 2,
+    UNTERMINATED_SINGLE_QUOTE_IN_PLACEHOLDER: 3,
+    UNKNOWN_ESCAPE_SEQUENCE: 4,
+    INVALID_UNICODE_ESCAPE_SEQUENCE: 5,
+    UNBALANCED_CLOSING_BRACE: 6,
+    UNTERMINATED_CLOSING_BRACE: 7,
+    EMPTY_PLACEHOLDER: 8,
+    NOT_ALLOW_NEST_PLACEHOLDER: 9,
+    INVALID_LINKED_FORMAT: 10,
+    // parser error codes
+    MUST_HAVE_MESSAGES_IN_PLURAL: 11,
+    UNEXPECTED_EMPTY_LINKED_MODIFIER: 12,
+    UNEXPECTED_EMPTY_LINKED_KEY: 13,
+    UNEXPECTED_LEXICAL_ANALYSIS: 14
+  };
+  const COMPILE_ERROR_CODES_EXTEND_POINT = 17;
+  function createCompileError(code, loc, options = {}) {
+    const { domain, messages, args } = options;
+    const msg = code;
+    const error = new SyntaxError(String(msg));
+    error.code = code;
+    if (loc) {
+      error.location = loc;
+    }
+    error.domain = domain;
+    return error;
+  }
+  function defaultOnError(error) {
+    throw error;
+  }
+  const CHAR_SP = " ";
+  const CHAR_CR = "\r";
+  const CHAR_LF = "\n";
+  const CHAR_LS = String.fromCharCode(8232);
+  const CHAR_PS = String.fromCharCode(8233);
+  function createScanner(str) {
+    const _buf = str;
+    let _index = 0;
+    let _line = 1;
+    let _column = 1;
+    let _peekOffset = 0;
+    const isCRLF = (index22) => _buf[index22] === CHAR_CR && _buf[index22 + 1] === CHAR_LF;
+    const isLF = (index22) => _buf[index22] === CHAR_LF;
+    const isPS = (index22) => _buf[index22] === CHAR_PS;
+    const isLS = (index22) => _buf[index22] === CHAR_LS;
+    const isLineEnd = (index22) => isCRLF(index22) || isLF(index22) || isPS(index22) || isLS(index22);
+    const index2 = () => _index;
+    const line = () => _line;
+    const column = () => _column;
+    const peekOffset = () => _peekOffset;
+    const charAt = (offset) => isCRLF(offset) || isPS(offset) || isLS(offset) ? CHAR_LF : _buf[offset];
+    const currentChar = () => charAt(_index);
+    const currentPeek = () => charAt(_index + _peekOffset);
+    function next() {
+      _peekOffset = 0;
+      if (isLineEnd(_index)) {
+        _line++;
+        _column = 0;
+      }
+      if (isCRLF(_index)) {
+        _index++;
+      }
+      _index++;
+      _column++;
+      return _buf[_index];
+    }
+    function peek() {
+      if (isCRLF(_index + _peekOffset)) {
+        _peekOffset++;
+      }
+      _peekOffset++;
+      return _buf[_index + _peekOffset];
+    }
+    function reset() {
+      _index = 0;
+      _line = 1;
+      _column = 1;
+      _peekOffset = 0;
+    }
+    function resetPeek(offset = 0) {
+      _peekOffset = offset;
+    }
+    function skipToPeek() {
+      const target = _index + _peekOffset;
+      while (target !== _index) {
+        next();
+      }
+      _peekOffset = 0;
+    }
+    return {
+      index: index2,
+      line,
+      column,
+      peekOffset,
+      charAt,
+      currentChar,
+      currentPeek,
+      next,
+      peek,
+      reset,
+      resetPeek,
+      skipToPeek
+    };
+  }
+  const EOF = void 0;
+  const DOT = ".";
+  const LITERAL_DELIMITER = "'";
+  const ERROR_DOMAIN$3 = "tokenizer";
+  function createTokenizer(source, options = {}) {
+    const location2 = options.location !== false;
+    const _scnr = createScanner(source);
+    const currentOffset = () => _scnr.index();
+    const currentPosition = () => createPosition(_scnr.line(), _scnr.column(), _scnr.index());
+    const _initLoc = currentPosition();
+    const _initOffset = currentOffset();
+    const _context = {
+      currentType: 13,
+      offset: _initOffset,
+      startLoc: _initLoc,
+      endLoc: _initLoc,
+      lastType: 13,
+      lastOffset: _initOffset,
+      lastStartLoc: _initLoc,
+      lastEndLoc: _initLoc,
+      braceNest: 0,
+      inLinked: false,
+      text: ""
+    };
+    const context = () => _context;
+    const { onError } = options;
+    function emitError(code, pos, offset, ...args) {
+      const ctx = context();
+      pos.column += offset;
+      pos.offset += offset;
+      if (onError) {
+        const loc = location2 ? createLocation(ctx.startLoc, pos) : null;
+        const err = createCompileError(code, loc, {
+          domain: ERROR_DOMAIN$3,
+          args
+        });
+        onError(err);
+      }
+    }
+    function getToken(context2, type, value) {
+      context2.endLoc = currentPosition();
+      context2.currentType = type;
+      const token = { type };
+      if (location2) {
+        token.loc = createLocation(context2.startLoc, context2.endLoc);
+      }
+      if (value != null) {
+        token.value = value;
+      }
+      return token;
+    }
+    const getEndToken = (context2) => getToken(
+      context2,
+      13
+      /* TokenTypes.EOF */
+    );
+    function eat(scnr, ch) {
+      if (scnr.currentChar() === ch) {
+        scnr.next();
+        return ch;
+      } else {
+        emitError(CompileErrorCodes.EXPECTED_TOKEN, currentPosition(), 0, ch);
+        return "";
+      }
+    }
+    function peekSpaces(scnr) {
+      let buf = "";
+      while (scnr.currentPeek() === CHAR_SP || scnr.currentPeek() === CHAR_LF) {
+        buf += scnr.currentPeek();
+        scnr.peek();
+      }
+      return buf;
+    }
+    function skipSpaces(scnr) {
+      const buf = peekSpaces(scnr);
+      scnr.skipToPeek();
+      return buf;
+    }
+    function isIdentifierStart(ch) {
+      if (ch === EOF) {
+        return false;
+      }
+      const cc = ch.charCodeAt(0);
+      return cc >= 97 && cc <= 122 || // a-z
+      cc >= 65 && cc <= 90 || // A-Z
+      cc === 95;
+    }
+    function isNumberStart(ch) {
+      if (ch === EOF) {
+        return false;
+      }
+      const cc = ch.charCodeAt(0);
+      return cc >= 48 && cc <= 57;
+    }
+    function isNamedIdentifierStart(scnr, context2) {
+      const { currentType } = context2;
+      if (currentType !== 2) {
+        return false;
+      }
+      peekSpaces(scnr);
+      const ret = isIdentifierStart(scnr.currentPeek());
+      scnr.resetPeek();
+      return ret;
+    }
+    function isListIdentifierStart(scnr, context2) {
+      const { currentType } = context2;
+      if (currentType !== 2) {
+        return false;
+      }
+      peekSpaces(scnr);
+      const ch = scnr.currentPeek() === "-" ? scnr.peek() : scnr.currentPeek();
+      const ret = isNumberStart(ch);
+      scnr.resetPeek();
+      return ret;
+    }
+    function isLiteralStart(scnr, context2) {
+      const { currentType } = context2;
+      if (currentType !== 2) {
+        return false;
+      }
+      peekSpaces(scnr);
+      const ret = scnr.currentPeek() === LITERAL_DELIMITER;
+      scnr.resetPeek();
+      return ret;
+    }
+    function isLinkedDotStart(scnr, context2) {
+      const { currentType } = context2;
+      if (currentType !== 7) {
+        return false;
+      }
+      peekSpaces(scnr);
+      const ret = scnr.currentPeek() === ".";
+      scnr.resetPeek();
+      return ret;
+    }
+    function isLinkedModifierStart(scnr, context2) {
+      const { currentType } = context2;
+      if (currentType !== 8) {
+        return false;
+      }
+      peekSpaces(scnr);
+      const ret = isIdentifierStart(scnr.currentPeek());
+      scnr.resetPeek();
+      return ret;
+    }
+    function isLinkedDelimiterStart(scnr, context2) {
+      const { currentType } = context2;
+      if (!(currentType === 7 || currentType === 11)) {
+        return false;
+      }
+      peekSpaces(scnr);
+      const ret = scnr.currentPeek() === ":";
+      scnr.resetPeek();
+      return ret;
+    }
+    function isLinkedReferStart(scnr, context2) {
+      const { currentType } = context2;
+      if (currentType !== 9) {
+        return false;
+      }
+      const fn = () => {
+        const ch = scnr.currentPeek();
+        if (ch === "{") {
+          return isIdentifierStart(scnr.peek());
+        } else if (ch === "@" || ch === "|" || ch === ":" || ch === "." || ch === CHAR_SP || !ch) {
+          return false;
+        } else if (ch === CHAR_LF) {
+          scnr.peek();
+          return fn();
+        } else {
+          return isTextStart(scnr, false);
+        }
+      };
+      const ret = fn();
+      scnr.resetPeek();
+      return ret;
+    }
+    function isPluralStart(scnr) {
+      peekSpaces(scnr);
+      const ret = scnr.currentPeek() === "|";
+      scnr.resetPeek();
+      return ret;
+    }
+    function isTextStart(scnr, reset = true) {
+      const fn = (hasSpace = false, prev = "") => {
+        const ch = scnr.currentPeek();
+        if (ch === "{") {
+          return hasSpace;
+        } else if (ch === "@" || !ch) {
+          return hasSpace;
+        } else if (ch === "|") {
+          return !(prev === CHAR_SP || prev === CHAR_LF);
+        } else if (ch === CHAR_SP) {
+          scnr.peek();
+          return fn(true, CHAR_SP);
+        } else if (ch === CHAR_LF) {
+          scnr.peek();
+          return fn(true, CHAR_LF);
+        } else {
+          return true;
+        }
+      };
+      const ret = fn();
+      reset && scnr.resetPeek();
+      return ret;
+    }
+    function takeChar(scnr, fn) {
+      const ch = scnr.currentChar();
+      if (ch === EOF) {
+        return EOF;
+      }
+      if (fn(ch)) {
+        scnr.next();
+        return ch;
+      }
+      return null;
+    }
+    function isIdentifier(ch) {
+      const cc = ch.charCodeAt(0);
+      return cc >= 97 && cc <= 122 || // a-z
+      cc >= 65 && cc <= 90 || // A-Z
+      cc >= 48 && cc <= 57 || // 0-9
+      cc === 95 || // _
+      cc === 36;
+    }
+    function takeIdentifierChar(scnr) {
+      return takeChar(scnr, isIdentifier);
+    }
+    function isNamedIdentifier(ch) {
+      const cc = ch.charCodeAt(0);
+      return cc >= 97 && cc <= 122 || // a-z
+      cc >= 65 && cc <= 90 || // A-Z
+      cc >= 48 && cc <= 57 || // 0-9
+      cc === 95 || // _
+      cc === 36 || // $
+      cc === 45;
+    }
+    function takeNamedIdentifierChar(scnr) {
+      return takeChar(scnr, isNamedIdentifier);
+    }
+    function isDigit(ch) {
+      const cc = ch.charCodeAt(0);
+      return cc >= 48 && cc <= 57;
+    }
+    function takeDigit(scnr) {
+      return takeChar(scnr, isDigit);
+    }
+    function isHexDigit(ch) {
+      const cc = ch.charCodeAt(0);
+      return cc >= 48 && cc <= 57 || // 0-9
+      cc >= 65 && cc <= 70 || // A-F
+      cc >= 97 && cc <= 102;
+    }
+    function takeHexDigit(scnr) {
+      return takeChar(scnr, isHexDigit);
+    }
+    function getDigits(scnr) {
+      let ch = "";
+      let num = "";
+      while (ch = takeDigit(scnr)) {
+        num += ch;
+      }
+      return num;
+    }
+    function readText(scnr) {
+      let buf = "";
+      while (true) {
+        const ch = scnr.currentChar();
+        if (ch === "{" || ch === "}" || ch === "@" || ch === "|" || !ch) {
+          break;
+        } else if (ch === CHAR_SP || ch === CHAR_LF) {
+          if (isTextStart(scnr)) {
+            buf += ch;
+            scnr.next();
+          } else if (isPluralStart(scnr)) {
+            break;
+          } else {
+            buf += ch;
+            scnr.next();
+          }
+        } else {
+          buf += ch;
+          scnr.next();
+        }
+      }
+      return buf;
+    }
+    function readNamedIdentifier(scnr) {
+      skipSpaces(scnr);
+      let ch = "";
+      let name = "";
+      while (ch = takeNamedIdentifierChar(scnr)) {
+        name += ch;
+      }
+      if (scnr.currentChar() === EOF) {
+        emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
+      }
+      return name;
+    }
+    function readListIdentifier(scnr) {
+      skipSpaces(scnr);
+      let value = "";
+      if (scnr.currentChar() === "-") {
+        scnr.next();
+        value += `-${getDigits(scnr)}`;
+      } else {
+        value += getDigits(scnr);
+      }
+      if (scnr.currentChar() === EOF) {
+        emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
+      }
+      return value;
+    }
+    function isLiteral2(ch) {
+      return ch !== LITERAL_DELIMITER && ch !== CHAR_LF;
+    }
+    function readLiteral(scnr) {
+      skipSpaces(scnr);
+      eat(scnr, `'`);
+      let ch = "";
+      let literal = "";
+      while (ch = takeChar(scnr, isLiteral2)) {
+        if (ch === "\\") {
+          literal += readEscapeSequence(scnr);
+        } else {
+          literal += ch;
+        }
+      }
+      const current = scnr.currentChar();
+      if (current === CHAR_LF || current === EOF) {
+        emitError(CompileErrorCodes.UNTERMINATED_SINGLE_QUOTE_IN_PLACEHOLDER, currentPosition(), 0);
+        if (current === CHAR_LF) {
+          scnr.next();
+          eat(scnr, `'`);
+        }
+        return literal;
+      }
+      eat(scnr, `'`);
+      return literal;
+    }
+    function readEscapeSequence(scnr) {
+      const ch = scnr.currentChar();
+      switch (ch) {
+        case "\\":
+        case `'`:
+          scnr.next();
+          return `\\${ch}`;
+        case "u":
+          return readUnicodeEscapeSequence(scnr, ch, 4);
+        case "U":
+          return readUnicodeEscapeSequence(scnr, ch, 6);
+        default:
+          emitError(CompileErrorCodes.UNKNOWN_ESCAPE_SEQUENCE, currentPosition(), 0, ch);
+          return "";
+      }
+    }
+    function readUnicodeEscapeSequence(scnr, unicode, digits) {
+      eat(scnr, unicode);
+      let sequence = "";
+      for (let i = 0; i < digits; i++) {
+        const ch = takeHexDigit(scnr);
+        if (!ch) {
+          emitError(CompileErrorCodes.INVALID_UNICODE_ESCAPE_SEQUENCE, currentPosition(), 0, `\\${unicode}${sequence}${scnr.currentChar()}`);
+          break;
+        }
+        sequence += ch;
+      }
+      return `\\${unicode}${sequence}`;
+    }
+    function isInvalidIdentifier(ch) {
+      return ch !== "{" && ch !== "}" && ch !== CHAR_SP && ch !== CHAR_LF;
+    }
+    function readInvalidIdentifier(scnr) {
+      skipSpaces(scnr);
+      let ch = "";
+      let identifiers = "";
+      while (ch = takeChar(scnr, isInvalidIdentifier)) {
+        identifiers += ch;
+      }
+      return identifiers;
+    }
+    function readLinkedModifier(scnr) {
+      let ch = "";
+      let name = "";
+      while (ch = takeIdentifierChar(scnr)) {
+        name += ch;
+      }
+      return name;
+    }
+    function readLinkedRefer(scnr) {
+      const fn = (buf) => {
+        const ch = scnr.currentChar();
+        if (ch === "{" || ch === "@" || ch === "|" || ch === "(" || ch === ")" || !ch) {
+          return buf;
+        } else if (ch === CHAR_SP) {
+          return buf;
+        } else if (ch === CHAR_LF || ch === DOT) {
+          buf += ch;
+          scnr.next();
+          return fn(buf);
+        } else {
+          buf += ch;
+          scnr.next();
+          return fn(buf);
+        }
+      };
+      return fn("");
+    }
+    function readPlural(scnr) {
+      skipSpaces(scnr);
+      const plural = eat(
+        scnr,
+        "|"
+        /* TokenChars.Pipe */
+      );
+      skipSpaces(scnr);
+      return plural;
+    }
+    function readTokenInPlaceholder(scnr, context2) {
+      let token = null;
+      const ch = scnr.currentChar();
+      switch (ch) {
+        case "{":
+          if (context2.braceNest >= 1) {
+            emitError(CompileErrorCodes.NOT_ALLOW_NEST_PLACEHOLDER, currentPosition(), 0);
+          }
+          scnr.next();
+          token = getToken(
+            context2,
+            2,
+            "{"
+            /* TokenChars.BraceLeft */
+          );
+          skipSpaces(scnr);
+          context2.braceNest++;
+          return token;
+        case "}":
+          if (context2.braceNest > 0 && context2.currentType === 2) {
+            emitError(CompileErrorCodes.EMPTY_PLACEHOLDER, currentPosition(), 0);
+          }
+          scnr.next();
+          token = getToken(
+            context2,
+            3,
+            "}"
+            /* TokenChars.BraceRight */
+          );
+          context2.braceNest--;
+          context2.braceNest > 0 && skipSpaces(scnr);
+          if (context2.inLinked && context2.braceNest === 0) {
+            context2.inLinked = false;
+          }
+          return token;
+        case "@":
+          if (context2.braceNest > 0) {
+            emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
+          }
+          token = readTokenInLinked(scnr, context2) || getEndToken(context2);
+          context2.braceNest = 0;
+          return token;
+        default: {
+          let validNamedIdentifier = true;
+          let validListIdentifier = true;
+          let validLiteral = true;
+          if (isPluralStart(scnr)) {
+            if (context2.braceNest > 0) {
+              emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
+            }
+            token = getToken(context2, 1, readPlural(scnr));
+            context2.braceNest = 0;
+            context2.inLinked = false;
+            return token;
+          }
+          if (context2.braceNest > 0 && (context2.currentType === 4 || context2.currentType === 5 || context2.currentType === 6)) {
+            emitError(CompileErrorCodes.UNTERMINATED_CLOSING_BRACE, currentPosition(), 0);
+            context2.braceNest = 0;
+            return readToken(scnr, context2);
+          }
+          if (validNamedIdentifier = isNamedIdentifierStart(scnr, context2)) {
+            token = getToken(context2, 4, readNamedIdentifier(scnr));
+            skipSpaces(scnr);
+            return token;
+          }
+          if (validListIdentifier = isListIdentifierStart(scnr, context2)) {
+            token = getToken(context2, 5, readListIdentifier(scnr));
+            skipSpaces(scnr);
+            return token;
+          }
+          if (validLiteral = isLiteralStart(scnr, context2)) {
+            token = getToken(context2, 6, readLiteral(scnr));
+            skipSpaces(scnr);
+            return token;
+          }
+          if (!validNamedIdentifier && !validListIdentifier && !validLiteral) {
+            token = getToken(context2, 12, readInvalidIdentifier(scnr));
+            emitError(CompileErrorCodes.INVALID_TOKEN_IN_PLACEHOLDER, currentPosition(), 0, token.value);
+            skipSpaces(scnr);
+            return token;
+          }
+          break;
+        }
+      }
+      return token;
+    }
+    function readTokenInLinked(scnr, context2) {
+      const { currentType } = context2;
+      let token = null;
+      const ch = scnr.currentChar();
+      if ((currentType === 7 || currentType === 8 || currentType === 11 || currentType === 9) && (ch === CHAR_LF || ch === CHAR_SP)) {
+        emitError(CompileErrorCodes.INVALID_LINKED_FORMAT, currentPosition(), 0);
+      }
+      switch (ch) {
+        case "@":
+          scnr.next();
+          token = getToken(
+            context2,
+            7,
+            "@"
+            /* TokenChars.LinkedAlias */
+          );
+          context2.inLinked = true;
+          return token;
+        case ".":
+          skipSpaces(scnr);
+          scnr.next();
+          return getToken(
+            context2,
+            8,
+            "."
+            /* TokenChars.LinkedDot */
+          );
+        case ":":
+          skipSpaces(scnr);
+          scnr.next();
+          return getToken(
+            context2,
+            9,
+            ":"
+            /* TokenChars.LinkedDelimiter */
+          );
+        default:
+          if (isPluralStart(scnr)) {
+            token = getToken(context2, 1, readPlural(scnr));
+            context2.braceNest = 0;
+            context2.inLinked = false;
+            return token;
+          }
+          if (isLinkedDotStart(scnr, context2) || isLinkedDelimiterStart(scnr, context2)) {
+            skipSpaces(scnr);
+            return readTokenInLinked(scnr, context2);
+          }
+          if (isLinkedModifierStart(scnr, context2)) {
+            skipSpaces(scnr);
+            return getToken(context2, 11, readLinkedModifier(scnr));
+          }
+          if (isLinkedReferStart(scnr, context2)) {
+            skipSpaces(scnr);
+            if (ch === "{") {
+              return readTokenInPlaceholder(scnr, context2) || token;
+            } else {
+              return getToken(context2, 10, readLinkedRefer(scnr));
+            }
+          }
+          if (currentType === 7) {
+            emitError(CompileErrorCodes.INVALID_LINKED_FORMAT, currentPosition(), 0);
+          }
+          context2.braceNest = 0;
+          context2.inLinked = false;
+          return readToken(scnr, context2);
+      }
+    }
+    function readToken(scnr, context2) {
+      let token = {
+        type: 13
+        /* TokenTypes.EOF */
+      };
+      if (context2.braceNest > 0) {
+        return readTokenInPlaceholder(scnr, context2) || getEndToken(context2);
+      }
+      if (context2.inLinked) {
+        return readTokenInLinked(scnr, context2) || getEndToken(context2);
+      }
+      const ch = scnr.currentChar();
+      switch (ch) {
+        case "{":
+          return readTokenInPlaceholder(scnr, context2) || getEndToken(context2);
+        case "}":
+          emitError(CompileErrorCodes.UNBALANCED_CLOSING_BRACE, currentPosition(), 0);
+          scnr.next();
+          return getToken(
+            context2,
+            3,
+            "}"
+            /* TokenChars.BraceRight */
+          );
+        case "@":
+          return readTokenInLinked(scnr, context2) || getEndToken(context2);
+        default: {
+          if (isPluralStart(scnr)) {
+            token = getToken(context2, 1, readPlural(scnr));
+            context2.braceNest = 0;
+            context2.inLinked = false;
+            return token;
+          }
+          if (isTextStart(scnr)) {
+            return getToken(context2, 0, readText(scnr));
+          }
+          break;
+        }
+      }
+      return token;
+    }
+    function nextToken() {
+      const { currentType, offset, startLoc, endLoc } = _context;
+      _context.lastType = currentType;
+      _context.lastOffset = offset;
+      _context.lastStartLoc = startLoc;
+      _context.lastEndLoc = endLoc;
+      _context.offset = currentOffset();
+      _context.startLoc = currentPosition();
+      if (_scnr.currentChar() === EOF) {
+        return getToken(
+          _context,
+          13
+          /* TokenTypes.EOF */
+        );
+      }
+      return readToken(_scnr, _context);
+    }
+    return {
+      nextToken,
+      currentOffset,
+      currentPosition,
+      context
+    };
+  }
+  const ERROR_DOMAIN$2 = "parser";
+  const KNOWN_ESCAPES = /(?:\\\\|\\'|\\u([0-9a-fA-F]{4})|\\U([0-9a-fA-F]{6}))/g;
+  function fromEscapeSequence(match, codePoint4, codePoint6) {
+    switch (match) {
+      case `\\\\`:
+        return `\\`;
+      // eslint-disable-next-line no-useless-escape
+      case `\\'`:
+        return `'`;
+      default: {
+        const codePoint = parseInt(codePoint4 || codePoint6, 16);
+        if (codePoint <= 55295 || codePoint >= 57344) {
+          return String.fromCodePoint(codePoint);
+        }
+        return "�";
+      }
+    }
+  }
+  function createParser(options = {}) {
+    const location2 = options.location !== false;
+    const { onError } = options;
+    function emitError(tokenzer, code, start, offset, ...args) {
+      const end = tokenzer.currentPosition();
+      end.offset += offset;
+      end.column += offset;
+      if (onError) {
+        const loc = location2 ? createLocation(start, end) : null;
+        const err = createCompileError(code, loc, {
+          domain: ERROR_DOMAIN$2,
+          args
+        });
+        onError(err);
+      }
+    }
+    function startNode(type, offset, loc) {
+      const node = { type };
+      if (location2) {
+        node.start = offset;
+        node.end = offset;
+        node.loc = { start: loc, end: loc };
+      }
+      return node;
+    }
+    function endNode(node, offset, pos, type) {
+      if (location2) {
+        node.end = offset;
+        if (node.loc) {
+          node.loc.end = pos;
+        }
+      }
+    }
+    function parseText(tokenizer, value) {
+      const context = tokenizer.context();
+      const node = startNode(3, context.offset, context.startLoc);
+      node.value = value;
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    function parseList(tokenizer, index2) {
+      const context = tokenizer.context();
+      const { lastOffset: offset, lastStartLoc: loc } = context;
+      const node = startNode(5, offset, loc);
+      node.index = parseInt(index2, 10);
+      tokenizer.nextToken();
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    function parseNamed(tokenizer, key) {
+      const context = tokenizer.context();
+      const { lastOffset: offset, lastStartLoc: loc } = context;
+      const node = startNode(4, offset, loc);
+      node.key = key;
+      tokenizer.nextToken();
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    function parseLiteral(tokenizer, value) {
+      const context = tokenizer.context();
+      const { lastOffset: offset, lastStartLoc: loc } = context;
+      const node = startNode(9, offset, loc);
+      node.value = value.replace(KNOWN_ESCAPES, fromEscapeSequence);
+      tokenizer.nextToken();
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    function parseLinkedModifier(tokenizer) {
+      const token = tokenizer.nextToken();
+      const context = tokenizer.context();
+      const { lastOffset: offset, lastStartLoc: loc } = context;
+      const node = startNode(8, offset, loc);
+      if (token.type !== 11) {
+        emitError(tokenizer, CompileErrorCodes.UNEXPECTED_EMPTY_LINKED_MODIFIER, context.lastStartLoc, 0);
+        node.value = "";
+        endNode(node, offset, loc);
+        return {
+          nextConsumeToken: token,
+          node
+        };
+      }
+      if (token.value == null) {
+        emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+      }
+      node.value = token.value || "";
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return {
+        node
+      };
+    }
+    function parseLinkedKey(tokenizer, value) {
+      const context = tokenizer.context();
+      const node = startNode(7, context.offset, context.startLoc);
+      node.value = value;
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    function parseLinked(tokenizer) {
+      const context = tokenizer.context();
+      const linkedNode = startNode(6, context.offset, context.startLoc);
+      let token = tokenizer.nextToken();
+      if (token.type === 8) {
+        const parsed = parseLinkedModifier(tokenizer);
+        linkedNode.modifier = parsed.node;
+        token = parsed.nextConsumeToken || tokenizer.nextToken();
+      }
+      if (token.type !== 9) {
+        emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+      }
+      token = tokenizer.nextToken();
+      if (token.type === 2) {
+        token = tokenizer.nextToken();
+      }
+      switch (token.type) {
+        case 10:
+          if (token.value == null) {
+            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+          }
+          linkedNode.key = parseLinkedKey(tokenizer, token.value || "");
+          break;
+        case 4:
+          if (token.value == null) {
+            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+          }
+          linkedNode.key = parseNamed(tokenizer, token.value || "");
+          break;
+        case 5:
+          if (token.value == null) {
+            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+          }
+          linkedNode.key = parseList(tokenizer, token.value || "");
+          break;
+        case 6:
+          if (token.value == null) {
+            emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+          }
+          linkedNode.key = parseLiteral(tokenizer, token.value || "");
+          break;
+        default: {
+          emitError(tokenizer, CompileErrorCodes.UNEXPECTED_EMPTY_LINKED_KEY, context.lastStartLoc, 0);
+          const nextContext = tokenizer.context();
+          const emptyLinkedKeyNode = startNode(7, nextContext.offset, nextContext.startLoc);
+          emptyLinkedKeyNode.value = "";
+          endNode(emptyLinkedKeyNode, nextContext.offset, nextContext.startLoc);
+          linkedNode.key = emptyLinkedKeyNode;
+          endNode(linkedNode, nextContext.offset, nextContext.startLoc);
+          return {
+            nextConsumeToken: token,
+            node: linkedNode
+          };
+        }
+      }
+      endNode(linkedNode, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return {
+        node: linkedNode
+      };
+    }
+    function parseMessage(tokenizer) {
+      const context = tokenizer.context();
+      const startOffset = context.currentType === 1 ? tokenizer.currentOffset() : context.offset;
+      const startLoc = context.currentType === 1 ? context.endLoc : context.startLoc;
+      const node = startNode(2, startOffset, startLoc);
+      node.items = [];
+      let nextToken = null;
+      do {
+        const token = nextToken || tokenizer.nextToken();
+        nextToken = null;
+        switch (token.type) {
+          case 0:
+            if (token.value == null) {
+              emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+            }
+            node.items.push(parseText(tokenizer, token.value || ""));
+            break;
+          case 5:
+            if (token.value == null) {
+              emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+            }
+            node.items.push(parseList(tokenizer, token.value || ""));
+            break;
+          case 4:
+            if (token.value == null) {
+              emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+            }
+            node.items.push(parseNamed(tokenizer, token.value || ""));
+            break;
+          case 6:
+            if (token.value == null) {
+              emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, getTokenCaption(token));
+            }
+            node.items.push(parseLiteral(tokenizer, token.value || ""));
+            break;
+          case 7: {
+            const parsed = parseLinked(tokenizer);
+            node.items.push(parsed.node);
+            nextToken = parsed.nextConsumeToken || null;
+            break;
+          }
+        }
+      } while (context.currentType !== 13 && context.currentType !== 1);
+      const endOffset = context.currentType === 1 ? context.lastOffset : tokenizer.currentOffset();
+      const endLoc = context.currentType === 1 ? context.lastEndLoc : tokenizer.currentPosition();
+      endNode(node, endOffset, endLoc);
+      return node;
+    }
+    function parsePlural(tokenizer, offset, loc, msgNode) {
+      const context = tokenizer.context();
+      let hasEmptyMessage = msgNode.items.length === 0;
+      const node = startNode(1, offset, loc);
+      node.cases = [];
+      node.cases.push(msgNode);
+      do {
+        const msg = parseMessage(tokenizer);
+        if (!hasEmptyMessage) {
+          hasEmptyMessage = msg.items.length === 0;
+        }
+        node.cases.push(msg);
+      } while (context.currentType !== 13);
+      if (hasEmptyMessage) {
+        emitError(tokenizer, CompileErrorCodes.MUST_HAVE_MESSAGES_IN_PLURAL, loc, 0);
+      }
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    function parseResource(tokenizer) {
+      const context = tokenizer.context();
+      const { offset, startLoc } = context;
+      const msgNode = parseMessage(tokenizer);
+      if (context.currentType === 13) {
+        return msgNode;
+      } else {
+        return parsePlural(tokenizer, offset, startLoc, msgNode);
+      }
+    }
+    function parse2(source) {
+      const tokenizer = createTokenizer(source, assign({}, options));
+      const context = tokenizer.context();
+      const node = startNode(0, context.offset, context.startLoc);
+      if (location2 && node.loc) {
+        node.loc.source = source;
+      }
+      node.body = parseResource(tokenizer);
+      if (options.onCacheKey) {
+        node.cacheKey = options.onCacheKey(source);
+      }
+      if (context.currentType !== 13) {
+        emitError(tokenizer, CompileErrorCodes.UNEXPECTED_LEXICAL_ANALYSIS, context.lastStartLoc, 0, source[context.offset] || "");
+      }
+      endNode(node, tokenizer.currentOffset(), tokenizer.currentPosition());
+      return node;
+    }
+    return { parse: parse2 };
+  }
+  function getTokenCaption(token) {
+    if (token.type === 13) {
+      return "EOF";
+    }
+    const name = (token.value || "").replace(/\r?\n/gu, "\\n");
+    return name.length > 10 ? name.slice(0, 9) + "…" : name;
+  }
+  function createTransformer(ast, options = {}) {
+    const _context = {
+      ast,
+      helpers: /* @__PURE__ */ new Set()
+    };
+    const context = () => _context;
+    const helper = (name) => {
+      _context.helpers.add(name);
+      return name;
+    };
+    return { context, helper };
+  }
+  function traverseNodes(nodes, transformer) {
+    for (let i = 0; i < nodes.length; i++) {
+      traverseNode(nodes[i], transformer);
+    }
+  }
+  function traverseNode(node, transformer) {
+    switch (node.type) {
+      case 1:
+        traverseNodes(node.cases, transformer);
+        transformer.helper(
+          "plural"
+          /* HelperNameMap.PLURAL */
+        );
+        break;
+      case 2:
+        traverseNodes(node.items, transformer);
+        break;
+      case 6: {
+        const linked = node;
+        traverseNode(linked.key, transformer);
+        transformer.helper(
+          "linked"
+          /* HelperNameMap.LINKED */
+        );
+        transformer.helper(
+          "type"
+          /* HelperNameMap.TYPE */
+        );
+        break;
+      }
+      case 5:
+        transformer.helper(
+          "interpolate"
+          /* HelperNameMap.INTERPOLATE */
+        );
+        transformer.helper(
+          "list"
+          /* HelperNameMap.LIST */
+        );
+        break;
+      case 4:
+        transformer.helper(
+          "interpolate"
+          /* HelperNameMap.INTERPOLATE */
+        );
+        transformer.helper(
+          "named"
+          /* HelperNameMap.NAMED */
+        );
+        break;
+    }
+  }
+  function transform(ast, options = {}) {
+    const transformer = createTransformer(ast);
+    transformer.helper(
+      "normalize"
+      /* HelperNameMap.NORMALIZE */
+    );
+    ast.body && traverseNode(ast.body, transformer);
+    const context = transformer.context();
+    ast.helpers = Array.from(context.helpers);
+  }
+  function optimize(ast) {
+    const body = ast.body;
+    if (body.type === 2) {
+      optimizeMessageNode(body);
+    } else {
+      body.cases.forEach((c) => optimizeMessageNode(c));
+    }
+    return ast;
+  }
+  function optimizeMessageNode(message) {
+    if (message.items.length === 1) {
+      const item = message.items[0];
+      if (item.type === 3 || item.type === 9) {
+        message.static = item.value;
+        delete item.value;
+      }
+    } else {
+      const values = [];
+      for (let i = 0; i < message.items.length; i++) {
+        const item = message.items[i];
+        if (!(item.type === 3 || item.type === 9)) {
+          break;
+        }
+        if (item.value == null) {
+          break;
+        }
+        values.push(item.value);
+      }
+      if (values.length === message.items.length) {
+        message.static = join(values);
+        for (let i = 0; i < message.items.length; i++) {
+          const item = message.items[i];
+          if (item.type === 3 || item.type === 9) {
+            delete item.value;
+          }
+        }
+      }
+    }
+  }
+  function minify(node) {
+    node.t = node.type;
+    switch (node.type) {
+      case 0: {
+        const resource = node;
+        minify(resource.body);
+        resource.b = resource.body;
+        delete resource.body;
+        break;
+      }
+      case 1: {
+        const plural = node;
+        const cases = plural.cases;
+        for (let i = 0; i < cases.length; i++) {
+          minify(cases[i]);
+        }
+        plural.c = cases;
+        delete plural.cases;
+        break;
+      }
+      case 2: {
+        const message = node;
+        const items = message.items;
+        for (let i = 0; i < items.length; i++) {
+          minify(items[i]);
+        }
+        message.i = items;
+        delete message.items;
+        if (message.static) {
+          message.s = message.static;
+          delete message.static;
+        }
+        break;
+      }
+      case 3:
+      case 9:
+      case 8:
+      case 7: {
+        const valueNode = node;
+        if (valueNode.value) {
+          valueNode.v = valueNode.value;
+          delete valueNode.value;
+        }
+        break;
+      }
+      case 6: {
+        const linked = node;
+        minify(linked.key);
+        linked.k = linked.key;
+        delete linked.key;
+        if (linked.modifier) {
+          minify(linked.modifier);
+          linked.m = linked.modifier;
+          delete linked.modifier;
+        }
+        break;
+      }
+      case 5: {
+        const list = node;
+        list.i = list.index;
+        delete list.index;
+        break;
+      }
+      case 4: {
+        const named = node;
+        named.k = named.key;
+        delete named.key;
+        break;
+      }
+    }
+    delete node.type;
+  }
+  function createCodeGenerator(ast, options) {
+    const { filename, breakLineCode, needIndent: _needIndent } = options;
+    const location2 = options.location !== false;
+    const _context = {
+      filename,
+      code: "",
+      column: 1,
+      line: 1,
+      offset: 0,
+      map: void 0,
+      breakLineCode,
+      needIndent: _needIndent,
+      indentLevel: 0
+    };
+    if (location2 && ast.loc) {
+      _context.source = ast.loc.source;
+    }
+    const context = () => _context;
+    function push(code, node) {
+      _context.code += code;
+    }
+    function _newline(n, withBreakLine = true) {
+      const _breakLineCode = withBreakLine ? breakLineCode : "";
+      push(_needIndent ? _breakLineCode + `  `.repeat(n) : _breakLineCode);
+    }
+    function indent(withNewLine = true) {
+      const level = ++_context.indentLevel;
+      withNewLine && _newline(level);
+    }
+    function deindent(withNewLine = true) {
+      const level = --_context.indentLevel;
+      withNewLine && _newline(level);
+    }
+    function newline() {
+      _newline(_context.indentLevel);
+    }
+    const helper = (key) => `_${key}`;
+    const needIndent = () => _context.needIndent;
+    return {
+      context,
+      push,
+      indent,
+      deindent,
+      newline,
+      helper,
+      needIndent
+    };
+  }
+  function generateLinkedNode(generator, node) {
+    const { helper } = generator;
+    generator.push(`${helper(
+      "linked"
+      /* HelperNameMap.LINKED */
+    )}(`);
+    generateNode(generator, node.key);
+    if (node.modifier) {
+      generator.push(`, `);
+      generateNode(generator, node.modifier);
+      generator.push(`, _type`);
+    } else {
+      generator.push(`, undefined, _type`);
+    }
+    generator.push(`)`);
+  }
+  function generateMessageNode(generator, node) {
+    const { helper, needIndent } = generator;
+    generator.push(`${helper(
+      "normalize"
+      /* HelperNameMap.NORMALIZE */
+    )}([`);
+    generator.indent(needIndent());
+    const length = node.items.length;
+    for (let i = 0; i < length; i++) {
+      generateNode(generator, node.items[i]);
+      if (i === length - 1) {
+        break;
+      }
+      generator.push(", ");
+    }
+    generator.deindent(needIndent());
+    generator.push("])");
+  }
+  function generatePluralNode(generator, node) {
+    const { helper, needIndent } = generator;
+    if (node.cases.length > 1) {
+      generator.push(`${helper(
+        "plural"
+        /* HelperNameMap.PLURAL */
+      )}([`);
+      generator.indent(needIndent());
+      const length = node.cases.length;
+      for (let i = 0; i < length; i++) {
+        generateNode(generator, node.cases[i]);
+        if (i === length - 1) {
+          break;
+        }
+        generator.push(", ");
+      }
+      generator.deindent(needIndent());
+      generator.push(`])`);
+    }
+  }
+  function generateResource(generator, node) {
+    if (node.body) {
+      generateNode(generator, node.body);
+    } else {
+      generator.push("null");
+    }
+  }
+  function generateNode(generator, node) {
+    const { helper } = generator;
+    switch (node.type) {
+      case 0:
+        generateResource(generator, node);
+        break;
+      case 1:
+        generatePluralNode(generator, node);
+        break;
+      case 2:
+        generateMessageNode(generator, node);
+        break;
+      case 6:
+        generateLinkedNode(generator, node);
+        break;
+      case 8:
+        generator.push(JSON.stringify(node.value), node);
+        break;
+      case 7:
+        generator.push(JSON.stringify(node.value), node);
+        break;
+      case 5:
+        generator.push(`${helper(
+          "interpolate"
+          /* HelperNameMap.INTERPOLATE */
+        )}(${helper(
+          "list"
+          /* HelperNameMap.LIST */
+        )}(${node.index}))`, node);
+        break;
+      case 4:
+        generator.push(`${helper(
+          "interpolate"
+          /* HelperNameMap.INTERPOLATE */
+        )}(${helper(
+          "named"
+          /* HelperNameMap.NAMED */
+        )}(${JSON.stringify(node.key)}))`, node);
+        break;
+      case 9:
+        generator.push(JSON.stringify(node.value), node);
+        break;
+      case 3:
+        generator.push(JSON.stringify(node.value), node);
+        break;
+    }
+  }
+  const generate = (ast, options = {}) => {
+    const mode = isString$1(options.mode) ? options.mode : "normal";
+    const filename = isString$1(options.filename) ? options.filename : "message.intl";
+    !!options.sourceMap;
+    const breakLineCode = options.breakLineCode != null ? options.breakLineCode : mode === "arrow" ? ";" : "\n";
+    const needIndent = options.needIndent ? options.needIndent : mode !== "arrow";
+    const helpers = ast.helpers || [];
+    const generator = createCodeGenerator(ast, {
+      filename,
+      breakLineCode,
+      needIndent
+    });
+    generator.push(mode === "normal" ? `function __msg__ (ctx) {` : `(ctx) => {`);
+    generator.indent(needIndent);
+    if (helpers.length > 0) {
+      generator.push(`const { ${join(helpers.map((s) => `${s}: _${s}`), ", ")} } = ctx`);
+      generator.newline();
+    }
+    generator.push(`return `);
+    generateNode(generator, ast);
+    generator.deindent(needIndent);
+    generator.push(`}`);
+    delete ast.helpers;
+    const { code, map } = generator.context();
+    return {
+      ast,
+      code,
+      map: map ? map.toJSON() : void 0
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+    };
+  };
+  function baseCompile$1(source, options = {}) {
+    const assignedOptions = assign({}, options);
+    const jit = !!assignedOptions.jit;
+    const enalbeMinify = !!assignedOptions.minify;
+    const enambeOptimize = assignedOptions.optimize == null ? true : assignedOptions.optimize;
+    const parser = createParser(assignedOptions);
+    const ast = parser.parse(source);
+    if (!jit) {
+      transform(ast, assignedOptions);
+      return generate(ast, assignedOptions);
+    } else {
+      enambeOptimize && optimize(ast);
+      enalbeMinify && minify(ast);
+      return { ast, code: "" };
+    }
+  }
+  /*!
+    * core-base v11.1.5
+    * (c) 2025 kazuya kawaguchi
+    * Released under the MIT License.
+    */
+  function initFeatureFlags$1() {
+    if (typeof __INTLIFY_PROD_DEVTOOLS__ !== "boolean") {
+      getGlobalThis().__INTLIFY_PROD_DEVTOOLS__ = false;
+    }
+    if (typeof __INTLIFY_DROP_MESSAGE_COMPILER__ !== "boolean") {
+      getGlobalThis().__INTLIFY_DROP_MESSAGE_COMPILER__ = false;
+    }
+  }
+  function isMessageAST(val) {
+    return isObject$1(val) && resolveType(val) === 0 && (hasOwn(val, "b") || hasOwn(val, "body"));
+  }
+  const PROPS_BODY = ["b", "body"];
+  function resolveBody(node) {
+    return resolveProps(node, PROPS_BODY);
+  }
+  const PROPS_CASES = ["c", "cases"];
+  function resolveCases(node) {
+    return resolveProps(node, PROPS_CASES, []);
+  }
+  const PROPS_STATIC = ["s", "static"];
+  function resolveStatic(node) {
+    return resolveProps(node, PROPS_STATIC);
+  }
+  const PROPS_ITEMS = ["i", "items"];
+  function resolveItems(node) {
+    return resolveProps(node, PROPS_ITEMS, []);
+  }
+  const PROPS_TYPE = ["t", "type"];
+  function resolveType(node) {
+    return resolveProps(node, PROPS_TYPE);
+  }
+  const PROPS_VALUE = ["v", "value"];
+  function resolveValue$1(node, type) {
+    const resolved = resolveProps(node, PROPS_VALUE);
+    if (resolved != null) {
+      return resolved;
+    } else {
+      throw createUnhandleNodeError(type);
+    }
+  }
+  const PROPS_MODIFIER = ["m", "modifier"];
+  function resolveLinkedModifier(node) {
+    return resolveProps(node, PROPS_MODIFIER);
+  }
+  const PROPS_KEY = ["k", "key"];
+  function resolveLinkedKey(node) {
+    const resolved = resolveProps(node, PROPS_KEY);
+    if (resolved) {
+      return resolved;
+    } else {
+      throw createUnhandleNodeError(
+        6
+        /* NodeTypes.Linked */
+      );
+    }
+  }
+  function resolveProps(node, props, defaultValue) {
+    for (let i = 0; i < props.length; i++) {
+      const prop = props[i];
+      if (hasOwn(node, prop) && node[prop] != null) {
+        return node[prop];
+      }
+    }
+    return defaultValue;
+  }
+  const AST_NODE_PROPS_KEYS = [
+    ...PROPS_BODY,
+    ...PROPS_CASES,
+    ...PROPS_STATIC,
+    ...PROPS_ITEMS,
+    ...PROPS_KEY,
+    ...PROPS_MODIFIER,
+    ...PROPS_VALUE,
+    ...PROPS_TYPE
+  ];
+  function createUnhandleNodeError(type) {
+    return new Error(`unhandled node type: ${type}`);
+  }
+  function format(ast) {
+    const msg = (ctx) => formatParts(ctx, ast);
+    return msg;
+  }
+  function formatParts(ctx, ast) {
+    const body = resolveBody(ast);
+    if (body == null) {
+      throw createUnhandleNodeError(
+        0
+        /* NodeTypes.Resource */
+      );
+    }
+    const type = resolveType(body);
+    if (type === 1) {
+      const plural = body;
+      const cases = resolveCases(plural);
+      return ctx.plural(cases.reduce((messages, c) => [
+        ...messages,
+        formatMessageParts(ctx, c)
+      ], []));
+    } else {
+      return formatMessageParts(ctx, body);
+    }
+  }
+  function formatMessageParts(ctx, node) {
+    const static_ = resolveStatic(node);
+    if (static_ != null) {
+      return ctx.type === "text" ? static_ : ctx.normalize([static_]);
+    } else {
+      const messages = resolveItems(node).reduce((acm, c) => [...acm, formatMessagePart(ctx, c)], []);
+      return ctx.normalize(messages);
+    }
+  }
+  function formatMessagePart(ctx, node) {
+    const type = resolveType(node);
+    switch (type) {
+      case 3: {
+        return resolveValue$1(node, type);
+      }
+      case 9: {
+        return resolveValue$1(node, type);
+      }
+      case 4: {
+        const named = node;
+        if (hasOwn(named, "k") && named.k) {
+          return ctx.interpolate(ctx.named(named.k));
+        }
+        if (hasOwn(named, "key") && named.key) {
+          return ctx.interpolate(ctx.named(named.key));
+        }
+        throw createUnhandleNodeError(type);
+      }
+      case 5: {
+        const list = node;
+        if (hasOwn(list, "i") && isNumber$1(list.i)) {
+          return ctx.interpolate(ctx.list(list.i));
+        }
+        if (hasOwn(list, "index") && isNumber$1(list.index)) {
+          return ctx.interpolate(ctx.list(list.index));
+        }
+        throw createUnhandleNodeError(type);
+      }
+      case 6: {
+        const linked = node;
+        const modifier = resolveLinkedModifier(linked);
+        const key = resolveLinkedKey(linked);
+        return ctx.linked(formatMessagePart(ctx, key), modifier ? formatMessagePart(ctx, modifier) : void 0, ctx.type);
+      }
+      case 7: {
+        return resolveValue$1(node, type);
+      }
+      case 8: {
+        return resolveValue$1(node, type);
+      }
+      default:
+        throw new Error(`unhandled node on format message part: ${type}`);
+    }
+  }
+  const defaultOnCacheKey = (message) => message;
+  let compileCache = create();
+  function baseCompile(message, options = {}) {
+    let detectError = false;
+    const onError = options.onError || defaultOnError;
+    options.onError = (err) => {
+      detectError = true;
+      onError(err);
+    };
+    return { ...baseCompile$1(message, options), detectError };
+  }
+  // @__NO_SIDE_EFFECTS__
+  function compile(message, context) {
+    if (!__INTLIFY_DROP_MESSAGE_COMPILER__ && isString$1(message)) {
+      isBoolean$1(context.warnHtmlMessage) ? context.warnHtmlMessage : true;
+      const onCacheKey = context.onCacheKey || defaultOnCacheKey;
+      const cacheKey = onCacheKey(message);
+      const cached = compileCache[cacheKey];
+      if (cached) {
+        return cached;
+      }
+      const { ast, detectError } = baseCompile(message, {
+        ...context,
+        location: false,
+        jit: true
+      });
+      const msg = format(ast);
+      return !detectError ? compileCache[cacheKey] = msg : msg;
+    } else {
+      const cacheKey = message.cacheKey;
+      if (cacheKey) {
+        const cached = compileCache[cacheKey];
+        if (cached) {
+          return cached;
+        }
+        return compileCache[cacheKey] = format(message);
+      } else {
+        return format(message);
+      }
+    }
+  }
+  let devtools = null;
+  function setDevToolsHook(hook) {
+    devtools = hook;
+  }
+  function initI18nDevTools(i18n2, version2, meta) {
+    devtools && devtools.emit("i18n:init", {
+      timestamp: Date.now(),
+      i18n: i18n2,
+      version: version2,
+      meta
+    });
+  }
+  const translateDevTools = /* @__PURE__ */ createDevToolsHook("function:translate");
+  function createDevToolsHook(hook) {
+    return (payloads) => devtools && devtools.emit(hook, payloads);
+  }
+  const CoreErrorCodes = {
+    INVALID_ARGUMENT: COMPILE_ERROR_CODES_EXTEND_POINT,
+    // 17
+    INVALID_DATE_ARGUMENT: 18,
+    INVALID_ISO_DATE_ARGUMENT: 19,
+    NOT_SUPPORT_LOCALE_PROMISE_VALUE: 21,
+    NOT_SUPPORT_LOCALE_ASYNC_FUNCTION: 22,
+    NOT_SUPPORT_LOCALE_TYPE: 23
+  };
+  const CORE_ERROR_CODES_EXTEND_POINT = 24;
+  function createCoreError(code) {
+    return createCompileError(code, null, void 0);
+  }
+  function getLocale$1(context, options) {
+    return options.locale != null ? resolveLocale(options.locale) : resolveLocale(context.locale);
+  }
+  let _resolveLocale;
+  function resolveLocale(locale) {
+    if (isString$1(locale)) {
+      return locale;
+    } else {
+      if (isFunction$1(locale)) {
+        if (locale.resolvedOnce && _resolveLocale != null) {
+          return _resolveLocale;
+        } else if (locale.constructor.name === "Function") {
+          const resolve2 = locale();
+          if (isPromise(resolve2)) {
+            throw createCoreError(CoreErrorCodes.NOT_SUPPORT_LOCALE_PROMISE_VALUE);
+          }
+          return _resolveLocale = resolve2;
+        } else {
+          throw createCoreError(CoreErrorCodes.NOT_SUPPORT_LOCALE_ASYNC_FUNCTION);
+        }
+      } else {
+        throw createCoreError(CoreErrorCodes.NOT_SUPPORT_LOCALE_TYPE);
+      }
+    }
+  }
+  function fallbackWithSimple(ctx, fallback, start) {
+    return [.../* @__PURE__ */ new Set([
+      start,
+      ...isArray$1(fallback) ? fallback : isObject$1(fallback) ? Object.keys(fallback) : isString$1(fallback) ? [fallback] : [start]
+    ])];
+  }
+  function fallbackWithLocaleChain(ctx, fallback, start) {
+    const startLocale = isString$1(start) ? start : DEFAULT_LOCALE;
+    const context = ctx;
+    if (!context.__localeChainCache) {
+      context.__localeChainCache = /* @__PURE__ */ new Map();
+    }
+    let chain = context.__localeChainCache.get(startLocale);
+    if (!chain) {
+      chain = [];
+      let block = [start];
+      while (isArray$1(block)) {
+        block = appendBlockToChain(chain, block, fallback);
+      }
+      const defaults2 = isArray$1(fallback) || !isPlainObject$1(fallback) ? fallback : fallback["default"] ? fallback["default"] : null;
+      block = isString$1(defaults2) ? [defaults2] : defaults2;
+      if (isArray$1(block)) {
+        appendBlockToChain(chain, block, false);
+      }
+      context.__localeChainCache.set(startLocale, chain);
+    }
+    return chain;
+  }
+  function appendBlockToChain(chain, block, blocks) {
+    let follow = true;
+    for (let i = 0; i < block.length && isBoolean$1(follow); i++) {
+      const locale = block[i];
+      if (isString$1(locale)) {
+        follow = appendLocaleToChain(chain, block[i], blocks);
+      }
+    }
+    return follow;
+  }
+  function appendLocaleToChain(chain, locale, blocks) {
+    let follow;
+    const tokens = locale.split("-");
+    do {
+      const target = tokens.join("-");
+      follow = appendItemToChain(chain, target, blocks);
+      tokens.splice(-1, 1);
+    } while (tokens.length && follow === true);
+    return follow;
+  }
+  function appendItemToChain(chain, target, blocks) {
+    let follow = false;
+    if (!chain.includes(target)) {
+      follow = true;
+      if (target) {
+        follow = target[target.length - 1] !== "!";
+        const locale = target.replace(/!/g, "");
+        chain.push(locale);
+        if ((isArray$1(blocks) || isPlainObject$1(blocks)) && blocks[locale]) {
+          follow = blocks[locale];
+        }
+      }
+    }
+    return follow;
+  }
+  const pathStateMachine = [];
+  pathStateMachine[
+    0
+    /* States.BEFORE_PATH */
+  ] = {
+    [
+      "w"
+      /* PathCharTypes.WORKSPACE */
+    ]: [
+      0
+      /* States.BEFORE_PATH */
+    ],
+    [
+      "i"
+      /* PathCharTypes.IDENT */
+    ]: [
+      3,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "["
+      /* PathCharTypes.LEFT_BRACKET */
+    ]: [
+      4
+      /* States.IN_SUB_PATH */
+    ],
+    [
+      "o"
+      /* PathCharTypes.END_OF_FAIL */
+    ]: [
+      7
+      /* States.AFTER_PATH */
+    ]
+  };
+  pathStateMachine[
+    1
+    /* States.IN_PATH */
+  ] = {
+    [
+      "w"
+      /* PathCharTypes.WORKSPACE */
+    ]: [
+      1
+      /* States.IN_PATH */
+    ],
+    [
+      "."
+      /* PathCharTypes.DOT */
+    ]: [
+      2
+      /* States.BEFORE_IDENT */
+    ],
+    [
+      "["
+      /* PathCharTypes.LEFT_BRACKET */
+    ]: [
+      4
+      /* States.IN_SUB_PATH */
+    ],
+    [
+      "o"
+      /* PathCharTypes.END_OF_FAIL */
+    ]: [
+      7
+      /* States.AFTER_PATH */
+    ]
+  };
+  pathStateMachine[
+    2
+    /* States.BEFORE_IDENT */
+  ] = {
+    [
+      "w"
+      /* PathCharTypes.WORKSPACE */
+    ]: [
+      2
+      /* States.BEFORE_IDENT */
+    ],
+    [
+      "i"
+      /* PathCharTypes.IDENT */
+    ]: [
+      3,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "0"
+      /* PathCharTypes.ZERO */
+    ]: [
+      3,
+      0
+      /* Actions.APPEND */
+    ]
+  };
+  pathStateMachine[
+    3
+    /* States.IN_IDENT */
+  ] = {
+    [
+      "i"
+      /* PathCharTypes.IDENT */
+    ]: [
+      3,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "0"
+      /* PathCharTypes.ZERO */
+    ]: [
+      3,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "w"
+      /* PathCharTypes.WORKSPACE */
+    ]: [
+      1,
+      1
+      /* Actions.PUSH */
+    ],
+    [
+      "."
+      /* PathCharTypes.DOT */
+    ]: [
+      2,
+      1
+      /* Actions.PUSH */
+    ],
+    [
+      "["
+      /* PathCharTypes.LEFT_BRACKET */
+    ]: [
+      4,
+      1
+      /* Actions.PUSH */
+    ],
+    [
+      "o"
+      /* PathCharTypes.END_OF_FAIL */
+    ]: [
+      7,
+      1
+      /* Actions.PUSH */
+    ]
+  };
+  pathStateMachine[
+    4
+    /* States.IN_SUB_PATH */
+  ] = {
+    [
+      "'"
+      /* PathCharTypes.SINGLE_QUOTE */
+    ]: [
+      5,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      '"'
+      /* PathCharTypes.DOUBLE_QUOTE */
+    ]: [
+      6,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "["
+      /* PathCharTypes.LEFT_BRACKET */
+    ]: [
+      4,
+      2
+      /* Actions.INC_SUB_PATH_DEPTH */
+    ],
+    [
+      "]"
+      /* PathCharTypes.RIGHT_BRACKET */
+    ]: [
+      1,
+      3
+      /* Actions.PUSH_SUB_PATH */
+    ],
+    [
+      "o"
+      /* PathCharTypes.END_OF_FAIL */
+    ]: 8,
+    [
+      "l"
+      /* PathCharTypes.ELSE */
+    ]: [
+      4,
+      0
+      /* Actions.APPEND */
+    ]
+  };
+  pathStateMachine[
+    5
+    /* States.IN_SINGLE_QUOTE */
+  ] = {
+    [
+      "'"
+      /* PathCharTypes.SINGLE_QUOTE */
+    ]: [
+      4,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "o"
+      /* PathCharTypes.END_OF_FAIL */
+    ]: 8,
+    [
+      "l"
+      /* PathCharTypes.ELSE */
+    ]: [
+      5,
+      0
+      /* Actions.APPEND */
+    ]
+  };
+  pathStateMachine[
+    6
+    /* States.IN_DOUBLE_QUOTE */
+  ] = {
+    [
+      '"'
+      /* PathCharTypes.DOUBLE_QUOTE */
+    ]: [
+      4,
+      0
+      /* Actions.APPEND */
+    ],
+    [
+      "o"
+      /* PathCharTypes.END_OF_FAIL */
+    ]: 8,
+    [
+      "l"
+      /* PathCharTypes.ELSE */
+    ]: [
+      6,
+      0
+      /* Actions.APPEND */
+    ]
+  };
+  const literalValueRE = /^\s?(?:true|false|-?[\d.]+|'[^']*'|"[^"]*")\s?$/;
+  function isLiteral(exp) {
+    return literalValueRE.test(exp);
+  }
+  function stripQuotes(str) {
+    const a = str.charCodeAt(0);
+    const b = str.charCodeAt(str.length - 1);
+    return a === b && (a === 34 || a === 39) ? str.slice(1, -1) : str;
+  }
+  function getPathCharType(ch) {
+    if (ch === void 0 || ch === null) {
+      return "o";
+    }
+    const code = ch.charCodeAt(0);
+    switch (code) {
+      case 91:
+      // [
+      case 93:
+      // ]
+      case 46:
+      // .
+      case 34:
+      // "
+      case 39:
+        return ch;
+      case 95:
+      // _
+      case 36:
+      // $
+      case 45:
+        return "i";
+      case 9:
+      // Tab (HT)
+      case 10:
+      // Newline (LF)
+      case 13:
+      // Return (CR)
+      case 160:
+      // No-break space (NBSP)
+      case 65279:
+      // Byte Order Mark (BOM)
+      case 8232:
+      // Line Separator (LS)
+      case 8233:
+        return "w";
+    }
+    return "i";
+  }
+  function formatSubPath(path) {
+    const trimmed = path.trim();
+    if (path.charAt(0) === "0" && isNaN(parseInt(path))) {
+      return false;
+    }
+    return isLiteral(trimmed) ? stripQuotes(trimmed) : "*" + trimmed;
+  }
+  function parse(path) {
+    const keys = [];
+    let index2 = -1;
+    let mode = 0;
+    let subPathDepth = 0;
+    let c;
+    let key;
+    let newChar;
+    let type;
+    let transition;
+    let action;
+    let typeMap;
+    const actions = [];
+    actions[
+      0
+      /* Actions.APPEND */
+    ] = () => {
+      if (key === void 0) {
+        key = newChar;
+      } else {
+        key += newChar;
+      }
+    };
+    actions[
+      1
+      /* Actions.PUSH */
+    ] = () => {
+      if (key !== void 0) {
+        keys.push(key);
+        key = void 0;
+      }
+    };
+    actions[
+      2
+      /* Actions.INC_SUB_PATH_DEPTH */
+    ] = () => {
+      actions[
+        0
+        /* Actions.APPEND */
+      ]();
+      subPathDepth++;
+    };
+    actions[
+      3
+      /* Actions.PUSH_SUB_PATH */
+    ] = () => {
+      if (subPathDepth > 0) {
+        subPathDepth--;
+        mode = 4;
+        actions[
+          0
+          /* Actions.APPEND */
+        ]();
+      } else {
+        subPathDepth = 0;
+        if (key === void 0) {
+          return false;
+        }
+        key = formatSubPath(key);
+        if (key === false) {
+          return false;
+        } else {
+          actions[
+            1
+            /* Actions.PUSH */
+          ]();
+        }
+      }
+    };
+    function maybeUnescapeQuote() {
+      const nextChar = path[index2 + 1];
+      if (mode === 5 && nextChar === "'" || mode === 6 && nextChar === '"') {
+        index2++;
+        newChar = "\\" + nextChar;
+        actions[
+          0
+          /* Actions.APPEND */
+        ]();
+        return true;
+      }
+    }
+    while (mode !== null) {
+      index2++;
+      c = path[index2];
+      if (c === "\\" && maybeUnescapeQuote()) {
+        continue;
+      }
+      type = getPathCharType(c);
+      typeMap = pathStateMachine[mode];
+      transition = typeMap[type] || typeMap[
+        "l"
+        /* PathCharTypes.ELSE */
+      ] || 8;
+      if (transition === 8) {
+        return;
+      }
+      mode = transition[0];
+      if (transition[1] !== void 0) {
+        action = actions[transition[1]];
+        if (action) {
+          newChar = c;
+          if (action() === false) {
+            return;
+          }
+        }
+      }
+      if (mode === 7) {
+        return keys;
+      }
+    }
+  }
+  const cache = /* @__PURE__ */ new Map();
+  function resolveWithKeyValue(obj, path) {
+    return isObject$1(obj) ? obj[path] : null;
+  }
+  function resolveValue(obj, path) {
+    if (!isObject$1(obj)) {
+      return null;
+    }
+    let hit = cache.get(path);
+    if (!hit) {
+      hit = parse(path);
+      if (hit) {
+        cache.set(path, hit);
+      }
+    }
+    if (!hit) {
+      return null;
+    }
+    const len = hit.length;
+    let last = obj;
+    let i = 0;
+    while (i < len) {
+      const key = hit[i];
+      if (AST_NODE_PROPS_KEYS.includes(key) && isMessageAST(last)) {
+        return null;
+      }
+      const val = last[key];
+      if (val === void 0) {
+        return null;
+      }
+      if (isFunction$1(last)) {
+        return null;
+      }
+      last = val;
+      i++;
+    }
+    return last;
+  }
+  const VERSION$3 = "11.1.5";
+  const NOT_REOSLVED = -1;
+  const DEFAULT_LOCALE = "en-US";
+  const MISSING_RESOLVE_VALUE = "";
+  const capitalize = (str) => `${str.charAt(0).toLocaleUpperCase()}${str.substr(1)}`;
+  function getDefaultLinkedModifiers() {
+    return {
+      upper: (val, type) => {
+        return type === "text" && isString$1(val) ? val.toUpperCase() : type === "vnode" && isObject$1(val) && "__v_isVNode" in val ? val.children.toUpperCase() : val;
+      },
+      lower: (val, type) => {
+        return type === "text" && isString$1(val) ? val.toLowerCase() : type === "vnode" && isObject$1(val) && "__v_isVNode" in val ? val.children.toLowerCase() : val;
+      },
+      capitalize: (val, type) => {
+        return type === "text" && isString$1(val) ? capitalize(val) : type === "vnode" && isObject$1(val) && "__v_isVNode" in val ? capitalize(val.children) : val;
+      }
+    };
+  }
+  let _compiler;
+  function registerMessageCompiler(compiler) {
+    _compiler = compiler;
+  }
+  let _resolver;
+  function registerMessageResolver(resolver) {
+    _resolver = resolver;
+  }
+  let _fallbacker;
+  function registerLocaleFallbacker(fallbacker) {
+    _fallbacker = fallbacker;
+  }
+  let _additionalMeta = null;
+  const setAdditionalMeta = /* @__NO_SIDE_EFFECTS__ */ (meta) => {
+    _additionalMeta = meta;
+  };
+  const getAdditionalMeta = /* @__NO_SIDE_EFFECTS__ */ () => _additionalMeta;
+  let _fallbackContext = null;
+  const setFallbackContext = (context) => {
+    _fallbackContext = context;
+  };
+  const getFallbackContext = () => _fallbackContext;
+  let _cid = 0;
+  function createCoreContext(options = {}) {
+    const onWarn = isFunction$1(options.onWarn) ? options.onWarn : warn;
+    const version2 = isString$1(options.version) ? options.version : VERSION$3;
+    const locale = isString$1(options.locale) || isFunction$1(options.locale) ? options.locale : DEFAULT_LOCALE;
+    const _locale = isFunction$1(locale) ? DEFAULT_LOCALE : locale;
+    const fallbackLocale = isArray$1(options.fallbackLocale) || isPlainObject$1(options.fallbackLocale) || isString$1(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale;
+    const messages = isPlainObject$1(options.messages) ? options.messages : createResources(_locale);
+    const datetimeFormats = isPlainObject$1(options.datetimeFormats) ? options.datetimeFormats : createResources(_locale);
+    const numberFormats = isPlainObject$1(options.numberFormats) ? options.numberFormats : createResources(_locale);
+    const modifiers = assign(create(), options.modifiers, getDefaultLinkedModifiers());
+    const pluralRules = options.pluralRules || create();
+    const missing = isFunction$1(options.missing) ? options.missing : null;
+    const missingWarn = isBoolean$1(options.missingWarn) || isRegExp$1(options.missingWarn) ? options.missingWarn : true;
+    const fallbackWarn = isBoolean$1(options.fallbackWarn) || isRegExp$1(options.fallbackWarn) ? options.fallbackWarn : true;
+    const fallbackFormat = !!options.fallbackFormat;
+    const unresolving = !!options.unresolving;
+    const postTranslation = isFunction$1(options.postTranslation) ? options.postTranslation : null;
+    const processor = isPlainObject$1(options.processor) ? options.processor : null;
+    const warnHtmlMessage = isBoolean$1(options.warnHtmlMessage) ? options.warnHtmlMessage : true;
+    const escapeParameter = !!options.escapeParameter;
+    const messageCompiler = isFunction$1(options.messageCompiler) ? options.messageCompiler : _compiler;
+    const messageResolver = isFunction$1(options.messageResolver) ? options.messageResolver : _resolver || resolveWithKeyValue;
+    const localeFallbacker = isFunction$1(options.localeFallbacker) ? options.localeFallbacker : _fallbacker || fallbackWithSimple;
+    const fallbackContext = isObject$1(options.fallbackContext) ? options.fallbackContext : void 0;
+    const internalOptions = options;
+    const __datetimeFormatters = isObject$1(internalOptions.__datetimeFormatters) ? internalOptions.__datetimeFormatters : /* @__PURE__ */ new Map();
+    const __numberFormatters = isObject$1(internalOptions.__numberFormatters) ? internalOptions.__numberFormatters : /* @__PURE__ */ new Map();
+    const __meta = isObject$1(internalOptions.__meta) ? internalOptions.__meta : {};
+    _cid++;
+    const context = {
+      version: version2,
+      cid: _cid,
+      locale,
+      fallbackLocale,
+      messages,
+      modifiers,
+      pluralRules,
+      missing,
+      missingWarn,
+      fallbackWarn,
+      fallbackFormat,
+      unresolving,
+      postTranslation,
+      processor,
+      warnHtmlMessage,
+      escapeParameter,
+      messageCompiler,
+      messageResolver,
+      localeFallbacker,
+      fallbackContext,
+      onWarn,
+      __meta
+    };
+    {
+      context.datetimeFormats = datetimeFormats;
+      context.numberFormats = numberFormats;
+      context.__datetimeFormatters = __datetimeFormatters;
+      context.__numberFormatters = __numberFormatters;
+    }
+    if (__INTLIFY_PROD_DEVTOOLS__) {
+      initI18nDevTools(context, version2, __meta);
+    }
+    return context;
+  }
+  const createResources = (locale) => ({ [locale]: create() });
+  function handleMissing(context, key, locale, missingWarn, type) {
+    const { missing, onWarn } = context;
+    if (missing !== null) {
+      const ret = missing(context, locale, key, type);
+      return isString$1(ret) ? ret : key;
+    } else {
+      return key;
+    }
+  }
+  function updateFallbackLocale(ctx, locale, fallback) {
+    const context = ctx;
+    context.__localeChainCache = /* @__PURE__ */ new Map();
+    ctx.localeFallbacker(ctx, fallback, locale);
+  }
+  function isAlmostSameLocale(locale, compareLocale) {
+    if (locale === compareLocale)
+      return false;
+    return locale.split("-")[0] === compareLocale.split("-")[0];
+  }
+  function isImplicitFallback(targetLocale, locales) {
+    const index2 = locales.indexOf(targetLocale);
+    if (index2 === -1) {
+      return false;
+    }
+    for (let i = index2 + 1; i < locales.length; i++) {
+      if (isAlmostSameLocale(targetLocale, locales[i])) {
+        return true;
+      }
+    }
+    return false;
+  }
+  function datetime(context, ...args) {
+    const { datetimeFormats, unresolving, fallbackLocale, onWarn, localeFallbacker } = context;
+    const { __datetimeFormatters } = context;
+    const [key, value, options, overrides] = parseDateTimeArgs(...args);
+    const missingWarn = isBoolean$1(options.missingWarn) ? options.missingWarn : context.missingWarn;
+    isBoolean$1(options.fallbackWarn) ? options.fallbackWarn : context.fallbackWarn;
+    const part = !!options.part;
+    const locale = getLocale$1(context, options);
+    const locales = localeFallbacker(
+      context,
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      fallbackLocale,
+      locale
+    );
+    if (!isString$1(key) || key === "") {
+      return new Intl.DateTimeFormat(locale, overrides).format(value);
+    }
+    let datetimeFormat = {};
+    let targetLocale;
+    let format2 = null;
+    const type = "datetime format";
+    for (let i = 0; i < locales.length; i++) {
+      targetLocale = locales[i];
+      datetimeFormat = datetimeFormats[targetLocale] || {};
+      format2 = datetimeFormat[key];
+      if (isPlainObject$1(format2))
+        break;
+      handleMissing(context, key, targetLocale, missingWarn, type);
+    }
+    if (!isPlainObject$1(format2) || !isString$1(targetLocale)) {
+      return unresolving ? NOT_REOSLVED : key;
+    }
+    let id = `${targetLocale}__${key}`;
+    if (!isEmptyObject(overrides)) {
+      id = `${id}__${JSON.stringify(overrides)}`;
+    }
+    let formatter = __datetimeFormatters.get(id);
+    if (!formatter) {
+      formatter = new Intl.DateTimeFormat(targetLocale, assign({}, format2, overrides));
+      __datetimeFormatters.set(id, formatter);
+    }
+    return !part ? formatter.format(value) : formatter.formatToParts(value);
+  }
+  const DATETIME_FORMAT_OPTIONS_KEYS = [
+    "localeMatcher",
+    "weekday",
+    "era",
+    "year",
+    "month",
+    "day",
+    "hour",
+    "minute",
+    "second",
+    "timeZoneName",
+    "formatMatcher",
+    "hour12",
+    "timeZone",
+    "dateStyle",
+    "timeStyle",
+    "calendar",
+    "dayPeriod",
+    "numberingSystem",
+    "hourCycle",
+    "fractionalSecondDigits"
+  ];
+  function parseDateTimeArgs(...args) {
+    const [arg1, arg2, arg3, arg4] = args;
+    const options = create();
+    let overrides = create();
+    let value;
+    if (isString$1(arg1)) {
+      const matches = arg1.match(/(\d{4}-\d{2}-\d{2})(T|\s)?(.*)/);
+      if (!matches) {
+        throw createCoreError(CoreErrorCodes.INVALID_ISO_DATE_ARGUMENT);
+      }
+      const dateTime = matches[3] ? matches[3].trim().startsWith("T") ? `${matches[1].trim()}${matches[3].trim()}` : `${matches[1].trim()}T${matches[3].trim()}` : matches[1].trim();
+      value = new Date(dateTime);
+      try {
+        value.toISOString();
+      } catch {
+        throw createCoreError(CoreErrorCodes.INVALID_ISO_DATE_ARGUMENT);
+      }
+    } else if (isDate$1(arg1)) {
+      if (isNaN(arg1.getTime())) {
+        throw createCoreError(CoreErrorCodes.INVALID_DATE_ARGUMENT);
+      }
+      value = arg1;
+    } else if (isNumber$1(arg1)) {
+      value = arg1;
+    } else {
+      throw createCoreError(CoreErrorCodes.INVALID_ARGUMENT);
+    }
+    if (isString$1(arg2)) {
+      options.key = arg2;
+    } else if (isPlainObject$1(arg2)) {
+      Object.keys(arg2).forEach((key) => {
+        if (DATETIME_FORMAT_OPTIONS_KEYS.includes(key)) {
+          overrides[key] = arg2[key];
+        } else {
+          options[key] = arg2[key];
+        }
+      });
+    }
+    if (isString$1(arg3)) {
+      options.locale = arg3;
+    } else if (isPlainObject$1(arg3)) {
+      overrides = arg3;
+    }
+    if (isPlainObject$1(arg4)) {
+      overrides = arg4;
+    }
+    return [options.key || "", value, options, overrides];
+  }
+  function clearDateTimeFormat(ctx, locale, format2) {
+    const context = ctx;
+    for (const key in format2) {
+      const id = `${locale}__${key}`;
+      if (!context.__datetimeFormatters.has(id)) {
+        continue;
+      }
+      context.__datetimeFormatters.delete(id);
+    }
+  }
+  function number(context, ...args) {
+    const { numberFormats, unresolving, fallbackLocale, onWarn, localeFallbacker } = context;
+    const { __numberFormatters } = context;
+    const [key, value, options, overrides] = parseNumberArgs(...args);
+    const missingWarn = isBoolean$1(options.missingWarn) ? options.missingWarn : context.missingWarn;
+    isBoolean$1(options.fallbackWarn) ? options.fallbackWarn : context.fallbackWarn;
+    const part = !!options.part;
+    const locale = getLocale$1(context, options);
+    const locales = localeFallbacker(
+      context,
+      // eslint-disable-line @typescript-eslint/no-explicit-any
+      fallbackLocale,
+      locale
+    );
+    if (!isString$1(key) || key === "") {
+      return new Intl.NumberFormat(locale, overrides).format(value);
+    }
+    let numberFormat = {};
+    let targetLocale;
+    let format2 = null;
+    const type = "number format";
+    for (let i = 0; i < locales.length; i++) {
+      targetLocale = locales[i];
+      numberFormat = numberFormats[targetLocale] || {};
+      format2 = numberFormat[key];
+      if (isPlainObject$1(format2))
+        break;
+      handleMissing(context, key, targetLocale, missingWarn, type);
+    }
+    if (!isPlainObject$1(format2) || !isString$1(targetLocale)) {
+      return unresolving ? NOT_REOSLVED : key;
+    }
+    let id = `${targetLocale}__${key}`;
+    if (!isEmptyObject(overrides)) {
+      id = `${id}__${JSON.stringify(overrides)}`;
+    }
+    let formatter = __numberFormatters.get(id);
+    if (!formatter) {
+      formatter = new Intl.NumberFormat(targetLocale, assign({}, format2, overrides));
+      __numberFormatters.set(id, formatter);
+    }
+    return !part ? formatter.format(value) : formatter.formatToParts(value);
+  }
+  const NUMBER_FORMAT_OPTIONS_KEYS = [
+    "localeMatcher",
+    "style",
+    "currency",
+    "currencyDisplay",
+    "currencySign",
+    "useGrouping",
+    "minimumIntegerDigits",
+    "minimumFractionDigits",
+    "maximumFractionDigits",
+    "minimumSignificantDigits",
+    "maximumSignificantDigits",
+    "compactDisplay",
+    "notation",
+    "signDisplay",
+    "unit",
+    "unitDisplay",
+    "roundingMode",
+    "roundingPriority",
+    "roundingIncrement",
+    "trailingZeroDisplay"
+  ];
+  function parseNumberArgs(...args) {
+    const [arg1, arg2, arg3, arg4] = args;
+    const options = create();
+    let overrides = create();
+    if (!isNumber$1(arg1)) {
+      throw createCoreError(CoreErrorCodes.INVALID_ARGUMENT);
+    }
+    const value = arg1;
+    if (isString$1(arg2)) {
+      options.key = arg2;
+    } else if (isPlainObject$1(arg2)) {
+      Object.keys(arg2).forEach((key) => {
+        if (NUMBER_FORMAT_OPTIONS_KEYS.includes(key)) {
+          overrides[key] = arg2[key];
+        } else {
+          options[key] = arg2[key];
+        }
+      });
+    }
+    if (isString$1(arg3)) {
+      options.locale = arg3;
+    } else if (isPlainObject$1(arg3)) {
+      overrides = arg3;
+    }
+    if (isPlainObject$1(arg4)) {
+      overrides = arg4;
+    }
+    return [options.key || "", value, options, overrides];
+  }
+  function clearNumberFormat(ctx, locale, format2) {
+    const context = ctx;
+    for (const key in format2) {
+      const id = `${locale}__${key}`;
+      if (!context.__numberFormatters.has(id)) {
+        continue;
+      }
+      context.__numberFormatters.delete(id);
+    }
+  }
+  const DEFAULT_MODIFIER = (str) => str;
+  const DEFAULT_MESSAGE = (ctx) => "";
+  const DEFAULT_MESSAGE_DATA_TYPE = "text";
+  const DEFAULT_NORMALIZE = (values) => values.length === 0 ? "" : join(values);
+  const DEFAULT_INTERPOLATE = toDisplayString;
+  function pluralDefault(choice, choicesLength) {
+    choice = Math.abs(choice);
+    if (choicesLength === 2) {
+      return choice ? choice > 1 ? 1 : 0 : 1;
+    }
+    return choice ? Math.min(choice, 2) : 0;
+  }
+  function getPluralIndex(options) {
+    const index2 = isNumber$1(options.pluralIndex) ? options.pluralIndex : -1;
+    return options.named && (isNumber$1(options.named.count) || isNumber$1(options.named.n)) ? isNumber$1(options.named.count) ? options.named.count : isNumber$1(options.named.n) ? options.named.n : index2 : index2;
+  }
+  function normalizeNamed(pluralIndex, props) {
+    if (!props.count) {
+      props.count = pluralIndex;
+    }
+    if (!props.n) {
+      props.n = pluralIndex;
+    }
+  }
+  function createMessageContext(options = {}) {
+    const locale = options.locale;
+    const pluralIndex = getPluralIndex(options);
+    const pluralRule = isObject$1(options.pluralRules) && isString$1(locale) && isFunction$1(options.pluralRules[locale]) ? options.pluralRules[locale] : pluralDefault;
+    const orgPluralRule = isObject$1(options.pluralRules) && isString$1(locale) && isFunction$1(options.pluralRules[locale]) ? pluralDefault : void 0;
+    const plural = (messages) => {
+      return messages[pluralRule(pluralIndex, messages.length, orgPluralRule)];
+    };
+    const _list = options.list || [];
+    const list = (index2) => _list[index2];
+    const _named = options.named || create();
+    isNumber$1(options.pluralIndex) && normalizeNamed(pluralIndex, _named);
+    const named = (key) => _named[key];
+    function message(key, useLinked) {
+      const msg = isFunction$1(options.messages) ? options.messages(key, !!useLinked) : isObject$1(options.messages) ? options.messages[key] : false;
+      return !msg ? options.parent ? options.parent.message(key) : DEFAULT_MESSAGE : msg;
+    }
+    const _modifier = (name) => options.modifiers ? options.modifiers[name] : DEFAULT_MODIFIER;
+    const normalize = isPlainObject$1(options.processor) && isFunction$1(options.processor.normalize) ? options.processor.normalize : DEFAULT_NORMALIZE;
+    const interpolate = isPlainObject$1(options.processor) && isFunction$1(options.processor.interpolate) ? options.processor.interpolate : DEFAULT_INTERPOLATE;
+    const type = isPlainObject$1(options.processor) && isString$1(options.processor.type) ? options.processor.type : DEFAULT_MESSAGE_DATA_TYPE;
+    const linked = (key, ...args) => {
+      const [arg1, arg2] = args;
+      let type2 = "text";
+      let modifier = "";
+      if (args.length === 1) {
+        if (isObject$1(arg1)) {
+          modifier = arg1.modifier || modifier;
+          type2 = arg1.type || type2;
+        } else if (isString$1(arg1)) {
+          modifier = arg1 || modifier;
+        }
+      } else if (args.length === 2) {
+        if (isString$1(arg1)) {
+          modifier = arg1 || modifier;
+        }
+        if (isString$1(arg2)) {
+          type2 = arg2 || type2;
+        }
+      }
+      const ret = message(key, true)(ctx);
+      const msg = (
+        // The message in vnode resolved with linked are returned as an array by processor.nomalize
+        type2 === "vnode" && isArray$1(ret) && modifier ? ret[0] : ret
+      );
+      return modifier ? _modifier(modifier)(msg, type2) : msg;
+    };
+    const ctx = {
+      [
+        "list"
+        /* HelperNameMap.LIST */
+      ]: list,
+      [
+        "named"
+        /* HelperNameMap.NAMED */
+      ]: named,
+      [
+        "plural"
+        /* HelperNameMap.PLURAL */
+      ]: plural,
+      [
+        "linked"
+        /* HelperNameMap.LINKED */
+      ]: linked,
+      [
+        "message"
+        /* HelperNameMap.MESSAGE */
+      ]: message,
+      [
+        "type"
+        /* HelperNameMap.TYPE */
+      ]: type,
+      [
+        "interpolate"
+        /* HelperNameMap.INTERPOLATE */
+      ]: interpolate,
+      [
+        "normalize"
+        /* HelperNameMap.NORMALIZE */
+      ]: normalize,
+      [
+        "values"
+        /* HelperNameMap.VALUES */
+      ]: assign(create(), _list, _named)
+    };
+    return ctx;
+  }
+  const NOOP_MESSAGE_FUNCTION = () => "";
+  const isMessageFunction = (val) => isFunction$1(val);
+  function translate(context, ...args) {
+    const { fallbackFormat, postTranslation, unresolving, messageCompiler, fallbackLocale, messages } = context;
+    const [key, options] = parseTranslateArgs(...args);
+    const missingWarn = isBoolean$1(options.missingWarn) ? options.missingWarn : context.missingWarn;
+    const fallbackWarn = isBoolean$1(options.fallbackWarn) ? options.fallbackWarn : context.fallbackWarn;
+    const escapeParameter = isBoolean$1(options.escapeParameter) ? options.escapeParameter : context.escapeParameter;
+    const resolvedMessage = !!options.resolvedMessage;
+    const defaultMsgOrKey = isString$1(options.default) || isBoolean$1(options.default) ? !isBoolean$1(options.default) ? options.default : !messageCompiler ? () => key : key : fallbackFormat ? !messageCompiler ? () => key : key : null;
+    const enableDefaultMsg = fallbackFormat || defaultMsgOrKey != null && (isString$1(defaultMsgOrKey) || isFunction$1(defaultMsgOrKey));
+    const locale = getLocale$1(context, options);
+    escapeParameter && escapeParams(options);
+    let [formatScope, targetLocale, message] = !resolvedMessage ? resolveMessageFormat(context, key, locale, fallbackLocale, fallbackWarn, missingWarn) : [
+      key,
+      locale,
+      messages[locale] || create()
+    ];
+    let format2 = formatScope;
+    let cacheBaseKey = key;
+    if (!resolvedMessage && !(isString$1(format2) || isMessageAST(format2) || isMessageFunction(format2))) {
+      if (enableDefaultMsg) {
+        format2 = defaultMsgOrKey;
+        cacheBaseKey = format2;
+      }
+    }
+    if (!resolvedMessage && (!(isString$1(format2) || isMessageAST(format2) || isMessageFunction(format2)) || !isString$1(targetLocale))) {
+      return unresolving ? NOT_REOSLVED : key;
+    }
+    let occurred = false;
+    const onError = () => {
+      occurred = true;
+    };
+    const msg = !isMessageFunction(format2) ? compileMessageFormat(context, key, targetLocale, format2, cacheBaseKey, onError) : format2;
+    if (occurred) {
+      return format2;
+    }
+    const ctxOptions = getMessageContextOptions(context, targetLocale, message, options);
+    const msgContext = createMessageContext(ctxOptions);
+    const messaged = evaluateMessage(context, msg, msgContext);
+    const ret = postTranslation ? postTranslation(messaged, key) : messaged;
+    if (__INTLIFY_PROD_DEVTOOLS__) {
+      const payloads = {
+        timestamp: Date.now(),
+        key: isString$1(key) ? key : isMessageFunction(format2) ? format2.key : "",
+        locale: targetLocale || (isMessageFunction(format2) ? format2.locale : ""),
+        format: isString$1(format2) ? format2 : isMessageFunction(format2) ? format2.source : "",
+        message: ret
+      };
+      payloads.meta = assign({}, context.__meta, /* @__PURE__ */ getAdditionalMeta() || {});
+      translateDevTools(payloads);
+    }
+    return ret;
+  }
+  function escapeParams(options) {
+    if (isArray$1(options.list)) {
+      options.list = options.list.map((item) => isString$1(item) ? escapeHtml(item) : item);
+    } else if (isObject$1(options.named)) {
+      Object.keys(options.named).forEach((key) => {
+        if (isString$1(options.named[key])) {
+          options.named[key] = escapeHtml(options.named[key]);
+        }
+      });
+    }
+  }
+  function resolveMessageFormat(context, key, locale, fallbackLocale, fallbackWarn, missingWarn) {
+    const { messages, onWarn, messageResolver: resolveValue2, localeFallbacker } = context;
+    const locales = localeFallbacker(context, fallbackLocale, locale);
+    let message = create();
+    let targetLocale;
+    let format2 = null;
+    const type = "translate";
+    for (let i = 0; i < locales.length; i++) {
+      targetLocale = locales[i];
+      message = messages[targetLocale] || create();
+      if ((format2 = resolveValue2(message, key)) === null) {
+        format2 = message[key];
+      }
+      if (isString$1(format2) || isMessageAST(format2) || isMessageFunction(format2)) {
+        break;
+      }
+      if (!isImplicitFallback(targetLocale, locales)) {
+        const missingRet = handleMissing(
+          context,
+          // eslint-disable-line @typescript-eslint/no-explicit-any
+          key,
+          targetLocale,
+          missingWarn,
+          type
+        );
+        if (missingRet !== key) {
+          format2 = missingRet;
+        }
+      }
+    }
+    return [format2, targetLocale, message];
+  }
+  function compileMessageFormat(context, key, targetLocale, format2, cacheBaseKey, onError) {
+    const { messageCompiler, warnHtmlMessage } = context;
+    if (isMessageFunction(format2)) {
+      const msg2 = format2;
+      msg2.locale = msg2.locale || targetLocale;
+      msg2.key = msg2.key || key;
+      return msg2;
+    }
+    if (messageCompiler == null) {
+      const msg2 = () => format2;
+      msg2.locale = targetLocale;
+      msg2.key = key;
+      return msg2;
+    }
+    const msg = messageCompiler(format2, getCompileContext(context, targetLocale, cacheBaseKey, format2, warnHtmlMessage, onError));
+    msg.locale = targetLocale;
+    msg.key = key;
+    msg.source = format2;
+    return msg;
+  }
+  function evaluateMessage(context, msg, msgCtx) {
+    const messaged = msg(msgCtx);
+    return messaged;
+  }
+  function parseTranslateArgs(...args) {
+    const [arg1, arg2, arg3] = args;
+    const options = create();
+    if (!isString$1(arg1) && !isNumber$1(arg1) && !isMessageFunction(arg1) && !isMessageAST(arg1)) {
+      throw createCoreError(CoreErrorCodes.INVALID_ARGUMENT);
+    }
+    const key = isNumber$1(arg1) ? String(arg1) : isMessageFunction(arg1) ? arg1 : arg1;
+    if (isNumber$1(arg2)) {
+      options.plural = arg2;
+    } else if (isString$1(arg2)) {
+      options.default = arg2;
+    } else if (isPlainObject$1(arg2) && !isEmptyObject(arg2)) {
+      options.named = arg2;
+    } else if (isArray$1(arg2)) {
+      options.list = arg2;
+    }
+    if (isNumber$1(arg3)) {
+      options.plural = arg3;
+    } else if (isString$1(arg3)) {
+      options.default = arg3;
+    } else if (isPlainObject$1(arg3)) {
+      assign(options, arg3);
+    }
+    return [key, options];
+  }
+  function getCompileContext(context, locale, key, source, warnHtmlMessage, onError) {
+    return {
+      locale,
+      key,
+      warnHtmlMessage,
+      onError: (err) => {
+        onError && onError(err);
+        {
+          throw err;
+        }
+      },
+      onCacheKey: (source2) => generateFormatCacheKey(locale, key, source2)
+    };
+  }
+  function getMessageContextOptions(context, locale, message, options) {
+    const { modifiers, pluralRules, messageResolver: resolveValue2, fallbackLocale, fallbackWarn, missingWarn, fallbackContext } = context;
+    const resolveMessage = (key, useLinked) => {
+      let val = resolveValue2(message, key);
+      if (val == null && (fallbackContext || useLinked)) {
+        const [, , message2] = resolveMessageFormat(
+          fallbackContext || context,
+          // NOTE: if has fallbackContext, fallback to root, else if use linked, fallback to local context
+          key,
+          locale,
+          fallbackLocale,
+          fallbackWarn,
+          missingWarn
+        );
+        val = resolveValue2(message2, key);
+      }
+      if (isString$1(val) || isMessageAST(val)) {
+        let occurred = false;
+        const onError = () => {
+          occurred = true;
+        };
+        const msg = compileMessageFormat(context, key, locale, val, key, onError);
+        return !occurred ? msg : NOOP_MESSAGE_FUNCTION;
+      } else if (isMessageFunction(val)) {
+        return val;
+      } else {
+        return NOOP_MESSAGE_FUNCTION;
+      }
+    };
+    const ctxOptions = {
+      locale,
+      modifiers,
+      pluralRules,
+      messages: resolveMessage
+    };
+    if (context.processor) {
+      ctxOptions.processor = context.processor;
+    }
+    if (options.list) {
+      ctxOptions.list = options.list;
+    }
+    if (options.named) {
+      ctxOptions.named = options.named;
+    }
+    if (isNumber$1(options.plural)) {
+      ctxOptions.pluralIndex = options.plural;
+    }
+    return ctxOptions;
+  }
+  {
+    initFeatureFlags$1();
+  }
+  /*!
+    * vue-i18n v11.1.5
+    * (c) 2025 kazuya kawaguchi
+    * Released under the MIT License.
+    */
+  const VERSION$2 = "11.1.5";
+  function initFeatureFlags() {
+    if (typeof __VUE_I18N_FULL_INSTALL__ !== "boolean") {
+      getGlobalThis().__VUE_I18N_FULL_INSTALL__ = true;
+    }
+    if (typeof __VUE_I18N_LEGACY_API__ !== "boolean") {
+      getGlobalThis().__VUE_I18N_LEGACY_API__ = true;
+    }
+    if (typeof __INTLIFY_DROP_MESSAGE_COMPILER__ !== "boolean") {
+      getGlobalThis().__INTLIFY_DROP_MESSAGE_COMPILER__ = false;
+    }
+    if (typeof __INTLIFY_PROD_DEVTOOLS__ !== "boolean") {
+      getGlobalThis().__INTLIFY_PROD_DEVTOOLS__ = false;
+    }
+  }
+  const I18nErrorCodes = {
+    // composer module errors
+    UNEXPECTED_RETURN_TYPE: CORE_ERROR_CODES_EXTEND_POINT,
+    // 24
+    // legacy module errors
+    INVALID_ARGUMENT: 25,
+    // i18n module errors
+    MUST_BE_CALL_SETUP_TOP: 26,
+    NOT_INSTALLED: 27,
+    // directive module errors
+    REQUIRED_VALUE: 28,
+    INVALID_VALUE: 29,
+    NOT_INSTALLED_WITH_PROVIDE: 31,
+    // unexpected error
+    UNEXPECTED_ERROR: 32
+  };
+  function createI18nError(code, ...args) {
+    return createCompileError(code, null, void 0);
+  }
+  const TranslateVNodeSymbol = /* @__PURE__ */ makeSymbol("__translateVNode");
+  const DatetimePartsSymbol = /* @__PURE__ */ makeSymbol("__datetimeParts");
+  const NumberPartsSymbol = /* @__PURE__ */ makeSymbol("__numberParts");
+  const SetPluralRulesSymbol = makeSymbol("__setPluralRules");
+  const InejctWithOptionSymbol = /* @__PURE__ */ makeSymbol("__injectWithOption");
+  const DisposeSymbol = /* @__PURE__ */ makeSymbol("__dispose");
+  function handleFlatJson(obj) {
+    if (!isObject$1(obj)) {
+      return obj;
+    }
+    if (isMessageAST(obj)) {
+      return obj;
+    }
+    for (const key in obj) {
+      if (!hasOwn(obj, key)) {
+        continue;
+      }
+      if (!key.includes(".")) {
+        if (isObject$1(obj[key])) {
+          handleFlatJson(obj[key]);
+        }
+      } else {
+        const subKeys = key.split(".");
+        const lastIndex = subKeys.length - 1;
+        let currentObj = obj;
+        let hasStringValue = false;
+        for (let i = 0; i < lastIndex; i++) {
+          if (subKeys[i] === "__proto__") {
+            throw new Error(`unsafe key: ${subKeys[i]}`);
+          }
+          if (!(subKeys[i] in currentObj)) {
+            currentObj[subKeys[i]] = create();
+          }
+          if (!isObject$1(currentObj[subKeys[i]])) {
+            hasStringValue = true;
+            break;
+          }
+          currentObj = currentObj[subKeys[i]];
+        }
+        if (!hasStringValue) {
+          if (!isMessageAST(currentObj)) {
+            currentObj[subKeys[lastIndex]] = obj[key];
+            delete obj[key];
+          } else {
+            if (!AST_NODE_PROPS_KEYS.includes(subKeys[lastIndex])) {
+              delete obj[key];
+            }
+          }
+        }
+        if (!isMessageAST(currentObj)) {
+          const target = currentObj[subKeys[lastIndex]];
+          if (isObject$1(target)) {
+            handleFlatJson(target);
+          }
+        }
+      }
+    }
+    return obj;
+  }
+  function getLocaleMessages(locale, options) {
+    const { messages, __i18n, messageResolver, flatJson } = options;
+    const ret = isPlainObject$1(messages) ? messages : isArray$1(__i18n) ? create() : { [locale]: create() };
+    if (isArray$1(__i18n)) {
+      __i18n.forEach((custom) => {
+        if ("locale" in custom && "resource" in custom) {
+          const { locale: locale2, resource } = custom;
+          if (locale2) {
+            ret[locale2] = ret[locale2] || create();
+            deepCopy(resource, ret[locale2]);
+          } else {
+            deepCopy(resource, ret);
+          }
+        } else {
+          isString$1(custom) && deepCopy(JSON.parse(custom), ret);
+        }
+      });
+    }
+    if (messageResolver == null && flatJson) {
+      for (const key in ret) {
+        if (hasOwn(ret, key)) {
+          handleFlatJson(ret[key]);
+        }
+      }
+    }
+    return ret;
+  }
+  function getComponentOptions(instance) {
+    return instance.type;
+  }
+  function adjustI18nResources(gl, options, componentOptions) {
+    let messages = isObject$1(options.messages) ? options.messages : create();
+    if ("__i18nGlobal" in componentOptions) {
+      messages = getLocaleMessages(gl.locale.value, {
+        messages,
+        __i18n: componentOptions.__i18nGlobal
+      });
+    }
+    const locales = Object.keys(messages);
+    if (locales.length) {
+      locales.forEach((locale) => {
+        gl.mergeLocaleMessage(locale, messages[locale]);
+      });
+    }
+    {
+      if (isObject$1(options.datetimeFormats)) {
+        const locales2 = Object.keys(options.datetimeFormats);
+        if (locales2.length) {
+          locales2.forEach((locale) => {
+            gl.mergeDateTimeFormat(locale, options.datetimeFormats[locale]);
+          });
+        }
+      }
+      if (isObject$1(options.numberFormats)) {
+        const locales2 = Object.keys(options.numberFormats);
+        if (locales2.length) {
+          locales2.forEach((locale) => {
+            gl.mergeNumberFormat(locale, options.numberFormats[locale]);
+          });
+        }
+      }
+    }
+  }
+  function createTextNode(key) {
+    return createVNode(Text, null, key, 0);
+  }
+  const DEVTOOLS_META = "__INTLIFY_META__";
+  const NOOP_RETURN_ARRAY = () => [];
+  const NOOP_RETURN_FALSE = () => false;
+  let composerID = 0;
+  function defineCoreMissingHandler(missing) {
+    return (ctx, locale, key, type) => {
+      return missing(locale, key, getCurrentInstance() || void 0, type);
+    };
+  }
+  const getMetaInfo = /* @__NO_SIDE_EFFECTS__ */ () => {
+    const instance = getCurrentInstance();
+    let meta = null;
+    return instance && (meta = getComponentOptions(instance)[DEVTOOLS_META]) ? { [DEVTOOLS_META]: meta } : null;
+  };
+  function createComposer(options = {}) {
+    const { __root, __injectWithOption } = options;
+    const _isGlobal = __root === void 0;
+    const flatJson = options.flatJson;
+    const _ref = inBrowser ? ref : shallowRef;
+    let _inheritLocale = isBoolean$1(options.inheritLocale) ? options.inheritLocale : true;
+    const _locale = _ref(
+      // prettier-ignore
+      __root && _inheritLocale ? __root.locale.value : isString$1(options.locale) ? options.locale : DEFAULT_LOCALE
+    );
+    const _fallbackLocale = _ref(
+      // prettier-ignore
+      __root && _inheritLocale ? __root.fallbackLocale.value : isString$1(options.fallbackLocale) || isArray$1(options.fallbackLocale) || isPlainObject$1(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : _locale.value
+    );
+    const _messages = _ref(getLocaleMessages(_locale.value, options));
+    const _datetimeFormats = _ref(isPlainObject$1(options.datetimeFormats) ? options.datetimeFormats : { [_locale.value]: {} });
+    const _numberFormats = _ref(isPlainObject$1(options.numberFormats) ? options.numberFormats : { [_locale.value]: {} });
+    let _missingWarn = __root ? __root.missingWarn : isBoolean$1(options.missingWarn) || isRegExp$1(options.missingWarn) ? options.missingWarn : true;
+    let _fallbackWarn = __root ? __root.fallbackWarn : isBoolean$1(options.fallbackWarn) || isRegExp$1(options.fallbackWarn) ? options.fallbackWarn : true;
+    let _fallbackRoot = __root ? __root.fallbackRoot : isBoolean$1(options.fallbackRoot) ? options.fallbackRoot : true;
+    let _fallbackFormat = !!options.fallbackFormat;
+    let _missing = isFunction$1(options.missing) ? options.missing : null;
+    let _runtimeMissing = isFunction$1(options.missing) ? defineCoreMissingHandler(options.missing) : null;
+    let _postTranslation = isFunction$1(options.postTranslation) ? options.postTranslation : null;
+    let _warnHtmlMessage = __root ? __root.warnHtmlMessage : isBoolean$1(options.warnHtmlMessage) ? options.warnHtmlMessage : true;
+    let _escapeParameter = !!options.escapeParameter;
+    const _modifiers = __root ? __root.modifiers : isPlainObject$1(options.modifiers) ? options.modifiers : {};
+    let _pluralRules = options.pluralRules || __root && __root.pluralRules;
+    let _context;
+    const getCoreContext = () => {
+      _isGlobal && setFallbackContext(null);
+      const ctxOptions = {
+        version: VERSION$2,
+        locale: _locale.value,
+        fallbackLocale: _fallbackLocale.value,
+        messages: _messages.value,
+        modifiers: _modifiers,
+        pluralRules: _pluralRules,
+        missing: _runtimeMissing === null ? void 0 : _runtimeMissing,
+        missingWarn: _missingWarn,
+        fallbackWarn: _fallbackWarn,
+        fallbackFormat: _fallbackFormat,
+        unresolving: true,
+        postTranslation: _postTranslation === null ? void 0 : _postTranslation,
+        warnHtmlMessage: _warnHtmlMessage,
+        escapeParameter: _escapeParameter,
+        messageResolver: options.messageResolver,
+        messageCompiler: options.messageCompiler,
+        __meta: { framework: "vue" }
+      };
+      {
+        ctxOptions.datetimeFormats = _datetimeFormats.value;
+        ctxOptions.numberFormats = _numberFormats.value;
+        ctxOptions.__datetimeFormatters = isPlainObject$1(_context) ? _context.__datetimeFormatters : void 0;
+        ctxOptions.__numberFormatters = isPlainObject$1(_context) ? _context.__numberFormatters : void 0;
+      }
+      const ctx = createCoreContext(ctxOptions);
+      _isGlobal && setFallbackContext(ctx);
+      return ctx;
+    };
+    _context = getCoreContext();
+    updateFallbackLocale(_context, _locale.value, _fallbackLocale.value);
+    function trackReactivityValues() {
+      return [
+        _locale.value,
+        _fallbackLocale.value,
+        _messages.value,
+        _datetimeFormats.value,
+        _numberFormats.value
+      ];
+    }
+    const locale = computed({
+      get: () => _locale.value,
+      set: (val) => {
+        _context.locale = val;
+        _locale.value = val;
+      }
+    });
+    const fallbackLocale = computed({
+      get: () => _fallbackLocale.value,
+      set: (val) => {
+        _context.fallbackLocale = val;
+        _fallbackLocale.value = val;
+        updateFallbackLocale(_context, _locale.value, val);
+      }
+    });
+    const messages = computed(() => _messages.value);
+    const datetimeFormats = /* @__PURE__ */ computed(() => _datetimeFormats.value);
+    const numberFormats = /* @__PURE__ */ computed(() => _numberFormats.value);
+    function getPostTranslationHandler() {
+      return isFunction$1(_postTranslation) ? _postTranslation : null;
+    }
+    function setPostTranslationHandler(handler) {
+      _postTranslation = handler;
+      _context.postTranslation = handler;
+    }
+    function getMissingHandler() {
+      return _missing;
+    }
+    function setMissingHandler(handler) {
+      if (handler !== null) {
+        _runtimeMissing = defineCoreMissingHandler(handler);
+      }
+      _missing = handler;
+      _context.missing = _runtimeMissing;
+    }
+    const wrapWithDeps = (fn, argumentParser, warnType, fallbackSuccess, fallbackFail, successCondition) => {
+      trackReactivityValues();
+      let ret;
+      try {
+        if (__INTLIFY_PROD_DEVTOOLS__) {
+          /* @__PURE__ */ setAdditionalMeta(/* @__PURE__ */ getMetaInfo());
+        }
+        if (!_isGlobal) {
+          _context.fallbackContext = __root ? getFallbackContext() : void 0;
+        }
+        ret = fn(_context);
+      } finally {
+        if (__INTLIFY_PROD_DEVTOOLS__) ;
+        if (!_isGlobal) {
+          _context.fallbackContext = void 0;
+        }
+      }
+      if (warnType !== "translate exists" && // for not `te` (e.g `t`)
+      isNumber$1(ret) && ret === NOT_REOSLVED || warnType === "translate exists" && !ret) {
+        const [key, arg2] = argumentParser();
+        return __root && _fallbackRoot ? fallbackSuccess(__root) : fallbackFail(key);
+      } else if (successCondition(ret)) {
+        return ret;
+      } else {
+        throw createI18nError(I18nErrorCodes.UNEXPECTED_RETURN_TYPE);
+      }
+    };
+    function t2(...args) {
+      return wrapWithDeps((context) => Reflect.apply(translate, null, [context, ...args]), () => parseTranslateArgs(...args), "translate", (root) => Reflect.apply(root.t, root, [...args]), (key) => key, (val) => isString$1(val));
+    }
+    function rt(...args) {
+      const [arg1, arg2, arg3] = args;
+      if (arg3 && !isObject$1(arg3)) {
+        throw createI18nError(I18nErrorCodes.INVALID_ARGUMENT);
+      }
+      return t2(...[arg1, arg2, assign({ resolvedMessage: true }, arg3 || {})]);
+    }
+    function d(...args) {
+      return wrapWithDeps((context) => Reflect.apply(datetime, null, [context, ...args]), () => parseDateTimeArgs(...args), "datetime format", (root) => Reflect.apply(root.d, root, [...args]), () => MISSING_RESOLVE_VALUE, (val) => isString$1(val) || isArray$1(val));
+    }
+    function n(...args) {
+      return wrapWithDeps((context) => Reflect.apply(number, null, [context, ...args]), () => parseNumberArgs(...args), "number format", (root) => Reflect.apply(root.n, root, [...args]), () => MISSING_RESOLVE_VALUE, (val) => isString$1(val) || isArray$1(val));
+    }
+    function normalize(values) {
+      return values.map((val) => isString$1(val) || isNumber$1(val) || isBoolean$1(val) ? createTextNode(String(val)) : val);
+    }
+    const interpolate = (val) => val;
+    const processor = {
+      normalize,
+      interpolate,
+      type: "vnode"
+    };
+    function translateVNode(...args) {
+      return wrapWithDeps((context) => {
+        let ret;
+        const _context2 = context;
+        try {
+          _context2.processor = processor;
+          ret = Reflect.apply(translate, null, [_context2, ...args]);
+        } finally {
+          _context2.processor = null;
+        }
+        return ret;
+      }, () => parseTranslateArgs(...args), "translate", (root) => root[TranslateVNodeSymbol](...args), (key) => [createTextNode(key)], (val) => isArray$1(val));
+    }
+    function numberParts(...args) {
+      return wrapWithDeps((context) => Reflect.apply(number, null, [context, ...args]), () => parseNumberArgs(...args), "number format", (root) => root[NumberPartsSymbol](...args), NOOP_RETURN_ARRAY, (val) => isString$1(val) || isArray$1(val));
+    }
+    function datetimeParts(...args) {
+      return wrapWithDeps((context) => Reflect.apply(datetime, null, [context, ...args]), () => parseDateTimeArgs(...args), "datetime format", (root) => root[DatetimePartsSymbol](...args), NOOP_RETURN_ARRAY, (val) => isString$1(val) || isArray$1(val));
+    }
+    function setPluralRules(rules) {
+      _pluralRules = rules;
+      _context.pluralRules = _pluralRules;
+    }
+    function te(key, locale2) {
+      return wrapWithDeps(() => {
+        if (!key) {
+          return false;
+        }
+        const targetLocale = isString$1(locale2) ? locale2 : _locale.value;
+        const message = getLocaleMessage(targetLocale);
+        const resolved = _context.messageResolver(message, key);
+        return isMessageAST(resolved) || isMessageFunction(resolved) || isString$1(resolved);
+      }, () => [key], "translate exists", (root) => {
+        return Reflect.apply(root.te, root, [key, locale2]);
+      }, NOOP_RETURN_FALSE, (val) => isBoolean$1(val));
+    }
+    function resolveMessages(key) {
+      let messages2 = null;
+      const locales = fallbackWithLocaleChain(_context, _fallbackLocale.value, _locale.value);
+      for (let i = 0; i < locales.length; i++) {
+        const targetLocaleMessages = _messages.value[locales[i]] || {};
+        const messageValue = _context.messageResolver(targetLocaleMessages, key);
+        if (messageValue != null) {
+          messages2 = messageValue;
+          break;
+        }
+      }
+      return messages2;
+    }
+    function tm(key) {
+      const messages2 = resolveMessages(key);
+      return messages2 != null ? messages2 : __root ? __root.tm(key) || {} : {};
+    }
+    function getLocaleMessage(locale2) {
+      return _messages.value[locale2] || {};
+    }
+    function setLocaleMessage(locale2, message) {
+      if (flatJson) {
+        const _message = { [locale2]: message };
+        for (const key in _message) {
+          if (hasOwn(_message, key)) {
+            handleFlatJson(_message[key]);
+          }
+        }
+        message = _message[locale2];
+      }
+      _messages.value[locale2] = message;
+      _context.messages = _messages.value;
+    }
+    function mergeLocaleMessage(locale2, message) {
+      _messages.value[locale2] = _messages.value[locale2] || {};
+      const _message = { [locale2]: message };
+      if (flatJson) {
+        for (const key in _message) {
+          if (hasOwn(_message, key)) {
+            handleFlatJson(_message[key]);
+          }
+        }
+      }
+      message = _message[locale2];
+      deepCopy(message, _messages.value[locale2]);
+      _context.messages = _messages.value;
+    }
+    function getDateTimeFormat(locale2) {
+      return _datetimeFormats.value[locale2] || {};
+    }
+    function setDateTimeFormat(locale2, format2) {
+      _datetimeFormats.value[locale2] = format2;
+      _context.datetimeFormats = _datetimeFormats.value;
+      clearDateTimeFormat(_context, locale2, format2);
+    }
+    function mergeDateTimeFormat(locale2, format2) {
+      _datetimeFormats.value[locale2] = assign(_datetimeFormats.value[locale2] || {}, format2);
+      _context.datetimeFormats = _datetimeFormats.value;
+      clearDateTimeFormat(_context, locale2, format2);
+    }
+    function getNumberFormat(locale2) {
+      return _numberFormats.value[locale2] || {};
+    }
+    function setNumberFormat(locale2, format2) {
+      _numberFormats.value[locale2] = format2;
+      _context.numberFormats = _numberFormats.value;
+      clearNumberFormat(_context, locale2, format2);
+    }
+    function mergeNumberFormat(locale2, format2) {
+      _numberFormats.value[locale2] = assign(_numberFormats.value[locale2] || {}, format2);
+      _context.numberFormats = _numberFormats.value;
+      clearNumberFormat(_context, locale2, format2);
+    }
+    composerID++;
+    if (__root && inBrowser) {
+      watch(__root.locale, (val) => {
+        if (_inheritLocale) {
+          _locale.value = val;
+          _context.locale = val;
+          updateFallbackLocale(_context, _locale.value, _fallbackLocale.value);
+        }
+      });
+      watch(__root.fallbackLocale, (val) => {
+        if (_inheritLocale) {
+          _fallbackLocale.value = val;
+          _context.fallbackLocale = val;
+          updateFallbackLocale(_context, _locale.value, _fallbackLocale.value);
+        }
+      });
+    }
+    const composer = {
+      id: composerID,
+      locale,
+      fallbackLocale,
+      get inheritLocale() {
+        return _inheritLocale;
+      },
+      set inheritLocale(val) {
+        _inheritLocale = val;
+        if (val && __root) {
+          _locale.value = __root.locale.value;
+          _fallbackLocale.value = __root.fallbackLocale.value;
+          updateFallbackLocale(_context, _locale.value, _fallbackLocale.value);
+        }
+      },
+      get availableLocales() {
+        return Object.keys(_messages.value).sort();
+      },
+      messages,
+      get modifiers() {
+        return _modifiers;
+      },
+      get pluralRules() {
+        return _pluralRules || {};
+      },
+      get isGlobal() {
+        return _isGlobal;
+      },
+      get missingWarn() {
+        return _missingWarn;
+      },
+      set missingWarn(val) {
+        _missingWarn = val;
+        _context.missingWarn = _missingWarn;
+      },
+      get fallbackWarn() {
+        return _fallbackWarn;
+      },
+      set fallbackWarn(val) {
+        _fallbackWarn = val;
+        _context.fallbackWarn = _fallbackWarn;
+      },
+      get fallbackRoot() {
+        return _fallbackRoot;
+      },
+      set fallbackRoot(val) {
+        _fallbackRoot = val;
+      },
+      get fallbackFormat() {
+        return _fallbackFormat;
+      },
+      set fallbackFormat(val) {
+        _fallbackFormat = val;
+        _context.fallbackFormat = _fallbackFormat;
+      },
+      get warnHtmlMessage() {
+        return _warnHtmlMessage;
+      },
+      set warnHtmlMessage(val) {
+        _warnHtmlMessage = val;
+        _context.warnHtmlMessage = val;
+      },
+      get escapeParameter() {
+        return _escapeParameter;
+      },
+      set escapeParameter(val) {
+        _escapeParameter = val;
+        _context.escapeParameter = val;
+      },
+      t: t2,
+      getLocaleMessage,
+      setLocaleMessage,
+      mergeLocaleMessage,
+      getPostTranslationHandler,
+      setPostTranslationHandler,
+      getMissingHandler,
+      setMissingHandler,
+      [SetPluralRulesSymbol]: setPluralRules
+    };
+    {
+      composer.datetimeFormats = datetimeFormats;
+      composer.numberFormats = numberFormats;
+      composer.rt = rt;
+      composer.te = te;
+      composer.tm = tm;
+      composer.d = d;
+      composer.n = n;
+      composer.getDateTimeFormat = getDateTimeFormat;
+      composer.setDateTimeFormat = setDateTimeFormat;
+      composer.mergeDateTimeFormat = mergeDateTimeFormat;
+      composer.getNumberFormat = getNumberFormat;
+      composer.setNumberFormat = setNumberFormat;
+      composer.mergeNumberFormat = mergeNumberFormat;
+      composer[InejctWithOptionSymbol] = __injectWithOption;
+      composer[TranslateVNodeSymbol] = translateVNode;
+      composer[DatetimePartsSymbol] = datetimeParts;
+      composer[NumberPartsSymbol] = numberParts;
+    }
+    return composer;
+  }
+  function convertComposerOptions(options) {
+    const locale = isString$1(options.locale) ? options.locale : DEFAULT_LOCALE;
+    const fallbackLocale = isString$1(options.fallbackLocale) || isArray$1(options.fallbackLocale) || isPlainObject$1(options.fallbackLocale) || options.fallbackLocale === false ? options.fallbackLocale : locale;
+    const missing = isFunction$1(options.missing) ? options.missing : void 0;
+    const missingWarn = isBoolean$1(options.silentTranslationWarn) || isRegExp$1(options.silentTranslationWarn) ? !options.silentTranslationWarn : true;
+    const fallbackWarn = isBoolean$1(options.silentFallbackWarn) || isRegExp$1(options.silentFallbackWarn) ? !options.silentFallbackWarn : true;
+    const fallbackRoot = isBoolean$1(options.fallbackRoot) ? options.fallbackRoot : true;
+    const fallbackFormat = !!options.formatFallbackMessages;
+    const modifiers = isPlainObject$1(options.modifiers) ? options.modifiers : {};
+    const pluralizationRules = options.pluralizationRules;
+    const postTranslation = isFunction$1(options.postTranslation) ? options.postTranslation : void 0;
+    const warnHtmlMessage = isString$1(options.warnHtmlInMessage) ? options.warnHtmlInMessage !== "off" : true;
+    const escapeParameter = !!options.escapeParameterHtml;
+    const inheritLocale = isBoolean$1(options.sync) ? options.sync : true;
+    let messages = options.messages;
+    if (isPlainObject$1(options.sharedMessages)) {
+      const sharedMessages = options.sharedMessages;
+      const locales = Object.keys(sharedMessages);
+      messages = locales.reduce((messages2, locale2) => {
+        const message = messages2[locale2] || (messages2[locale2] = {});
+        assign(message, sharedMessages[locale2]);
+        return messages2;
+      }, messages || {});
+    }
+    const { __i18n, __root, __injectWithOption } = options;
+    const datetimeFormats = options.datetimeFormats;
+    const numberFormats = options.numberFormats;
+    const flatJson = options.flatJson;
+    return {
+      locale,
+      fallbackLocale,
+      messages,
+      flatJson,
+      datetimeFormats,
+      numberFormats,
+      missing,
+      missingWarn,
+      fallbackWarn,
+      fallbackRoot,
+      fallbackFormat,
+      modifiers,
+      pluralRules: pluralizationRules,
+      postTranslation,
+      warnHtmlMessage,
+      escapeParameter,
+      messageResolver: options.messageResolver,
+      inheritLocale,
+      __i18n,
+      __root,
+      __injectWithOption
+    };
+  }
+  function createVueI18n(options = {}) {
+    const composer = createComposer(convertComposerOptions(options));
+    const { __extender } = options;
+    const vueI18n = {
+      // id
+      id: composer.id,
+      // locale
+      get locale() {
+        return composer.locale.value;
+      },
+      set locale(val) {
+        composer.locale.value = val;
+      },
+      // fallbackLocale
+      get fallbackLocale() {
+        return composer.fallbackLocale.value;
+      },
+      set fallbackLocale(val) {
+        composer.fallbackLocale.value = val;
+      },
+      // messages
+      get messages() {
+        return composer.messages.value;
+      },
+      // datetimeFormats
+      get datetimeFormats() {
+        return composer.datetimeFormats.value;
+      },
+      // numberFormats
+      get numberFormats() {
+        return composer.numberFormats.value;
+      },
+      // availableLocales
+      get availableLocales() {
+        return composer.availableLocales;
+      },
+      // missing
+      get missing() {
+        return composer.getMissingHandler();
+      },
+      set missing(handler) {
+        composer.setMissingHandler(handler);
+      },
+      // silentTranslationWarn
+      get silentTranslationWarn() {
+        return isBoolean$1(composer.missingWarn) ? !composer.missingWarn : composer.missingWarn;
+      },
+      set silentTranslationWarn(val) {
+        composer.missingWarn = isBoolean$1(val) ? !val : val;
+      },
+      // silentFallbackWarn
+      get silentFallbackWarn() {
+        return isBoolean$1(composer.fallbackWarn) ? !composer.fallbackWarn : composer.fallbackWarn;
+      },
+      set silentFallbackWarn(val) {
+        composer.fallbackWarn = isBoolean$1(val) ? !val : val;
+      },
+      // modifiers
+      get modifiers() {
+        return composer.modifiers;
+      },
+      // formatFallbackMessages
+      get formatFallbackMessages() {
+        return composer.fallbackFormat;
+      },
+      set formatFallbackMessages(val) {
+        composer.fallbackFormat = val;
+      },
+      // postTranslation
+      get postTranslation() {
+        return composer.getPostTranslationHandler();
+      },
+      set postTranslation(handler) {
+        composer.setPostTranslationHandler(handler);
+      },
+      // sync
+      get sync() {
+        return composer.inheritLocale;
+      },
+      set sync(val) {
+        composer.inheritLocale = val;
+      },
+      // warnInHtmlMessage
+      get warnHtmlInMessage() {
+        return composer.warnHtmlMessage ? "warn" : "off";
+      },
+      set warnHtmlInMessage(val) {
+        composer.warnHtmlMessage = val !== "off";
+      },
+      // escapeParameterHtml
+      get escapeParameterHtml() {
+        return composer.escapeParameter;
+      },
+      set escapeParameterHtml(val) {
+        composer.escapeParameter = val;
+      },
+      // pluralizationRules
+      get pluralizationRules() {
+        return composer.pluralRules || {};
+      },
+      // for internal
+      __composer: composer,
+      // t
+      t(...args) {
+        return Reflect.apply(composer.t, composer, [...args]);
+      },
+      // rt
+      rt(...args) {
+        return Reflect.apply(composer.rt, composer, [...args]);
+      },
+      // te
+      te(key, locale) {
+        return composer.te(key, locale);
+      },
+      // tm
+      tm(key) {
+        return composer.tm(key);
+      },
+      // getLocaleMessage
+      getLocaleMessage(locale) {
+        return composer.getLocaleMessage(locale);
+      },
+      // setLocaleMessage
+      setLocaleMessage(locale, message) {
+        composer.setLocaleMessage(locale, message);
+      },
+      // mergeLocaleMessage
+      mergeLocaleMessage(locale, message) {
+        composer.mergeLocaleMessage(locale, message);
+      },
+      // d
+      d(...args) {
+        return Reflect.apply(composer.d, composer, [...args]);
+      },
+      // getDateTimeFormat
+      getDateTimeFormat(locale) {
+        return composer.getDateTimeFormat(locale);
+      },
+      // setDateTimeFormat
+      setDateTimeFormat(locale, format2) {
+        composer.setDateTimeFormat(locale, format2);
+      },
+      // mergeDateTimeFormat
+      mergeDateTimeFormat(locale, format2) {
+        composer.mergeDateTimeFormat(locale, format2);
+      },
+      // n
+      n(...args) {
+        return Reflect.apply(composer.n, composer, [...args]);
+      },
+      // getNumberFormat
+      getNumberFormat(locale) {
+        return composer.getNumberFormat(locale);
+      },
+      // setNumberFormat
+      setNumberFormat(locale, format2) {
+        composer.setNumberFormat(locale, format2);
+      },
+      // mergeNumberFormat
+      mergeNumberFormat(locale, format2) {
+        composer.mergeNumberFormat(locale, format2);
+      }
+    };
+    vueI18n.__extender = __extender;
+    return vueI18n;
+  }
+  function defineMixin(vuei18n, composer, i18n2) {
+    return {
+      beforeCreate() {
+        const instance = getCurrentInstance();
+        if (!instance) {
+          throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
+        }
+        const options = this.$options;
+        if (options.i18n) {
+          const optionsI18n = options.i18n;
+          if (options.__i18n) {
+            optionsI18n.__i18n = options.__i18n;
+          }
+          optionsI18n.__root = composer;
+          if (this === this.$root) {
+            this.$i18n = mergeToGlobal(vuei18n, optionsI18n);
+          } else {
+            optionsI18n.__injectWithOption = true;
+            optionsI18n.__extender = i18n2.__vueI18nExtend;
+            this.$i18n = createVueI18n(optionsI18n);
+            const _vueI18n = this.$i18n;
+            if (_vueI18n.__extender) {
+              _vueI18n.__disposer = _vueI18n.__extender(this.$i18n);
+            }
+          }
+        } else if (options.__i18n) {
+          if (this === this.$root) {
+            this.$i18n = mergeToGlobal(vuei18n, options);
+          } else {
+            this.$i18n = createVueI18n({
+              __i18n: options.__i18n,
+              __injectWithOption: true,
+              __extender: i18n2.__vueI18nExtend,
+              __root: composer
+            });
+            const _vueI18n = this.$i18n;
+            if (_vueI18n.__extender) {
+              _vueI18n.__disposer = _vueI18n.__extender(this.$i18n);
+            }
+          }
+        } else {
+          this.$i18n = vuei18n;
+        }
+        if (options.__i18nGlobal) {
+          adjustI18nResources(composer, options, options);
+        }
+        this.$t = (...args) => this.$i18n.t(...args);
+        this.$rt = (...args) => this.$i18n.rt(...args);
+        this.$te = (key, locale) => this.$i18n.te(key, locale);
+        this.$d = (...args) => this.$i18n.d(...args);
+        this.$n = (...args) => this.$i18n.n(...args);
+        this.$tm = (key) => this.$i18n.tm(key);
+        i18n2.__setInstance(instance, this.$i18n);
+      },
+      mounted() {
+      },
+      unmounted() {
+        const instance = getCurrentInstance();
+        if (!instance) {
+          throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
+        }
+        const _vueI18n = this.$i18n;
+        delete this.$t;
+        delete this.$rt;
+        delete this.$te;
+        delete this.$d;
+        delete this.$n;
+        delete this.$tm;
+        if (_vueI18n.__disposer) {
+          _vueI18n.__disposer();
+          delete _vueI18n.__disposer;
+          delete _vueI18n.__extender;
+        }
+        i18n2.__deleteInstance(instance);
+        delete this.$i18n;
+      }
+    };
+  }
+  function mergeToGlobal(g, options) {
+    g.locale = options.locale || g.locale;
+    g.fallbackLocale = options.fallbackLocale || g.fallbackLocale;
+    g.missing = options.missing || g.missing;
+    g.silentTranslationWarn = options.silentTranslationWarn || g.silentFallbackWarn;
+    g.silentFallbackWarn = options.silentFallbackWarn || g.silentFallbackWarn;
+    g.formatFallbackMessages = options.formatFallbackMessages || g.formatFallbackMessages;
+    g.postTranslation = options.postTranslation || g.postTranslation;
+    g.warnHtmlInMessage = options.warnHtmlInMessage || g.warnHtmlInMessage;
+    g.escapeParameterHtml = options.escapeParameterHtml || g.escapeParameterHtml;
+    g.sync = options.sync || g.sync;
+    g.__composer[SetPluralRulesSymbol](options.pluralizationRules || g.pluralizationRules);
+    const messages = getLocaleMessages(g.locale, {
+      messages: options.messages,
+      __i18n: options.__i18n
+    });
+    Object.keys(messages).forEach((locale) => g.mergeLocaleMessage(locale, messages[locale]));
+    if (options.datetimeFormats) {
+      Object.keys(options.datetimeFormats).forEach((locale) => g.mergeDateTimeFormat(locale, options.datetimeFormats[locale]));
+    }
+    if (options.numberFormats) {
+      Object.keys(options.numberFormats).forEach((locale) => g.mergeNumberFormat(locale, options.numberFormats[locale]));
+    }
+    return g;
+  }
+  const baseFormatProps = {
+    tag: {
+      type: [String, Object]
+    },
+    locale: {
+      type: String
+    },
+    scope: {
+      type: String,
+      // NOTE: avoid https://github.com/microsoft/rushstack/issues/1050
+      validator: (val) => val === "parent" || val === "global",
+      default: "parent"
+      /* ComponentI18nScope */
+    },
+    i18n: {
+      type: Object
+    }
+  };
+  function getInterpolateArg({ slots }, keys) {
+    if (keys.length === 1 && keys[0] === "default") {
+      const ret = slots.default ? slots.default() : [];
+      return ret.reduce((slot, current) => {
+        return [
+          ...slot,
+          // prettier-ignore
+          ...current.type === Fragment ? current.children : [current]
+        ];
+      }, []);
+    } else {
+      return keys.reduce((arg, key) => {
+        const slot = slots[key];
+        if (slot) {
+          arg[key] = slot();
+        }
+        return arg;
+      }, create());
+    }
+  }
+  function getFragmentableTag() {
+    return Fragment;
+  }
+  const TranslationImpl = /* @__PURE__ */ defineComponent({
+    /* eslint-disable */
+    name: "i18n-t",
+    props: assign({
+      keypath: {
+        type: String,
+        required: true
+      },
+      plural: {
+        type: [Number, String],
+        validator: (val) => isNumber$1(val) || !isNaN(val)
+      }
+    }, baseFormatProps),
+    /* eslint-enable */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setup(props, context) {
+      const { slots, attrs } = context;
+      const i18n2 = props.i18n || useI18n({
+        useScope: props.scope,
+        __useComponent: true
+      });
+      return () => {
+        const keys = Object.keys(slots).filter((key) => key[0] !== "_");
+        const options = create();
+        if (props.locale) {
+          options.locale = props.locale;
+        }
+        if (props.plural !== void 0) {
+          options.plural = isString$1(props.plural) ? +props.plural : props.plural;
+        }
+        const arg = getInterpolateArg(context, keys);
+        const children = i18n2[TranslateVNodeSymbol](props.keypath, arg, options);
+        const assignedAttrs = assign(create(), attrs);
+        const tag = isString$1(props.tag) || isObject$1(props.tag) ? props.tag : getFragmentableTag();
+        return h(tag, assignedAttrs, children);
+      };
+    }
+  });
+  const Translation = TranslationImpl;
+  function isVNode(target) {
+    return isArray$1(target) && !isString$1(target[0]);
+  }
+  function renderFormatter(props, context, slotKeys, partFormatter) {
+    const { slots, attrs } = context;
+    return () => {
+      const options = { part: true };
+      let overrides = create();
+      if (props.locale) {
+        options.locale = props.locale;
+      }
+      if (isString$1(props.format)) {
+        options.key = props.format;
+      } else if (isObject$1(props.format)) {
+        if (isString$1(props.format.key)) {
+          options.key = props.format.key;
+        }
+        overrides = Object.keys(props.format).reduce((options2, prop) => {
+          return slotKeys.includes(prop) ? assign(create(), options2, { [prop]: props.format[prop] }) : options2;
+        }, create());
+      }
+      const parts = partFormatter(...[props.value, options, overrides]);
+      let children = [options.key];
+      if (isArray$1(parts)) {
+        children = parts.map((part, index2) => {
+          const slot = slots[part.type];
+          const node = slot ? slot({ [part.type]: part.value, index: index2, parts }) : [part.value];
+          if (isVNode(node)) {
+            node[0].key = `${part.type}-${index2}`;
+          }
+          return node;
+        });
+      } else if (isString$1(parts)) {
+        children = [parts];
+      }
+      const assignedAttrs = assign(create(), attrs);
+      const tag = isString$1(props.tag) || isObject$1(props.tag) ? props.tag : getFragmentableTag();
+      return h(tag, assignedAttrs, children);
+    };
+  }
+  const NumberFormatImpl = /* @__PURE__ */ defineComponent({
+    /* eslint-disable */
+    name: "i18n-n",
+    props: assign({
+      value: {
+        type: Number,
+        required: true
+      },
+      format: {
+        type: [String, Object]
+      }
+    }, baseFormatProps),
+    /* eslint-enable */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setup(props, context) {
+      const i18n2 = props.i18n || useI18n({
+        useScope: props.scope,
+        __useComponent: true
+      });
+      return renderFormatter(props, context, NUMBER_FORMAT_OPTIONS_KEYS, (...args) => (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        i18n2[NumberPartsSymbol](...args)
+      ));
+    }
+  });
+  const NumberFormat = NumberFormatImpl;
+  function getComposer$1(i18n2, instance) {
+    const i18nInternal = i18n2;
+    if (i18n2.mode === "composition") {
+      return i18nInternal.__getInstance(instance) || i18n2.global;
+    } else {
+      const vueI18n = i18nInternal.__getInstance(instance);
+      return vueI18n != null ? vueI18n.__composer : i18n2.global.__composer;
+    }
+  }
+  function vTDirective(i18n2) {
+    const _process = (binding) => {
+      const { instance, value } = binding;
+      if (!instance || !instance.$) {
+        throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
+      }
+      const composer = getComposer$1(i18n2, instance.$);
+      const parsedValue = parseValue(value);
+      return [
+        Reflect.apply(composer.t, composer, [...makeParams(parsedValue)]),
+        composer
+      ];
+    };
+    const register = (el, binding) => {
+      const [textContent, composer] = _process(binding);
+      if (inBrowser && i18n2.global === composer) {
+        el.__i18nWatcher = watch(composer.locale, () => {
+          binding.instance && binding.instance.$forceUpdate();
+        });
+      }
+      el.__composer = composer;
+      el.textContent = textContent;
+    };
+    const unregister = (el) => {
+      if (inBrowser && el.__i18nWatcher) {
+        el.__i18nWatcher();
+        el.__i18nWatcher = void 0;
+        delete el.__i18nWatcher;
+      }
+      if (el.__composer) {
+        el.__composer = void 0;
+        delete el.__composer;
+      }
+    };
+    const update = (el, { value }) => {
+      if (el.__composer) {
+        const composer = el.__composer;
+        const parsedValue = parseValue(value);
+        el.textContent = Reflect.apply(composer.t, composer, [
+          ...makeParams(parsedValue)
+        ]);
+      }
+    };
+    const getSSRProps = (binding) => {
+      const [textContent] = _process(binding);
+      return { textContent };
+    };
+    return {
+      created: register,
+      unmounted: unregister,
+      beforeUpdate: update,
+      getSSRProps
+    };
+  }
+  function parseValue(value) {
+    if (isString$1(value)) {
+      return { path: value };
+    } else if (isPlainObject$1(value)) {
+      if (!("path" in value)) {
+        throw createI18nError(I18nErrorCodes.REQUIRED_VALUE, "path");
+      }
+      return value;
+    } else {
+      throw createI18nError(I18nErrorCodes.INVALID_VALUE);
+    }
+  }
+  function makeParams(value) {
+    const { path, locale, args, choice, plural } = value;
+    const options = {};
+    const named = args || {};
+    if (isString$1(locale)) {
+      options.locale = locale;
+    }
+    if (isNumber$1(choice)) {
+      options.plural = choice;
+    }
+    if (isNumber$1(plural)) {
+      options.plural = plural;
+    }
+    return [path, named, options];
+  }
+  function apply(app2, i18n2, ...options) {
+    const pluginOptions = isPlainObject$1(options[0]) ? options[0] : {};
+    const globalInstall = isBoolean$1(pluginOptions.globalInstall) ? pluginOptions.globalInstall : true;
+    if (globalInstall) {
+      [Translation.name, "I18nT"].forEach((name) => app2.component(name, Translation));
+      [NumberFormat.name, "I18nN"].forEach((name) => app2.component(name, NumberFormat));
+      [DatetimeFormat.name, "I18nD"].forEach((name) => app2.component(name, DatetimeFormat));
+    }
+    {
+      app2.directive("t", vTDirective(i18n2));
+    }
+  }
+  const I18nInjectionKey = /* @__PURE__ */ makeSymbol("global-vue-i18n");
+  function createI18n(options = {}) {
+    const __legacyMode = __VUE_I18N_LEGACY_API__ && isBoolean$1(options.legacy) ? options.legacy : __VUE_I18N_LEGACY_API__;
+    const __globalInjection = isBoolean$1(options.globalInjection) ? options.globalInjection : true;
+    const __instances = /* @__PURE__ */ new Map();
+    const [globalScope, __global] = createGlobal(options, __legacyMode);
+    const symbol = /* @__PURE__ */ makeSymbol("");
+    function __getInstance(component) {
+      return __instances.get(component) || null;
+    }
+    function __setInstance(component, instance) {
+      __instances.set(component, instance);
+    }
+    function __deleteInstance(component) {
+      __instances.delete(component);
+    }
+    const i18n2 = {
+      // mode
+      get mode() {
+        return __VUE_I18N_LEGACY_API__ && __legacyMode ? "legacy" : "composition";
+      },
+      // install plugin
+      async install(app2, ...options2) {
+        app2.__VUE_I18N_SYMBOL__ = symbol;
+        app2.provide(app2.__VUE_I18N_SYMBOL__, i18n2);
+        if (isPlainObject$1(options2[0])) {
+          const opts = options2[0];
+          i18n2.__composerExtend = opts.__composerExtend;
+          i18n2.__vueI18nExtend = opts.__vueI18nExtend;
+        }
+        let globalReleaseHandler = null;
+        if (!__legacyMode && __globalInjection) {
+          globalReleaseHandler = injectGlobalFields(app2, i18n2.global);
+        }
+        if (__VUE_I18N_FULL_INSTALL__) {
+          apply(app2, i18n2, ...options2);
+        }
+        if (__VUE_I18N_LEGACY_API__ && __legacyMode) {
+          app2.mixin(defineMixin(__global, __global.__composer, i18n2));
+        }
+        const unmountApp = app2.unmount;
+        app2.unmount = () => {
+          globalReleaseHandler && globalReleaseHandler();
+          i18n2.dispose();
+          unmountApp();
+        };
+      },
+      // global accessor
+      get global() {
+        return __global;
+      },
+      dispose() {
+        globalScope.stop();
+      },
+      // @internal
+      __instances,
+      // @internal
+      __getInstance,
+      // @internal
+      __setInstance,
+      // @internal
+      __deleteInstance
+    };
+    return i18n2;
+  }
+  function useI18n(options = {}) {
+    const instance = getCurrentInstance();
+    if (instance == null) {
+      throw createI18nError(I18nErrorCodes.MUST_BE_CALL_SETUP_TOP);
+    }
+    if (!instance.isCE && instance.appContext.app != null && !instance.appContext.app.__VUE_I18N_SYMBOL__) {
+      throw createI18nError(I18nErrorCodes.NOT_INSTALLED);
+    }
+    const i18n2 = getI18nInstance(instance);
+    const gl = getGlobalComposer(i18n2);
+    const componentOptions = getComponentOptions(instance);
+    const scope = getScope(options, componentOptions);
+    if (scope === "global") {
+      adjustI18nResources(gl, options, componentOptions);
+      return gl;
+    }
+    if (scope === "parent") {
+      let composer2 = getComposer(i18n2, instance, options.__useComponent);
+      if (composer2 == null) {
+        composer2 = gl;
+      }
+      return composer2;
+    }
+    const i18nInternal = i18n2;
+    let composer = i18nInternal.__getInstance(instance);
+    if (composer == null) {
+      const composerOptions = assign({}, options);
+      if ("__i18n" in componentOptions) {
+        composerOptions.__i18n = componentOptions.__i18n;
+      }
+      if (gl) {
+        composerOptions.__root = gl;
+      }
+      composer = createComposer(composerOptions);
+      if (i18nInternal.__composerExtend) {
+        composer[DisposeSymbol] = i18nInternal.__composerExtend(composer);
+      }
+      setupLifeCycle(i18nInternal, instance, composer);
+      i18nInternal.__setInstance(instance, composer);
+    }
+    return composer;
+  }
+  function createGlobal(options, legacyMode) {
+    const scope = effectScope();
+    const obj = __VUE_I18N_LEGACY_API__ && legacyMode ? scope.run(() => createVueI18n(options)) : scope.run(() => createComposer(options));
+    if (obj == null) {
+      throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
+    }
+    return [scope, obj];
+  }
+  function getI18nInstance(instance) {
+    const i18n2 = inject(!instance.isCE ? instance.appContext.app.__VUE_I18N_SYMBOL__ : I18nInjectionKey);
+    if (!i18n2) {
+      throw createI18nError(!instance.isCE ? I18nErrorCodes.UNEXPECTED_ERROR : I18nErrorCodes.NOT_INSTALLED_WITH_PROVIDE);
+    }
+    return i18n2;
+  }
+  function getScope(options, componentOptions) {
+    return isEmptyObject(options) ? "__i18n" in componentOptions ? "local" : "global" : !options.useScope ? "local" : options.useScope;
+  }
+  function getGlobalComposer(i18n2) {
+    return i18n2.mode === "composition" ? i18n2.global : i18n2.global.__composer;
+  }
+  function getComposer(i18n2, target, useComponent = false) {
+    let composer = null;
+    const root = target.root;
+    let current = getParentComponentInstance(target, useComponent);
+    while (current != null) {
+      const i18nInternal = i18n2;
+      if (i18n2.mode === "composition") {
+        composer = i18nInternal.__getInstance(current);
+      } else {
+        if (__VUE_I18N_LEGACY_API__) {
+          const vueI18n = i18nInternal.__getInstance(current);
+          if (vueI18n != null) {
+            composer = vueI18n.__composer;
+            if (useComponent && composer && !composer[InejctWithOptionSymbol]) {
+              composer = null;
+            }
+          }
+        }
+      }
+      if (composer != null) {
+        break;
+      }
+      if (root === current) {
+        break;
+      }
+      current = current.parent;
+    }
+    return composer;
+  }
+  function getParentComponentInstance(target, useComponent = false) {
+    if (target == null) {
+      return null;
+    }
+    return !useComponent ? target.parent : target.vnode.ctx || target.parent;
+  }
+  function setupLifeCycle(i18n2, target, composer) {
+    onMounted(() => {
+    }, target);
+    onUnmounted(() => {
+      const _composer = composer;
+      i18n2.__deleteInstance(target);
+      const dispose = _composer[DisposeSymbol];
+      if (dispose) {
+        dispose();
+        delete _composer[DisposeSymbol];
+      }
+    }, target);
+  }
+  const globalExportProps = [
+    "locale",
+    "fallbackLocale",
+    "availableLocales"
+  ];
+  const globalExportMethods = ["t", "rt", "d", "n", "tm", "te"];
+  function injectGlobalFields(app2, composer) {
+    const i18n2 = /* @__PURE__ */ Object.create(null);
+    globalExportProps.forEach((prop) => {
+      const desc = Object.getOwnPropertyDescriptor(composer, prop);
+      if (!desc) {
+        throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
+      }
+      const wrap = isRef(desc.value) ? {
+        get() {
+          return desc.value.value;
+        },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        set(val) {
+          desc.value.value = val;
+        }
+      } : {
+        get() {
+          return desc.get && desc.get();
+        }
+      };
+      Object.defineProperty(i18n2, prop, wrap);
+    });
+    app2.config.globalProperties.$i18n = i18n2;
+    globalExportMethods.forEach((method) => {
+      const desc = Object.getOwnPropertyDescriptor(composer, method);
+      if (!desc || !desc.value) {
+        throw createI18nError(I18nErrorCodes.UNEXPECTED_ERROR);
+      }
+      Object.defineProperty(app2.config.globalProperties, `$${method}`, desc);
+    });
+    const dispose = () => {
+      delete app2.config.globalProperties.$i18n;
+      globalExportMethods.forEach((method) => {
+        delete app2.config.globalProperties[`$${method}`];
+      });
+    };
+    return dispose;
+  }
+  const DatetimeFormatImpl = /* @__PURE__ */ defineComponent({
+    /* eslint-disable */
+    name: "i18n-d",
+    props: assign({
+      value: {
+        type: [Number, Date],
+        required: true
+      },
+      format: {
+        type: [String, Object]
+      }
+    }, baseFormatProps),
+    /* eslint-enable */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    setup(props, context) {
+      const i18n2 = props.i18n || useI18n({
+        useScope: props.scope,
+        __useComponent: true
+      });
+      return renderFormatter(props, context, DATETIME_FORMAT_OPTIONS_KEYS, (...args) => (
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        i18n2[DatetimePartsSymbol](...args)
+      ));
+    }
+  });
+  const DatetimeFormat = DatetimeFormatImpl;
+  {
+    initFeatureFlags();
+  }
+  registerMessageCompiler(compile);
+  registerMessageResolver(resolveValue);
+  registerLocaleFallbacker(fallbackWithLocaleChain);
+  if (__INTLIFY_PROD_DEVTOOLS__) {
+    const target = getGlobalThis();
+    target.__INTLIFY__ = true;
+    setDevToolsHook(target.__INTLIFY_DEVTOOLS_GLOBAL_HOOK__);
+  }
+  const fr = {
+    settings: {
+      title: "Paramètres",
+      cache: {
+        title: "Gestion du cache",
+        description: "L'application stocke les données des lignes et arrêts en cache pendant 2 semaines pour améliorer les performances. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet.",
+        clearButton: "Vider le cache",
+        clearing: "Suppression en cours...",
+        cleared: "Cache vidé avec succès !"
+      },
+      preferences: {
+        title: "Préférences",
+        language: "Langue",
+        homePage: "Page d'accueil",
+        homeOptions: {
+          home: "Accueil",
+          favorites: "Favoris"
+        }
+      },
+      about: {
+        title: "À propos",
+        version: "Version",
+        description: "Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.",
+        dataSource: "Les données sont récupérées depuis le site"
+      },
+      legal: {
+        title: "Mentions légales",
+        copyright: "Droits d'auteur",
+        copyrightText: "Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d'auteur.",
+        reproduction: "Reproduction",
+        reproductionText: "Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.",
+        liability: "Limitation de responsabilité",
+        liabilityText: "Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.",
+        externalLinks: "Liens externes",
+        externalLinksText: "Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n'engage pas la responsabilité des créateurs de cette application.",
+        disclaimer: "Cette application n'est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN."
+      },
+      support: {
+        title: "Assistance",
+        description: "Si vous rencontrez des problèmes avec l'application, vous pouvez effectuer les actions suivantes :",
+        actions: {
+          clearCache: "Vider le cache de l'application (option ci-dessus)",
+          refresh: "Rafraîchir la page",
+          checkConnection: "Vérifier votre connexion internet"
+        }
+      }
+    },
+    favorites: {
+      title: "Favoris",
+      empty: "Vous n'avez pas encore d'arrêts favoris.",
+      emptyDescription: "Ajoutez des arrêts à vos favoris pour les retrouver ici."
+    },
+    home: {
+      search: "Trouver une ligne",
+      notFound: "Aucune ligne ne correspond à votre recherche."
+    },
+    arret: {
+      title: "Arrêts",
+      passageImediat: "À l'approche",
+      loading: "Chargement des passages...",
+      noPassages: "Aucun passage prévu prochainement."
+    },
+    ligne: {
+      title: "Ligne",
+      search: "Rechercher...",
+      notFound: "Aucune ligne trouvée.",
+      detail: "Voir détails"
+    }
+  };
+  const en = {
+    settings: {
+      title: "Settings",
+      cache: {
+        title: "Cache Management",
+        description: "The application stores line and stop data in cache for 2 weeks to improve performance. You can clear the cache if you encounter issues or if you want to force a complete refresh.",
+        clearButton: "Clear cache",
+        clearing: "Clearing...",
+        cleared: "Cache cleared successfully!"
+      },
+      preferences: {
+        title: "Preferences",
+        language: "Language",
+        homePage: "Home page",
+        homeOptions: {
+          home: "Home",
+          favorites: "Favorites"
+        }
+      },
+      about: {
+        title: "About",
+        version: "Version",
+        description: "This unofficial web application allows you to access the STAN network schedules in real time.",
+        dataSource: "Data is retrieved from the website"
+      },
+      legal: {
+        title: "Legal Notice",
+        copyright: "Copyright",
+        copyrightText: "All elements, trademarks, and intellectual properties presented in this application are the property of KGN and the STAN network, and are protected by copyright laws.",
+        reproduction: "Reproduction",
+        reproductionText: "This application uses public data made available by the STAN network. The information is presented in its integrity, without modification or alteration, and is not used for commercial or advertising purposes.",
+        liability: "Limitation of Liability",
+        liabilityText: "This unofficial application is provided for informational purposes only. All data and schedules are provided for information purposes and shall not engage the responsibility of the creators of this application or the STAN network. Information may contain errors or omissions.",
+        externalLinks: "External Links",
+        externalLinksText: "External links in this application may direct you to third-party sites whose content is not the responsibility of the creators of this application.",
+        disclaimer: "This application is neither affiliated with nor endorsed by KGN or any company involved in the management of the STAN network."
+      },
+      support: {
+        title: "Support",
+        description: "If you encounter problems with the application, you can perform the following actions:",
+        actions: {
+          clearCache: "Clear the application cache (option above)",
+          refresh: "Refresh the page",
+          checkConnection: "Check your internet connection"
+        }
+      }
+    },
+    favorites: {
+      title: "Favorites",
+      empty: "You don't have any favorite stops yet.",
+      emptyDescription: "Add stops to your favorites to find them here."
+    },
+    home: {
+      search: "Find a line",
+      notFound: "No lines match your search."
+    },
+    arret: {
+      title: "Stops",
+      passageImediat: "Approaching",
+      loading: "Loading arrivals...",
+      noPassages: "No upcoming arrivals scheduled."
+    },
+    ligne: {
+      title: "Line",
+      search: "Search...",
+      notFound: "No line found.",
+      detail: "View details"
+    }
+  };
+  const getLocale = () => {
+    const preferences = localStorage.getItem("preferences");
+    if (preferences) {
+      const { language } = JSON.parse(preferences);
+      return language || "fr";
+    }
+    return "fr";
+  };
+  const i18n = createI18n({
+    legacy: false,
+    locale: getLocale(),
+    fallbackLocale: "fr",
+    messages: {
+      fr,
+      en
+    }
+  });
+  const { t } = i18n.global;
   const clickOutside = {
     beforeMount(el, binding) {
       el.clickOutsideEvent = (event) => {
@@ -10364,6 +14890,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   app.use(router);
   app.use(src_default, { position: "bottom-right" });
   app.use(pinia);
+  app.use(i18n);
   app.directive("click-outside", clickOutside);
   app.mount("#app");
   function bind(fn, thisArg) {
@@ -10374,9 +14901,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const { toString } = Object.prototype;
   const { getPrototypeOf } = Object;
   const { iterator, toStringTag } = Symbol;
-  const kindOf = /* @__PURE__ */ ((cache) => (thing) => {
+  const kindOf = /* @__PURE__ */ ((cache2) => (thing) => {
     const str = toString.call(thing);
-    return cache[str] || (cache[str] = str.slice(8, -1).toLowerCase());
+    return cache2[str] || (cache2[str] = str.slice(8, -1).toLowerCase());
   })(/* @__PURE__ */ Object.create(null));
   const kindOfTest = (type) => {
     type = type.toLowerCase();
@@ -11432,7 +15959,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       }
       return deleted;
     }
-    normalize(format) {
+    normalize(format2) {
       const self2 = this;
       const headers = {};
       utils$1.forEach(this, (value, header) => {
@@ -11442,7 +15969,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           delete self2[header];
           return;
         }
-        const normalized = format ? formatHeader(header) : String(header).trim();
+        const normalized = format2 ? formatHeader(header) : String(header).trim();
         if (normalized !== header) {
           delete self2[header];
         }
@@ -11514,7 +16041,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const context = response || config;
     const headers = AxiosHeaders$1.from(context.headers);
     let data = context.data;
-    utils$1.forEach(fns, function transform(fn) {
+    utils$1.forEach(fns, function transform2(fn) {
       data = fn.call(config, data, headers.normalize(), response ? response.status : void 0);
     });
     headers.normalize();
@@ -12705,7 +17232,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     const instance = bind(Axios$1.prototype.request, context);
     utils$1.extend(instance, Axios$1.prototype, context, { allOwnKeys: true });
     utils$1.extend(instance, context, null, { allOwnKeys: true });
-    instance.create = function create(instanceConfig) {
+    instance.create = function create2(instanceConfig) {
       return createInstance(mergeConfig$1(defaultConfig, instanceConfig));
     };
     return instance;
@@ -13184,7 +17711,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             createVNode(unref(StarIcon), { class: "size-6" })
           ]),
           createBaseVNode("button", {
-            onClick: _cache[1] || (_cache[1] = ($event) => navigateTo("/"))
+            onClick: _cache[1] || (_cache[1] = ($event) => navigateTo("/home"))
           }, [
             createVNode(unref(HomeIcon), { class: "size-6" })
           ]),
@@ -13252,23 +17779,24 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const _hoisted_7$6 = { class: "loader-container" };
   const _hoisted_8$6 = { class: "loader-line" };
-  const _hoisted_9$5 = { key: 1 };
-  const _hoisted_10$4 = {
+  const _hoisted_9$6 = { class: "mt-2 text-center text-sm text-gray-600" };
+  const _hoisted_10$6 = { key: 1 };
+  const _hoisted_11$5 = {
     key: 0,
     class: "text-sm text-gray-500 py-2"
   };
-  const _hoisted_11$2 = {
+  const _hoisted_12$2 = {
     key: 1,
     class: "space-y-6"
   };
-  const _hoisted_12$2 = { class: "font-semibold text-sm text-gray-700 mb-2" };
-  const _hoisted_13$2 = { class: "relative h-[30px] ml-[20px]" };
-  const _hoisted_14$1 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
-  const _hoisted_15 = {
+  const _hoisted_13$2 = { class: "font-semibold text-sm text-gray-700 mb-2" };
+  const _hoisted_14$2 = { class: "relative h-[30px] ml-[20px]" };
+  const _hoisted_15$2 = { class: "absolute top-[7px] left-[-10px] w-5 h-5 rounded-full bg-white border-2 border-slate-300 flex items-center justify-center z-10" };
+  const _hoisted_16$1 = {
     key: 0,
     class: "absolute top-0 left-[30%] flex flex-col items-center transform -translate-x-1/2"
   };
-  const _hoisted_16 = {
+  const _hoisted_17$1 = {
     key: 1,
     class: "absolute top-0 left-[70%] flex flex-col items-center transform -translate-x-1/2"
   };
@@ -13307,7 +17835,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const emit2 = __emit;
       const formatPassageTime = (passage) => {
         if (passage.temps_min === 0) {
-          return "À l'approche";
+          return t("arret.passageImediat");
         } else if (passage.temps_min < 60) {
           return `${passage.temps_min} min`;
         } else {
@@ -13356,7 +17884,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               class: "size-6 mr-3"
             }, null, 8, _hoisted_1$8),
             createBaseVNode("div", _hoisted_2$8, [
-              createBaseVNode("h3", _hoisted_3$8, toDisplayString(__props.arret.libelle), 1)
+              createBaseVNode("h3", _hoisted_3$8, toDisplayString$1(__props.arret.libelle), 1)
             ]),
             createBaseVNode("button", {
               class: "text-yellow-400 mr-2 p-1",
@@ -13389,35 +17917,35 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   }, null, 2)
                 ])
               ]),
-              _cache[1] || (_cache[1] = createBaseVNode("p", { class: "mt-2 text-center text-sm text-gray-600" }, "Chargement des passages...", -1))
-            ])) : (openBlock(), createElementBlock("div", _hoisted_9$5, [
-              Object.keys(passagesByDirection.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$4, " Aucun passage prévu prochainement ")) : (openBlock(), createElementBlock("div", _hoisted_11$2, [
+              createBaseVNode("p", _hoisted_9$6, toDisplayString$1(unref(t)("arret.loading")), 1)
+            ])) : (openBlock(), createElementBlock("div", _hoisted_10$6, [
+              Object.keys(passagesByDirection.value).length === 0 ? (openBlock(), createElementBlock("div", _hoisted_11$5, toDisplayString$1(unref(t)("arret.noPassages")), 1)) : (openBlock(), createElementBlock("div", _hoisted_12$2, [
                 (openBlock(true), createElementBlock(Fragment, null, renderList(passagesByDirection.value, (passages, direction) => {
                   return openBlock(), createElementBlock("div", {
                     key: direction,
                     class: "py-4 relative"
                   }, [
-                    createBaseVNode("div", _hoisted_12$2, toDisplayString(direction), 1),
-                    createBaseVNode("div", _hoisted_13$2, [
+                    createBaseVNode("div", _hoisted_13$2, toDisplayString$1(direction), 1),
+                    createBaseVNode("div", _hoisted_14$2, [
                       createBaseVNode("div", {
                         class: normalizeClass(["absolute top-[15px] left-0 right-[30px] h-1 dotted-line", __props.color])
                       }, null, 2),
-                      createBaseVNode("div", _hoisted_14$1, [
+                      createBaseVNode("div", _hoisted_15$2, [
                         createBaseVNode("div", {
                           class: normalizeClass(["w-2 h-2 rounded-full", __props.color])
                         }, null, 2)
                       ]),
-                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_15, [
+                      passages.length > 0 ? (openBlock(), createElementBlock("div", _hoisted_16$1, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[0].temps_theorique }])
-                        }, toDisplayString(formatPassageTime(passages[0])), 3)
+                        }, toDisplayString$1(formatPassageTime(passages[0])), 3)
                       ])) : createCommentVNode("", true),
-                      passages.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_16, [
+                      passages.length > 1 ? (openBlock(), createElementBlock("div", _hoisted_17$1, [
                         createVNode(unref(BusIcon), { class: "w-5 h-5" }),
                         createBaseVNode("div", {
                           class: normalizeClass(["px-1.5 py-0.5 bg-white text-xs font-semibold rounded-full shadow-sm", { "text-amber-500": passages[1].temps_theorique }])
-                        }, toDisplayString(formatPassageTime(passages[1])), 3)
+                        }, toDisplayString$1(formatPassageTime(passages[1])), 3)
                       ])) : createCommentVNode("", true)
                     ])
                   ]);
@@ -13429,7 +17957,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const Arret = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-55a5227b"]]);
+  const Arret = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-a498f2f5"]]);
   const _hoisted_1$7 = {
     key: 0,
     id: "fancy-modal",
@@ -13466,7 +17994,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const FancyModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-36d06f24"]]);
+  const FancyModal = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-8b1ef9f4"]]);
   const _hoisted_1$6 = { class: "custom-dropdown relative" };
   const _hoisted_2$6 = { class: "text-gray-900 text-base" };
   const _hoisted_3$6 = {
@@ -13476,10 +18004,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _hoisted_4$5 = { class: "sticky top-0 px-3 py-2 bg-stone-50 border-b border-gray-700" };
   const _hoisted_5$5 = { class: "relative" };
   const _hoisted_6$5 = { class: "absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none" };
-  const _hoisted_7$5 = ["onClick"];
-  const _hoisted_8$5 = ["src", "alt"];
-  const _hoisted_9$4 = { class: "text-black text-base truncate" };
-  const _hoisted_10$3 = {
+  const _hoisted_7$5 = ["placeholder"];
+  const _hoisted_8$5 = ["onClick"];
+  const _hoisted_9$5 = ["src", "alt"];
+  const _hoisted_10$5 = { class: "text-black text-base truncate" };
+  const _hoisted_11$4 = {
     key: 0,
     class: "px-4 py-4 text-center text-gray-500"
   };
@@ -13549,7 +18078,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             onClick: toggleDropdown,
             class: "w-full bg-stone-50 border border-gray-600 rounded-md px-4 py-3 text-white flex items-center justify-between transition-all duration-200 hover:bg-stone-100"
           }, [
-            createBaseVNode("span", _hoisted_2$6, toDisplayString(props.label || "Sélectionner une ligne"), 1),
+            createBaseVNode("span", _hoisted_2$6, toDisplayString$1(props.label || "Sélectionner une ligne"), 1),
             createVNode(unref(ChevronDownIcon), {
               class: normalizeClass(["size-5 text-gray-500 transition-transform duration-200", { "transform rotate-180": isOpen.value }])
             }, null, 8, ["class"])
@@ -13570,10 +18099,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   autocapitalize: "off",
                   spellcheck: "false",
                   class: "w-full pl-10 pr-3 py-2.5 bg-stone-200 border border-gray-600 rounded-md text-base text-black font-normal",
-                  placeholder: "Rechercher...",
+                  placeholder: unref(t)("ligne.search"),
                   onClick: withModifiers(preventZoom, ["stop"]),
                   onTouchstart: withModifiers(preventZoom, ["stop"])
-                }, null, 544), [
+                }, null, 40, _hoisted_7$5), [
                   [vModelText, searchQuery.value]
                 ])
               ])
@@ -13588,11 +18117,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   src: item.image,
                   alt: item.libelle,
                   class: "w-8 h-8 mr-3 object-contain"
-                }, null, 8, _hoisted_8$5),
-                createBaseVNode("span", _hoisted_9$4, toDisplayString(item.libelle), 1)
-              ], 8, _hoisted_7$5);
+                }, null, 8, _hoisted_9$5),
+                createBaseVNode("span", _hoisted_10$5, toDisplayString$1(item.libelle), 1)
+              ], 8, _hoisted_8$5);
             }), 128)),
-            filteredItems.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_10$3, " Aucune ligne trouvée ")) : createCommentVNode("", true)
+            filteredItems.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_11$4, toDisplayString$1(unref(t)("ligne.notFound")), 1)) : createCommentVNode("", true)
           ])) : createCommentVNode("", true)
         ])), [
           [_directive_click_outside, handleClickOutside]
@@ -13600,7 +18129,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const ItemSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-df78dc39"]]);
+  const ItemSelector = /* @__PURE__ */ _export_sfc(_sfc_main$6, [["__scopeId", "data-v-4e68b0a7"]]);
   const getColor = (ligne) => {
     if (!ligne || !ligne.numlignepublic) return "bg-gray-500";
     if (ligne.numlignepublic.startsWith("T")) {
@@ -13625,7 +18154,8 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _hoisted_6$4 = ["src"];
   const _hoisted_7$4 = { class: "flex-1" };
   const _hoisted_8$4 = { class: "font-medium text-gray-900 line-clamp-1" };
-  const _hoisted_9$3 = { class: "px-4 py-3 bg-gray-50 flex items-center justify-between" };
+  const _hoisted_9$4 = { class: "px-4 py-3 bg-gray-50 flex items-center justify-between" };
+  const _hoisted_10$4 = { class: "text-sm font-medium text-blue-600 group-hover:text-blue-800 transition-colors duration-200 flex items-center" };
   const _sfc_main$5 = {
     __name: "Ligne",
     props: {
@@ -13650,7 +18180,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             class: normalizeClass(["px-4 py-2", unref(getColor)(__props.ligne)])
           }, [
             createBaseVNode("div", _hoisted_1$5, [
-              createBaseVNode("span", _hoisted_2$5, toDisplayString(__props.ligne.numlignepublic), 1),
+              createBaseVNode("span", _hoisted_2$5, toDisplayString$1(__props.ligne.numlignepublic), 1),
               createBaseVNode("div", _hoisted_3$5, [
                 createVNode(unref(BusIcon), { class: "size-4 text-white" })
               ])
@@ -13664,20 +18194,20 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 class: "w-12 h-12 object-contain mr-3 flex-shrink-0"
               }, null, 8, _hoisted_6$4),
               createBaseVNode("div", _hoisted_7$4, [
-                createBaseVNode("p", _hoisted_8$4, toDisplayString(__props.ligne.libelle), 1)
+                createBaseVNode("p", _hoisted_8$4, toDisplayString$1(__props.ligne.libelle), 1)
               ])
             ])
           ]),
-          createBaseVNode("div", _hoisted_9$3, [
-            _cache[1] || (_cache[1] = createBaseVNode("span", { class: "text-sm font-medium text-blue-600 group-hover:text-blue-800 transition-colors duration-200 flex items-center" }, " Voir détails ", -1)),
+          createBaseVNode("div", _hoisted_9$4, [
+            createBaseVNode("span", _hoisted_10$4, toDisplayString$1(unref(t)("ligne.detail")), 1),
             createVNode(unref(ChevronRightIcon), { class: "size-5 text-blue-600" })
           ]),
-          _cache[2] || (_cache[2] = createBaseVNode("div", { class: "absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-5 transition-opacity duration-300" }, null, -1))
+          _cache[1] || (_cache[1] = createBaseVNode("div", { class: "absolute inset-0 bg-black bg-opacity-0 hover:bg-opacity-5 transition-opacity duration-300" }, null, -1))
         ]);
       };
     }
   };
-  const Ligne = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-4e8aa8c1"]]);
+  const Ligne = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-59d90450"]]);
   const _hoisted_1$4 = { class: "flex justify-center items-center min-h-screen" };
   const _hoisted_2$4 = { class: "loader-container" };
   const _hoisted_3$4 = { class: "loader-line" };
@@ -13703,7 +18233,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const LineLoader = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-bd0cfbc1"]]);
+  const LineLoader = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-eae6b13f"]]);
   const _hoisted_1$3 = { class: "min-h-screen bg-gray-100" };
   const _hoisted_2$3 = { class: "sticky top-0 z-20 shadow-md bg-white py-3 px-4 border-t" };
   const _hoisted_3$3 = { class: "pl-10 max-w-7xl mx-auto relative" };
@@ -13718,11 +18248,12 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _hoisted_6$3 = { class: "category-header mb-6 relative" };
   const _hoisted_7$3 = { class: "text-2xl font-bold text-gray-800 inline-block pb-2 border-b-4 border-blue-500" };
   const _hoisted_8$3 = { class: "lines-container" };
-  const _hoisted_9$2 = { class: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" };
-  const _hoisted_10$2 = {
+  const _hoisted_9$3 = { class: "grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" };
+  const _hoisted_10$3 = {
     key: 0,
     class: "text-center py-16"
   };
+  const _hoisted_11$3 = { class: "text-gray-500 text-lg" };
   const _sfc_main$3 = {
     __name: "HomeView",
     setup(__props) {
@@ -13783,9 +18314,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 createVNode(unref(ItemSelector), {
                   class: "w-full shadow-sm z-10",
                   items: lignes.value,
-                  label: "Trouver une ligne",
+                  label: unref(t)("home.search"),
                   onSelect: goToLigneDetail
-                }, null, 8, ["items"])
+                }, null, 8, ["items", "label"])
               ])
             ]),
             loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_4$3, [
@@ -13796,11 +18327,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                     class: "category-section"
                   }, [
                     createBaseVNode("div", _hoisted_6$3, [
-                      createBaseVNode("h2", _hoisted_7$3, toDisplayString(category), 1),
+                      createBaseVNode("h2", _hoisted_7$3, toDisplayString$1(category), 1),
                       _cache[0] || (_cache[0] = createBaseVNode("div", { class: "absolute bottom-0 left-0 w-full h-px bg-gray-200" }, null, -1))
                     ]),
                     createBaseVNode("div", _hoisted_8$3, [
-                      createBaseVNode("div", _hoisted_9$2, [
+                      createBaseVNode("div", _hoisted_9$3, [
                         (openBlock(true), createElementBlock(Fragment, null, renderList(lines, (ligne) => {
                           return openBlock(), createBlock(unref(Ligne), {
                             key: ligne.id,
@@ -13815,9 +18346,9 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                     [vShow, lines.length > 0]
                   ]);
                 }), 128)),
-                Object.values(categorizedLignes.value).every((arr) => arr.length === 0) ? (openBlock(), createElementBlock("div", _hoisted_10$2, [
+                Object.values(categorizedLignes.value).every((arr) => arr.length === 0) ? (openBlock(), createElementBlock("div", _hoisted_10$3, [
                   createVNode(unref(SadIcon), { class: "h-16 w-16 mx-auto text-gray-400 mb-4" }),
-                  _cache[1] || (_cache[1] = createBaseVNode("p", { class: "text-gray-500 text-lg" }, "Aucune ligne ne correspond à votre recherche", -1))
+                  createBaseVNode("p", _hoisted_11$3, toDisplayString$1(unref(t)("home.notFound")), 1)
                 ])) : createCommentVNode("", true)
               ])
             ]))
@@ -13827,7 +18358,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const HomeView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-88703073"]]);
+  const HomeView = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["__scopeId", "data-v-c294407f"]]);
   const HomeView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: HomeView
@@ -13843,12 +18374,13 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _hoisted_6$2 = ["disabled"];
   const _hoisted_7$2 = { class: "container mx-auto px-4 mt-4" };
   const _hoisted_8$2 = { class: "bg-white rounded-lg shadow-md p-4 flex items-center" };
-  const _hoisted_9$1 = ["src"];
-  const _hoisted_10$1 = { class: "font-bold text-lg" };
-  const _hoisted_11$1 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_12$1 = { class: "bg-white rounded-lg shadow-md" };
-  const _hoisted_13$1 = { class: "divide-y divide-gray-200" };
-  const _hoisted_14 = ["src"];
+  const _hoisted_9$2 = ["src"];
+  const _hoisted_10$2 = { class: "font-bold text-lg" };
+  const _hoisted_11$2 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_12$1 = { class: "text-xl font-semibold mb-3" };
+  const _hoisted_13$1 = { class: "bg-white rounded-lg shadow-md" };
+  const _hoisted_14$1 = { class: "divide-y divide-gray-200" };
+  const _hoisted_15$1 = ["src"];
   const _sfc_main$2 = {
     __name: "LigneDetailView",
     setup(__props) {
@@ -13862,7 +18394,6 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       const refreshing = ref(false);
       const selectedArret = ref(null);
       const arretPassages = ref({});
-      ref(false);
       const loadingArretId = ref(null);
       const autoRefreshInterval = ref(null);
       onMounted(async () => {
@@ -13883,7 +18414,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           ligne.value = await Stan.getLigne(route.params.osmid_ligne, forceRefresh);
           arrets.value = await Stan.getArrets(ligne.value, forceRefresh);
         } catch (error) {
-          console.error("Error loading data:", error);
+          router2.push("/home");
         } finally {
           loading.value = false;
         }
@@ -13972,7 +18503,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   }, [
                     createVNode(unref(ChevronLeftIcon), { class: "size-6" })
                   ]),
-                  createBaseVNode("h1", _hoisted_4$2, "Ligne " + toDisplayString(ligne.value.numlignepublic), 1),
+                  createBaseVNode("h1", _hoisted_4$2, toDisplayString$1(unref(t)("ligne.title")) + " " + toDisplayString$1(ligne.value.numlignepublic), 1),
                   createBaseVNode("div", null, [
                     createBaseVNode("button", {
                       onClick: refreshData,
@@ -14000,16 +18531,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                     src: ligne.value.image,
                     alt: "Line icon",
                     class: "h-12 mr-4"
-                  }, null, 8, _hoisted_9$1)) : createCommentVNode("", true),
+                  }, null, 8, _hoisted_9$2)) : createCommentVNode("", true),
                   createBaseVNode("div", null, [
-                    createBaseVNode("h2", _hoisted_10$1, toDisplayString((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
+                    createBaseVNode("h2", _hoisted_10$2, toDisplayString$1((_b = ligne.value) == null ? void 0 : _b.libelle), 1)
                   ])
                 ])
               ]),
-              createBaseVNode("div", _hoisted_11$1, [
-                _cache[3] || (_cache[3] = createBaseVNode("h2", { class: "text-xl font-semibold mb-3" }, "Arrêts", -1)),
-                createBaseVNode("div", _hoisted_12$1, [
-                  createBaseVNode("ul", _hoisted_13$1, [
+              createBaseVNode("div", _hoisted_11$2, [
+                createBaseVNode("h2", _hoisted_12$1, toDisplayString$1(unref(t)("arret.title")), 1),
+                createBaseVNode("div", _hoisted_13$1, [
+                  createBaseVNode("ul", _hoisted_14$1, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(arrets.value, (arret, index2) => {
                       return openBlock(), createBlock(unref(Arret), {
                         key: arret.osmid,
@@ -14040,7 +18571,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 class: "size-full",
                 frameborder: "0",
                 allowfullscreen: ""
-              }, null, 8, _hoisted_14)) : createCommentVNode("", true)
+              }, null, 8, _hoisted_15$1)) : createCommentVNode("", true)
             ]),
             _: 1
           }, 8, ["show"])
@@ -14059,16 +18590,19 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   };
   const _hoisted_3$1 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
   const _hoisted_4$1 = { class: "flex items-center justify-between h-20 px-4" };
-  const _hoisted_5$1 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_6$1 = {
+  const _hoisted_5$1 = { class: "text-xl font-bold text-white" };
+  const _hoisted_6$1 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_7$1 = {
     key: 0,
     class: "bg-white rounded-lg shadow-md p-8 text-center"
   };
-  const _hoisted_7$1 = {
+  const _hoisted_8$1 = { class: "text-gray-500" };
+  const _hoisted_9$1 = { class: "text-gray-500 mt-2" };
+  const _hoisted_10$1 = {
     key: 1,
     class: "bg-white rounded-lg shadow-md"
   };
-  const _hoisted_8$1 = { class: "divide-y divide-gray-200" };
+  const _hoisted_11$1 = { class: "divide-y divide-gray-200" };
   const _sfc_main$1 = {
     __name: "FavoritesView",
     setup(__props) {
@@ -14122,16 +18656,16 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   }, [
                     createVNode(unref(ChevronLeftIcon), { class: "size-6" })
                   ]),
-                  _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Favoris", -1)),
-                  _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
+                  createBaseVNode("h1", _hoisted_5$1, toDisplayString$1(unref(t)("favorites.title")), 1),
+                  _cache[1] || (_cache[1] = createBaseVNode("div", { class: "w-10" }, null, -1))
                 ])
               ]),
-              createBaseVNode("div", _hoisted_5$1, [
-                favoriteArrets.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_6$1, _cache[3] || (_cache[3] = [
-                  createBaseVNode("p", { class: "text-gray-500" }, "Vous n'avez pas encore d'arrêts favoris.", -1),
-                  createBaseVNode("p", { class: "text-gray-500 mt-2" }, "Ajoutez des arrêts à vos favoris pour les retrouver ici.", -1)
-                ]))) : (openBlock(), createElementBlock("div", _hoisted_7$1, [
-                  createBaseVNode("ul", _hoisted_8$1, [
+              createBaseVNode("div", _hoisted_6$1, [
+                favoriteArrets.value.length === 0 ? (openBlock(), createElementBlock("div", _hoisted_7$1, [
+                  createBaseVNode("p", _hoisted_8$1, toDisplayString$1(unref(t)("favorites.empty")), 1),
+                  createBaseVNode("p", _hoisted_9$1, toDisplayString$1(unref(t)("favorites.emptyDescription")), 1)
+                ])) : (openBlock(), createElementBlock("div", _hoisted_10$1, [
+                  createBaseVNode("ul", _hoisted_11$1, [
                     (openBlock(true), createElementBlock(Fragment, null, renderList(favoriteArrets.value, (arret, index2) => {
                       return openBlock(), createBlock(unref(Arret), {
                         key: arret.osmid,
@@ -14163,26 +18697,69 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _hoisted_1 = { class: "min-h-screen bg-gray-100 pb-20" };
   const _hoisted_2 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
   const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
-  const _hoisted_4 = { class: "container mx-auto px-4 mt-6" };
-  const _hoisted_5 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
-  const _hoisted_6 = { class: "flex flex-col" };
-  const _hoisted_7 = ["disabled"];
-  const _hoisted_8 = { key: 0 };
-  const _hoisted_9 = { key: 1 };
-  const _hoisted_10 = {
+  const _hoisted_4 = { class: "text-xl font-bold text-white" };
+  const _hoisted_5 = { class: "container mx-auto px-4 mt-6" };
+  const _hoisted_6 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_7 = { class: "text-xl font-semibold mb-4" };
+  const _hoisted_8 = { class: "mb-4" };
+  const _hoisted_9 = { class: "text-gray-700 font-medium mb-2" };
+  const _hoisted_10 = { class: "flex gap-3" };
+  const _hoisted_11 = { class: "text-gray-700 font-medium mb-2" };
+  const _hoisted_12 = { class: "flex gap-3" };
+  const _hoisted_13 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_14 = { class: "text-xl font-semibold mb-4" };
+  const _hoisted_15 = { class: "text-gray-600 mb-4" };
+  const _hoisted_16 = { class: "flex flex-col" };
+  const _hoisted_17 = ["disabled"];
+  const _hoisted_18 = { key: 0 };
+  const _hoisted_19 = { key: 1 };
+  const _hoisted_20 = {
     key: 0,
     class: "mt-4 bg-green-100 text-green-700 p-3 rounded-md flex items-center"
   };
-  const _hoisted_11 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
-  const _hoisted_12 = { class: "text-gray-600" };
-  const _hoisted_13 = { class: "mb-2" };
+  const _hoisted_21 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_22 = { class: "text-xl font-semibold mb-4" };
+  const _hoisted_23 = { class: "text-gray-600" };
+  const _hoisted_24 = { class: "mb-2" };
+  const _hoisted_25 = { class: "mb-2" };
+  const _hoisted_26 = { class: "mb-2" };
+  const _hoisted_27 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
+  const _hoisted_28 = { class: "text-xl font-semibold mb-4" };
+  const _hoisted_29 = { class: "text-gray-600 text-sm" };
+  const _hoisted_30 = { class: "mb-2" };
+  const _hoisted_31 = { class: "mb-2" };
+  const _hoisted_32 = { class: "mb-2" };
+  const _hoisted_33 = { class: "mb-2" };
+  const _hoisted_34 = { class: "mb-2" };
+  const _hoisted_35 = { class: "bg-white rounded-lg shadow-md p-6" };
+  const _hoisted_36 = { class: "text-xl font-semibold mb-4" };
+  const _hoisted_37 = { class: "text-gray-600 mb-4" };
+  const _hoisted_38 = { class: "list-disc pl-5 text-gray-600 mb-2" };
+  const _hoisted_39 = { class: "mb-2" };
+  const _hoisted_40 = { class: "mb-2" };
+  const _hoisted_41 = { class: "mb-2" };
   const _sfc_main = {
     __name: "SettingsView",
     setup(__props) {
       const router2 = useRouter();
+      const { t: t2, locale } = useI18n();
       const cacheCleared = ref(false);
       const appVersion = ref("1.0.1");
       const clearingCache = ref(false);
+      const preferences = ref({
+        language: "fr",
+        home: "accueil"
+      });
+      onMounted(() => {
+        const savedPreferences = localStorage.getItem("preferences");
+        if (savedPreferences) {
+          const parsed = JSON.parse(savedPreferences);
+          preferences.value = {
+            language: parsed.language || "fr",
+            home: parsed.home || "accueil"
+          };
+        }
+      });
       const clearCache = async () => {
         clearingCache.value = true;
         await new Promise((resolve2) => setTimeout(resolve2, 500));
@@ -14193,8 +18770,18 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           cacheCleared.value = false;
         }, 3e3);
       };
-      onMounted(() => {
-      });
+      const savePreferences = () => {
+        localStorage.setItem("preferences", JSON.stringify(preferences.value));
+        locale.value = preferences.value.language;
+      };
+      const changeLanguage = (lang) => {
+        preferences.value.language = lang;
+        savePreferences();
+      };
+      const changeHomePage = (page) => {
+        preferences.value.home = page;
+        savePreferences();
+      };
       return (_ctx, _cache) => {
         return openBlock(), createElementBlock(Fragment, null, [
           createBaseVNode("div", _hoisted_1, [
@@ -14206,24 +18793,53 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                 }, [
                   createVNode(unref(ChevronLeftIcon), { class: "size-6" })
                 ]),
-                _cache[1] || (_cache[1] = createBaseVNode("h1", { class: "text-xl font-bold text-white" }, "Paramètres", -1)),
-                _cache[2] || (_cache[2] = createBaseVNode("div", { class: "w-10" }, null, -1))
+                createBaseVNode("h1", _hoisted_4, toDisplayString$1(unref(t2)("settings.title")), 1),
+                _cache[5] || (_cache[5] = createBaseVNode("div", { class: "w-10" }, null, -1))
               ])
             ]),
-            createBaseVNode("div", _hoisted_4, [
-              createBaseVNode("div", _hoisted_5, [
-                _cache[4] || (_cache[4] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "Gestion du cache", -1)),
-                _cache[5] || (_cache[5] = createBaseVNode("p", { class: "text-gray-600 mb-4" }, " L'application stocke les données des lignes et arrêts en cache pendant 2 semaines pour améliorer les performances. Vous pouvez vider le cache si vous rencontrez des problèmes ou si vous souhaitez forcer un rafraîchissement complet. ", -1)),
-                createBaseVNode("div", _hoisted_6, [
+            createBaseVNode("div", _hoisted_5, [
+              createBaseVNode("div", _hoisted_6, [
+                createBaseVNode("h2", _hoisted_7, toDisplayString$1(unref(t2)("settings.preferences.title")), 1),
+                createBaseVNode("div", _hoisted_8, [
+                  createBaseVNode("h3", _hoisted_9, toDisplayString$1(unref(t2)("settings.preferences.language")), 1),
+                  createBaseVNode("div", _hoisted_10, [
+                    createBaseVNode("button", {
+                      onClick: _cache[1] || (_cache[1] = ($event) => changeLanguage("fr")),
+                      class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.language === "fr" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
+                    }, " Français ", 2),
+                    createBaseVNode("button", {
+                      onClick: _cache[2] || (_cache[2] = ($event) => changeLanguage("en")),
+                      class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.language === "en" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
+                    }, " English ", 2)
+                  ])
+                ]),
+                createBaseVNode("div", null, [
+                  createBaseVNode("h3", _hoisted_11, toDisplayString$1(unref(t2)("settings.preferences.homePage")), 1),
+                  createBaseVNode("div", _hoisted_12, [
+                    createBaseVNode("button", {
+                      onClick: _cache[3] || (_cache[3] = ($event) => changeHomePage("accueil")),
+                      class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.home === "accueil" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
+                    }, toDisplayString$1(unref(t2)("settings.preferences.homeOptions.home")), 3),
+                    createBaseVNode("button", {
+                      onClick: _cache[4] || (_cache[4] = ($event) => changeHomePage("favorites")),
+                      class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.home === "favorites" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
+                    }, toDisplayString$1(unref(t2)("settings.preferences.homeOptions.favorites")), 3)
+                  ])
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_13, [
+                createBaseVNode("h2", _hoisted_14, toDisplayString$1(unref(t2)("settings.cache.title")), 1),
+                createBaseVNode("p", _hoisted_15, toDisplayString$1(unref(t2)("settings.cache.description")), 1),
+                createBaseVNode("div", _hoisted_16, [
                   createBaseVNode("button", {
                     onClick: clearCache,
                     disabled: clearingCache.value,
                     class: normalizeClass(["bg-red-500 hover:bg-red-600 text-white font-medium py-2 px-4 rounded-md transition duration-200", { "opacity-70 cursor-not-allowed": clearingCache.value }])
                   }, [
-                    clearingCache.value ? (openBlock(), createElementBlock("span", _hoisted_8, "Suppression en cours...")) : (openBlock(), createElementBlock("span", _hoisted_9, "Vider le cache"))
-                  ], 10, _hoisted_7),
-                  cacheCleared.value ? (openBlock(), createElementBlock("div", _hoisted_10, _cache[3] || (_cache[3] = [
-                    createBaseVNode("svg", {
+                    clearingCache.value ? (openBlock(), createElementBlock("span", _hoisted_18, toDisplayString$1(unref(t2)("settings.cache.clearing")), 1)) : (openBlock(), createElementBlock("span", _hoisted_19, toDisplayString$1(unref(t2)("settings.cache.clearButton")), 1))
+                  ], 10, _hoisted_17),
+                  cacheCleared.value ? (openBlock(), createElementBlock("div", _hoisted_20, [
+                    _cache[6] || (_cache[6] = createBaseVNode("svg", {
                       xmlns: "http://www.w3.org/2000/svg",
                       class: "h-5 w-5 mr-2",
                       viewBox: "0 0 20 20",
@@ -14234,27 +18850,57 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                         d: "M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z",
                         "clip-rule": "evenodd"
                       })
-                    ], -1),
-                    createTextVNode(" Cache vidé avec succès ! ")
-                  ]))) : createCommentVNode("", true)
+                    ], -1)),
+                    createTextVNode(" " + toDisplayString$1(unref(t2)("settings.cache.cleared")), 1)
+                  ])) : createCommentVNode("", true)
                 ])
               ]),
-              createBaseVNode("div", _hoisted_11, [
-                _cache[8] || (_cache[8] = createBaseVNode("h2", { class: "text-xl font-semibold mb-4" }, "À propos", -1)),
-                createBaseVNode("div", _hoisted_12, [
-                  createBaseVNode("p", _hoisted_13, "Version: " + toDisplayString(appVersion.value), 1),
-                  _cache[6] || (_cache[6] = createBaseVNode("p", { class: "mb-2" }, "Cette application web non officielle vous permet d'accéder aux horaires du réseau STAN en temps réel.", -1)),
-                  _cache[7] || (_cache[7] = createBaseVNode("p", { class: "mb-2" }, [
-                    createTextVNode("Les données sont récupérées depuis le site "),
-                    createBaseVNode("a", {
+              createBaseVNode("div", _hoisted_21, [
+                createBaseVNode("h2", _hoisted_22, toDisplayString$1(unref(t2)("settings.about.title")), 1),
+                createBaseVNode("div", _hoisted_23, [
+                  createBaseVNode("p", _hoisted_24, toDisplayString$1(unref(t2)("settings.about.version")) + ": " + toDisplayString$1(appVersion.value), 1),
+                  createBaseVNode("p", _hoisted_25, toDisplayString$1(unref(t2)("settings.about.description")), 1),
+                  createBaseVNode("p", _hoisted_26, [
+                    createTextVNode(toDisplayString$1(unref(t2)("settings.about.dataSource")) + " ", 1),
+                    _cache[7] || (_cache[7] = createBaseVNode("a", {
                       href: "https://reseau-stan.com",
                       class: "text-blue-500 hover:underline",
                       target: "_blank"
-                    }, "reseau-stan.com")
-                  ], -1))
+                    }, "reseau-stan.com", -1))
+                  ])
                 ])
               ]),
-              _cache[9] || (_cache[9] = createStaticVNode('<div class="bg-white rounded-lg shadow-md p-6 mb-6" data-v-f3d334cd><h2 class="text-xl font-semibold mb-4" data-v-f3d334cd>Mentions légales</h2><div class="text-gray-600 text-sm" data-v-f3d334cd><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Droits d&#39;auteur</strong> : Tous les éléments, marques et propriétés intellectuelles présentés dans cette application sont la propriété de KGN et du réseau STAN, et sont protégés par les lois sur les droits d&#39;auteur.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Reproduction</strong> : Cette application utilise des données publiques mises à disposition par le réseau STAN. Les informations sont présentées dans leur intégrité, sans modification ni altération, et ne sont pas utilisées à des fins commerciales ou publicitaires.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Limitation de responsabilité</strong> : Cette application non-officielle est proposée à titre informatif uniquement. Toutes les données et horaires sont fournis à titre indicatif et ne sauraient engager la responsabilité des créateurs de cette application ou du réseau STAN. Les informations peuvent contenir des erreurs ou omissions.</p><p class="mb-2" data-v-f3d334cd><strong data-v-f3d334cd>Liens externes</strong> : Les liens externes présents dans cette application peuvent vous diriger vers des sites tiers dont le contenu n&#39;engage pas la responsabilité des créateurs de cette application.</p><p class="mb-2" data-v-f3d334cd>Cette application n&#39;est ni affiliée ni endossée par KGN ou toute société impliquée dans la gestion du réseau STAN.</p></div></div><div class="bg-white rounded-lg shadow-md p-6" data-v-f3d334cd><h2 class="text-xl font-semibold mb-4" data-v-f3d334cd>Assistance</h2><p class="text-gray-600 mb-4" data-v-f3d334cd> Si vous rencontrez des problèmes avec l&#39;application, vous pouvez effectuer les actions suivantes : </p><ul class="list-disc pl-5 text-gray-600 mb-2" data-v-f3d334cd><li class="mb-2" data-v-f3d334cd>Vider le cache de l&#39;application (option ci-dessus)</li><li class="mb-2" data-v-f3d334cd>Rafraîchir la page</li><li class="mb-2" data-v-f3d334cd>Vérifier votre connexion internet</li></ul></div>', 2))
+              createBaseVNode("div", _hoisted_27, [
+                createBaseVNode("h2", _hoisted_28, toDisplayString$1(unref(t2)("settings.legal.title")), 1),
+                createBaseVNode("div", _hoisted_29, [
+                  createBaseVNode("p", _hoisted_30, [
+                    createBaseVNode("strong", null, toDisplayString$1(unref(t2)("settings.legal.copyright")), 1),
+                    createTextVNode(" : " + toDisplayString$1(unref(t2)("settings.legal.copyrightText")), 1)
+                  ]),
+                  createBaseVNode("p", _hoisted_31, [
+                    createBaseVNode("strong", null, toDisplayString$1(unref(t2)("settings.legal.reproduction")), 1),
+                    createTextVNode(" : " + toDisplayString$1(unref(t2)("settings.legal.reproductionText")), 1)
+                  ]),
+                  createBaseVNode("p", _hoisted_32, [
+                    createBaseVNode("strong", null, toDisplayString$1(unref(t2)("settings.legal.liability")), 1),
+                    createTextVNode(" : " + toDisplayString$1(unref(t2)("settings.legal.liabilityText")), 1)
+                  ]),
+                  createBaseVNode("p", _hoisted_33, [
+                    createBaseVNode("strong", null, toDisplayString$1(unref(t2)("settings.legal.externalLinks")), 1),
+                    createTextVNode(" : " + toDisplayString$1(unref(t2)("settings.legal.externalLinksText")), 1)
+                  ]),
+                  createBaseVNode("p", _hoisted_34, toDisplayString$1(unref(t2)("settings.legal.disclaimer")), 1)
+                ])
+              ]),
+              createBaseVNode("div", _hoisted_35, [
+                createBaseVNode("h2", _hoisted_36, toDisplayString$1(unref(t2)("settings.support.title")), 1),
+                createBaseVNode("p", _hoisted_37, toDisplayString$1(unref(t2)("settings.support.description")), 1),
+                createBaseVNode("ul", _hoisted_38, [
+                  createBaseVNode("li", _hoisted_39, toDisplayString$1(unref(t2)("settings.support.actions.clearCache")), 1),
+                  createBaseVNode("li", _hoisted_40, toDisplayString$1(unref(t2)("settings.support.actions.refresh")), 1),
+                  createBaseVNode("li", _hoisted_41, toDisplayString$1(unref(t2)("settings.support.actions.checkConnection")), 1)
+                ])
+              ])
             ])
           ]),
           createVNode(unref(_sfc_main$9))
@@ -14262,7 +18908,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-f3d334cd"]]);
+  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-85927157"]]);
   const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SettingsView

@@ -13,7 +13,7 @@ const navigateTo = (route) => {
         <button @click="navigateTo('/favorites')" >
             <StarIcon class="size-6" />
         </button>
-        <button @click="navigateTo('/')" >
+        <button @click="navigateTo('/home')" >
             <HomeIcon class="size-6" />
         </button>
         <button @click="navigateTo('/settings')" >
