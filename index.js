@@ -18498,7 +18498,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
               }, [
                 createBaseVNode("div", _hoisted_3$2, [
                   createBaseVNode("button", {
-                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
+                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).back()),
                     class: "text-white p-2"
                   }, [
                     createVNode(unref(ChevronLeftIcon), { class: "size-6" })
@@ -18589,7 +18589,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
     class: "pb-20"
   };
   const _hoisted_3$1 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
-  const _hoisted_4$1 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_4$1 = { class: "flex items-center justify-center h-20 px-4" };
   const _hoisted_5$1 = { class: "text-xl font-bold text-white" };
   const _hoisted_6$1 = { class: "container mx-auto px-4 mt-6" };
   const _hoisted_7$1 = {
@@ -18606,7 +18606,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _sfc_main$1 = {
     __name: "FavoritesView",
     setup(__props) {
-      const router2 = useRouter();
+      useRouter();
       const favorites = useFavoritesStore();
       const favoriteArrets = computed(() => favorites.getFavorites);
       const loading = ref(true);
@@ -18650,14 +18650,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
             loading.value ? (openBlock(), createBlock(unref(LineLoader), { key: 0 })) : (openBlock(), createElementBlock("div", _hoisted_2$1, [
               createBaseVNode("header", _hoisted_3$1, [
                 createBaseVNode("div", _hoisted_4$1, [
-                  createBaseVNode("button", {
-                    onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
-                    class: "text-white p-2"
-                  }, [
-                    createVNode(unref(ChevronLeftIcon), { class: "size-6" })
-                  ]),
-                  createBaseVNode("h1", _hoisted_5$1, toDisplayString$1(unref(t)("favorites.title")), 1),
-                  _cache[1] || (_cache[1] = createBaseVNode("div", { class: "w-10" }, null, -1))
+                  createBaseVNode("h1", _hoisted_5$1, toDisplayString$1(unref(t)("favorites.title")), 1)
                 ])
               ]),
               createBaseVNode("div", _hoisted_6$1, [
@@ -18696,7 +18689,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   }, Symbol.toStringTag, { value: "Module" }));
   const _hoisted_1 = { class: "min-h-screen bg-gray-100 pb-20" };
   const _hoisted_2 = { class: "sticky top-0 z-10 shadow-md bg-gray-700" };
-  const _hoisted_3 = { class: "flex items-center justify-between h-20 px-4" };
+  const _hoisted_3 = { class: "flex items-center justify-center h-20 px-4" };
   const _hoisted_4 = { class: "text-xl font-bold text-white" };
   const _hoisted_5 = { class: "container mx-auto px-4 mt-6" };
   const _hoisted_6 = { class: "bg-white rounded-lg shadow-md p-6 mb-6" };
@@ -18741,10 +18734,10 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
   const _sfc_main = {
     __name: "SettingsView",
     setup(__props) {
-      const router2 = useRouter();
+      useRouter();
       const { t: t2, locale } = useI18n();
       const cacheCleared = ref(false);
-      const appVersion = ref("1.0.1");
+      const appVersion = ref("1.0.2");
       const clearingCache = ref(false);
       const preferences = ref({
         language: "fr",
@@ -18787,14 +18780,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
           createBaseVNode("div", _hoisted_1, [
             createBaseVNode("header", _hoisted_2, [
               createBaseVNode("div", _hoisted_3, [
-                createBaseVNode("button", {
-                  onClick: _cache[0] || (_cache[0] = ($event) => unref(router2).push("/")),
-                  class: "text-white p-2"
-                }, [
-                  createVNode(unref(ChevronLeftIcon), { class: "size-6" })
-                ]),
-                createBaseVNode("h1", _hoisted_4, toDisplayString$1(unref(t2)("settings.title")), 1),
-                _cache[5] || (_cache[5] = createBaseVNode("div", { class: "w-10" }, null, -1))
+                createBaseVNode("h1", _hoisted_4, toDisplayString$1(unref(t2)("settings.title")), 1)
               ])
             ]),
             createBaseVNode("div", _hoisted_5, [
@@ -18804,11 +18790,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   createBaseVNode("h3", _hoisted_9, toDisplayString$1(unref(t2)("settings.preferences.language")), 1),
                   createBaseVNode("div", _hoisted_10, [
                     createBaseVNode("button", {
-                      onClick: _cache[1] || (_cache[1] = ($event) => changeLanguage("fr")),
+                      onClick: _cache[0] || (_cache[0] = ($event) => changeLanguage("fr")),
                       class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.language === "fr" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
                     }, " Français ", 2),
                     createBaseVNode("button", {
-                      onClick: _cache[2] || (_cache[2] = ($event) => changeLanguage("en")),
+                      onClick: _cache[1] || (_cache[1] = ($event) => changeLanguage("en")),
                       class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.language === "en" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
                     }, " English ", 2)
                   ])
@@ -18817,11 +18803,11 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   createBaseVNode("h3", _hoisted_11, toDisplayString$1(unref(t2)("settings.preferences.homePage")), 1),
                   createBaseVNode("div", _hoisted_12, [
                     createBaseVNode("button", {
-                      onClick: _cache[3] || (_cache[3] = ($event) => changeHomePage("accueil")),
+                      onClick: _cache[2] || (_cache[2] = ($event) => changeHomePage("accueil")),
                       class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.home === "accueil" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
                     }, toDisplayString$1(unref(t2)("settings.preferences.homeOptions.home")), 3),
                     createBaseVNode("button", {
-                      onClick: _cache[4] || (_cache[4] = ($event) => changeHomePage("favorites")),
+                      onClick: _cache[3] || (_cache[3] = ($event) => changeHomePage("favorites")),
                       class: normalizeClass(["flex-1 py-2 px-4 rounded-md transition duration-200", preferences.value.home === "favorites" ? "bg-blue-500 text-white" : "bg-gray-200 text-gray-700 hover:bg-gray-300"])
                     }, toDisplayString$1(unref(t2)("settings.preferences.homeOptions.favorites")), 3)
                   ])
@@ -18839,7 +18825,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                     clearingCache.value ? (openBlock(), createElementBlock("span", _hoisted_18, toDisplayString$1(unref(t2)("settings.cache.clearing")), 1)) : (openBlock(), createElementBlock("span", _hoisted_19, toDisplayString$1(unref(t2)("settings.cache.clearButton")), 1))
                   ], 10, _hoisted_17),
                   cacheCleared.value ? (openBlock(), createElementBlock("div", _hoisted_20, [
-                    _cache[6] || (_cache[6] = createBaseVNode("svg", {
+                    _cache[4] || (_cache[4] = createBaseVNode("svg", {
                       xmlns: "http://www.w3.org/2000/svg",
                       class: "h-5 w-5 mr-2",
                       viewBox: "0 0 20 20",
@@ -18862,7 +18848,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
                   createBaseVNode("p", _hoisted_25, toDisplayString$1(unref(t2)("settings.about.description")), 1),
                   createBaseVNode("p", _hoisted_26, [
                     createTextVNode(toDisplayString$1(unref(t2)("settings.about.dataSource")) + " ", 1),
-                    _cache[7] || (_cache[7] = createBaseVNode("a", {
+                    _cache[5] || (_cache[5] = createBaseVNode("a", {
                       href: "https://reseau-stan.com",
                       class: "text-blue-500 hover:underline",
                       target: "_blank"
@@ -18908,7 +18894,7 @@ var __publicField = (obj, key, value) => __defNormalProp(obj, typeof key !== "sy
       };
     }
   };
-  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-85927157"]]);
+  const SettingsView = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-31ba9430"]]);
   const SettingsView$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
     __proto__: null,
     default: SettingsView

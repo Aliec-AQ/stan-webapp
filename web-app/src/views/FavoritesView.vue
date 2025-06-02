@@ -61,12 +61,8 @@ const handleRemoveFavorite = (arretId) => {
     
     <div v-else class="pb-20">
       <header class="sticky top-0 z-10 shadow-md bg-gray-700">
-        <div class="flex items-center justify-between h-20 px-4">
-          <button @click="router.push('/')" class="text-white p-2">
-            <ChevronLeftIcon class="size-6" />
-          </button>
+        <div class="flex items-center justify-center h-20 px-4">
           <h1 class="text-xl font-bold text-white">{{t('favorites.title')}}</h1>
-          <div class="w-10"></div>
         </div>
       </header>
 
