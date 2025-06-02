@@ -153,7 +153,7 @@ watch(() => route.path, () => {
 
       <header :class="[getColor(ligne), 'sticky top-0 z-10 shadow-md']">
         <div class="flex items-center justify-between h-20 px-4">
-            <button @click="router.push('/')" class="text-white p-2">
+            <button @click="router.back()" class="text-white p-2">
               <ChevronLeftIcon class="size-6" />
             </button>
             <h1 class="text-xl font-bold text-white">{{ t('ligne.title') }} {{ ligne.numlignepublic }}</h1>
