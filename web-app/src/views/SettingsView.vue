@@ -16,7 +16,6 @@ const preferences = ref({
 // Load preferences from localStorage
 onMounted(() => {
     const savedPreferences = localStorage.getItem('preferences');
-    console.log('Loaded preferences:', savedPreferences);
     if (savedPreferences) {
         const parsed = JSON.parse(savedPreferences);
         preferences.value = {
@@ -24,7 +23,6 @@ onMounted(() => {
             home: parsed.home || 'accueil'
         };
     }
-    console.log('Current preferences:', preferences.value);
 });
 
 const clearCache = async () => {

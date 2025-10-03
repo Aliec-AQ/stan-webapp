@@ -10,7 +10,6 @@ interface BeforeInstallPromptEvent extends Event {
 const deferredPrompt = ref<BeforeInstallPromptEvent | null>(null);
 const isInstalling = ref(false);
 const isOnline = ref(navigator.onLine);
-const areNotificationsEnabled = ref(Notification.permission === 'granted');
 
 const isFirefox = computed(() => /Firefox/i.test(navigator.userAgent));
 
@@ -89,15 +88,6 @@ const updateOnlineStatus = () => {
 };
 //#endregion
 
-//#region NOTIFICATIONS
-const requestNotificationPermission = async () => {
-  if (Notification.permission === 'default') {
-    const permission = await Notification.requestPermission();
-    areNotificationsEnabled.value = permission === 'granted';
-  }
-};
-//#endregion
-
 // to call at app mount
 const setup = () => {
   window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
@@ -126,8 +116,6 @@ export function usePWA() {
     setup,
     cleanup,
     isOnline,
-    areNotificationsEnabled,
-    requestNotificationPermission,
     isFirefox,
     canInstall,
   };
