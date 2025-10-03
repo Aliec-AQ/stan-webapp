@@ -8,6 +8,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 
 const deferredPrompt = ref<BeforeInstallPromptEvent | null>(null);
+const canInstall = ref(true);
 const isInstalling = ref(false);
 const isOnline = ref(navigator.onLine);
 
@@ -47,17 +48,15 @@ const platformName = computed(() => {
   }
 });
 
-const canInstall = computed(() => {
-  return deferredPrompt.value !== null && !isFirefox.value;
-});
-
 //#endregion
 
 //#region INSTALLATION
 const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
   deferredPrompt.value = e;
+  canInstall.value = true;
 };
 const handleAppInstalled = () => {
+  canInstall.value = false;
   deferredPrompt.value = null;
 };
 const installPWA = async () => {
@@ -71,7 +70,7 @@ const installPWA = async () => {
     await deferredPrompt.value.prompt();
     const { outcome } = await deferredPrompt.value.userChoice;
     if (outcome === 'accepted') {
-      deferredPrompt.value = null;
+      canInstall.value = false;
     }
   } catch (error) {
     console.error('Error installing PWA:', error);
@@ -94,6 +93,10 @@ const setup = () => {
   window.addEventListener('appinstalled', handleAppInstalled);
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
+
+  if (isPWA.value || isFirefox.value) {
+    canInstall.value = false;
+  }
 };
 
 // to call at app unmount

@@ -1,13 +1,14 @@
 <script setup>
-import { inject, onMounted, onUnmounted } from 'vue';
+import { onMounted, onUnmounted } from 'vue';
+import { usePWA } from '@/plugins/PWA';
 import { RouterView } from 'vue-router';
 import PWAInstallButton from './plugins/PWA/components/PWAInstallButton.vue';
 
-const pwa = inject('pwa');
+const { setup, cleanup } = usePWA();
 
 
-onMounted(pwa.setup);
-onUnmounted(pwa.cleanup);
+onMounted(setup);
+onUnmounted(cleanup);
 
 </script>
 
@@ -15,7 +16,6 @@ onUnmounted(pwa.cleanup);
   <div>
     <PWAInstallButton customClass="fixed bottom-20 right-2 z-50" :showError="false" />
     <RouterView />
-    <Test />
   </div>
 </template>
 
