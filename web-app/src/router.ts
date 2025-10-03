@@ -13,7 +13,7 @@ const router = createRouter({
           localStorage.setItem('preferences', JSON.stringify({ home: 'accueil', language: 'fr' }));
         }
 
-        const savedPreferences = JSON.parse(localStorage.getItem('preferences'));
+        const savedPreferences = JSON.parse(preferences ?? '{"home":"accueil","language":"fr"}');
         const savedHome = savedPreferences && savedPreferences.home ? savedPreferences.home : null;
 
         return { name: savedHome || 'accueil' };
@@ -49,12 +49,15 @@ router.beforeEach((to, _, next) => {
   const query = to.query
   if(query && query.vrrp) {
     const vrrp = query.vrrp
-    
-    const matchedRoute = router.resolve(vrrp)
-    if (matchedRoute && matchedRoute.matched.length > 0) {
-      to.query = {}
-      router.push(vrrp)
-      return
+
+    const vrrpPath = Array.isArray(vrrp) ? vrrp[0] : vrrp;
+    if (typeof vrrpPath === 'string') {
+      const matchedRoute = router.resolve(vrrpPath);
+      if (matchedRoute && matchedRoute.matched.length > 0) {
+        to.query = {};
+        router.push(vrrpPath);
+        return;
+      }
     }
   }
   next()

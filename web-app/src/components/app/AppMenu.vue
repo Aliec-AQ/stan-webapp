@@ -1,9 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { HomeIcon, StarIcon, SettingsIcon } from '@/components/icons';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
-const navigateTo = (route) => {
+const navigateTo = (route: string) => {
     router.push(route);
 };
 </script>

@@ -1,34 +1,33 @@
-<script setup>
+<script setup lang="ts">
+import type { Arret as ArretType, Passage } from '@/types';
 import { ref, computed, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
 import { useFavoritesStore } from '@/stores/favorites';
-import { Arret, AppMenu, ChevronLeftIcon, LineLoader } from '@/components';
+import { Arret, AppMenu, LineLoader } from '@/components';
 import { Stan } from '@/composables/stan';
 import { getColor } from '@/utils/stan';
 import t from '@/i18n';
 
-const router = useRouter();
 const favorites = useFavoritesStore();
 const favoriteArrets = computed(() => favorites.getFavorites);
 
 const loading = ref(true);
-const selectedArret = ref(null);
-const arretPassages = ref({});
-const loadingArretId = ref(null);
+const selectedArret = ref<string | null>(null);
+const arretPassages = ref<Record<string, Passage[]>>({});
+const loadingArretId = ref<string | null>(null);
 
 onMounted(async () => {
   loading.value = false;
 });
 
-const handleSelectArret = async (arret) => {
+const handleSelectArret = async (arret: ArretType) => {
   if (selectedArret.value === arret.osmid) {
     selectedArret.value = null;
     return;
   }
-  
+
   selectedArret.value = arret.osmid;
   loadingArretId.value = arret.osmid;
-  
+
   try {
     const passages = await Stan.getProchainsPassages(arret);
     arretPassages.value = { ...arretPassages.value, [arret.osmid]: passages };
@@ -39,15 +38,15 @@ const handleSelectArret = async (arret) => {
   }
 };
 
-const getPassagesForArret = (arret) => {
+const getPassagesForArret = (arret: ArretType) => {
   return selectedArret.value === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
 };
 
-const isArretLoading = (arret) => {
+const isArretLoading = (arret: ArretType) => {
   return loadingArretId.value === arret.osmid;
 };
 
-const handleRemoveFavorite = (arretId) => {
+const handleRemoveFavorite = (arretId: string) => {
   favorites.removeFavorite(arretId);
   if (selectedArret.value === arretId) {
     selectedArret.value = null;

@@ -1,14 +1,12 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { AppMenu, ChevronLeftIcon } from '@/components';
-import { useRouter } from 'vue-router';
+import { AppMenu } from '@/components';
 import { useI18n } from 'vue-i18n';
 import { Stan } from '@/composables/stan';
 
-const router = useRouter();
 const { t, locale } = useI18n();
 const cacheCleared = ref(false);
-const appVersion = ref('1.0.2'); 
+const appVersion = ref('1.0.3'); 
 const clearingCache = ref(false);
 const preferences = ref({
     language: 'fr',
@@ -18,6 +16,7 @@ const preferences = ref({
 // Load preferences from localStorage
 onMounted(() => {
     const savedPreferences = localStorage.getItem('preferences');
+    console.log('Loaded preferences:', savedPreferences);
     if (savedPreferences) {
         const parsed = JSON.parse(savedPreferences);
         preferences.value = {
@@ -25,6 +24,7 @@ onMounted(() => {
             home: parsed.home || 'accueil'
         };
     }
+    console.log('Current preferences:', preferences.value);
 });
 
 const clearCache = async () => {
@@ -44,16 +44,6 @@ const savePreferences = () => {
     localStorage.setItem('preferences', JSON.stringify(preferences.value));
     locale.value = preferences.value.language;
 };
-
-const changeLanguage = (lang) => {
-    preferences.value.language = lang;
-    savePreferences();
-};
-
-const changeHomePage = (page) => {
-    preferences.value.home = page;
-    savePreferences();
-};
 </script>
 
 <template>
@@ -72,51 +62,32 @@ const changeHomePage = (page) => {
                 <!-- Language Selection -->
                 <div class="mb-4">
                     <h3 class="text-gray-700 font-medium mb-2">{{ t('settings.preferences.language') }}</h3>
-                    <div class="flex gap-3">
-                        <button 
-                            @click="changeLanguage('fr')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.language === 'fr' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            Français
-                        </button>
-                        <button 
-                            @click="changeLanguage('en')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.language === 'en' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            English
-                        </button>
-                    </div>
+                    <select 
+                        v-model="preferences.language" 
+                        @change="savePreferences" 
+                        class="mt-3 p-2 border rounded-md w-full bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option disabled value="">{{ t('settings.preferences.selectLanguage') }}</option>
+                        <option value="fr">Français</option>
+                        <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Español</option>
+                        <option value="it">Italiano</option>
+                    </select>
                 </div>
                 
                 <!-- Home Page Selection -->
                 <div>
                     <h3 class="text-gray-700 font-medium mb-2">{{ t('settings.preferences.homePage') }}</h3>
-                    <div class="flex gap-3">
-                        <button 
-                            @click="changeHomePage('accueil')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.home === 'accueil' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            {{ t('settings.preferences.homeOptions.home') }}
-                        </button>
-                        <button 
-                            @click="changeHomePage('favorites')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.home === 'favorites' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            {{ t('settings.preferences.homeOptions.favorites') }}
-                        </button>
-                    </div>
+                    <select 
+                        v-model="preferences.home" 
+                        @change="savePreferences" 
+                        class="flex-1 p-2 border rounded-md w-full bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option disabled value="">{{ t('settings.preferences.selectHomePage') }}</option>
+                        <option value="accueil">{{ t('settings.preferences.homeOptions.home') }}</option>
+                        <option value="favorites">{{ t('settings.preferences.homeOptions.favorites') }}</option>
+                    </select>
                 </div>
             </div>
 
