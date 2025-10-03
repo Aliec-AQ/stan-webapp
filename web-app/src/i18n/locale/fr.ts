@@ -11,6 +11,8 @@ export default {
     preferences: {
       title: 'Préférences',
       language: 'Langue',
+      selectLanguage: 'Sélectionner la langue',
+      selectHomePage: 'Sélectionner la page d\'accueil',
       homePage: 'Page d\'accueil',
       homeOptions: {
         home: 'Accueil',

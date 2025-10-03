@@ -2,6 +2,8 @@
 
 Une application web non-officielle pour consulter les horaires du réseau de transport STAN de Nancy en temps réel.
 
+Voici le lien vers l'application déployée: [https://aliec-aq.github.io/stan-webapp/](https://aliec-aq.github.io/stan-webapp/)
+
 ## À propos
 
 Cette application web permet aux utilisateurs de consulter les horaires des bus du réseau STAN de Nancy en temps réel. Elle offre une interface simple et intuitive pour:
@@ -25,6 +27,8 @@ Cette application web permet aux utilisateurs de consulter les horaires des bus 
 - **Horaires en temps réel**: Affichage des prochains passages avec indication des temps théoriques ou en temps réel
 - **Plans des lignes**: Accès aux PDF des plans officiels
 - **Gestion du cache**: Stockage local des données pour améliorer les performances et réduire la consommation de données
+- **Gestion des favoris**: Permet aux utilisateurs de marquer leurs arrêts préférés pour un accès rapide
+- **Internationalisation**: Support pour plusieurs langues (français et anglais)
 
 ## Mentions légales
 

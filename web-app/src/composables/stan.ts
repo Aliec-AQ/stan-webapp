@@ -5,53 +5,8 @@ export class Stan {
   // Constants
   static CACHE_DURATION = 14 * 24 * 60 * 60 * 1000; // 2 semaines en millisecondes
   
-  static plans: { [key: string]: string } = {
-    "line:GST:1-97" : "https://tim.reseau-stan.com/tim/data/pdf/2283_Ligne Tempo 1.pdf",
-    "line:GST:2-97" : "https://tim.reseau-stan.com/tim/data/pdf/1372_Ligne Tempo 2.pdf",
-    "line:GST:3-97" : "https://tim.reseau-stan.com/tim/data/pdf/2312_Ligne Tempo 3.pdf",
-    "line:GST:4-97" : "https://tim.reseau-stan.com/tim/data/pdf/2215_Ligne Tempo 4.pdf",
-    "line:GST:5-97" : "https://tim.reseau-stan.com/tim/data/pdf/2460_Tempo 5_2025.pdf",
-    "line:GST:7": "https://tim.reseau-stan.com/tim/data/pdf/2216_Ligne Corol.pdf",
-    "line:GST:18-97": "https://tim.reseau-stan.com/tim/data/pdf/2219_Brabois Express.pdf",
-    "line:GST:14-97": "https://tim.reseau-stan.com/tim/data/pdf/1315_Ligne 14ex-14sept23.pdf",
-    "line:SUB:10": "https://tim.reseau-stan.com/tim/data/pdf/2217_Ligne 10.pdf",
-    "line:GST:11-97": "https://tim.reseau-stan.com/tim/data/pdf/2218_Ligne 11.pdf",
-    "line:GST:12-97": "https://tim.reseau-stan.com/tim/data/pdf/2109_Ligne 12.pdf",
-    "line:GST:13-97": "https://tim.reseau-stan.com/tim/data/pdf/1868_Ligne 13.pdf",
-    "line:GST:15-97": "https://tim.reseau-stan.com/tim/data/pdf/2309_Ligne 15.pdf",
-    "line:GST:16-97": "https://tim.reseau-stan.com/tim/data/pdf/2310_Ligne 16.pdf",
-    "line:GST:17-97": "https://tim.reseau-stan.com/tim/data/pdf/2112_Ligne 17.pdf",
-    "ine:GST:20-97": "https://tim.reseau-stan.com/tim/data/pdf/2113_Ligne 20.pdf",
-    "line:GST:21-97": "https://tim.reseau-stan.com/tim/data/pdf/2118_Ligne 21.pdf",
-    "line:GST:22-97": "https://tim.reseau-stan.com/tim/data/pdf/1321_Ligne 22.pdf",
-    "line:SUB:23": "https://tim.reseau-stan.com/tim/data/pdf/2115_Ligne 23.pdf",
-    "line:SUB:24": "https://tim.reseau-stan.com/tim/data/pdf/1323_Ligne 24.pdf",
-    "line:GST:30-97": "https://tim.reseau-stan.com/tim/data/pdf/1324_Ligne 30.pdf",
-    "line:GST:31-97": "https://tim.reseau-stan.com/tim/data/pdf/1870_Ligne 31.pdf",
-    "line:GST:32-97": "https://tim.reseau-stan.com/tim/data/pdf/1327_Plan -ligne 32-sept 23.pdf",
-    "line:GST:33-97": "https://tim.reseau-stan.com/tim/data/pdf/2116_Ligne 33.pdf",
-    "line:GST:50-97": "https://tim.reseau-stan.com/tim/data/pdf/2119_Ligne 50.pdf",
-    "line:GST:51-97": "https://tim.reseau-stan.com/tim/data/pdf/2027_Ligne 51.pdf",
-    "line:GST:52-97": "https://tim.reseau-stan.com/tim/data/pdf/2120_Ligne 52.pdf",
-    "line:GST:53-97": "https://tim.reseau-stan.com/tim/data/pdf/2028_Ligne 53.pdf",
-    "line:GST:54-97": "https://tim.reseau-stan.com/tim/data/pdf/2121_Ligne 54.pdf",
-    "line:GST:55-97": "https://tim.reseau-stan.com/tim/data/pdf/1640_Plan -55 - 2 oct 23.pdf",
-    "line:GST:56-97": "https://tim.reseau-stan.com/tim/data/pdf/1333_Ligne 56.pdf",
-    "line:GST:57-97": "https://tim.reseau-stan.com/tim/data/pdf/2023_Ligne 57.pdf",
-    "line:GST:58-97": "https://tim.reseau-stan.com/tim/data/pdf/2029_Ligne 58.pdf",
-    "line:GST:59-97": "https://tim.reseau-stan.com/tim/data/pdf/2122_Ligne 59.pdf",
-    "line:GST:60-97": "https://tim.reseau-stan.com/tim/data/pdf/1388_Ligne 60-V2.pdf",
-    "line:GST:61-97": "https://tim.reseau-stan.com/tim/data/pdf/2123_Ligne 61.pdf",
-    "line:GST:62-97": "https://tim.reseau-stan.com/tim/data/pdf/2124_Ligne 62 - 02.09",
-    "line:GST:63-97": "https://tim.reseau-stan.com/tim/data/pdf/2125_Ligne 63.pdf",
-    "line:GST:64-97": "https://tim.reseau-stan.com/tim/data/pdf/2126_Ligne 64.pdf",
-    "line:GST:65-97": "https://tim.reseau-stan.com/tim/data/pdf/2026_Ligne 65.pdf",
-    "line:GST:66-97": "https://tim.reseau-stan.com/tim/data/pdf/2127_Ligne 66.pdf",
-    "line:GST:67-97": "https://tim.reseau-stan.com/tim/data/pdf/2128_Ligne 67.pdf",
-    "line:GST:41-97": "https://tim.reseau-stan.com/tim/data/pdf/2299_Citadine Nancy.pdf",
-    "line:GST:42-97": "https://tim.reseau-stan.com/tim/data/pdf/1484_Citadine Vandoeuvre.pdf",
-  }
-  
+  static plans: { [key: string]: string } | null = null;
+
   // HTTP client
   static getInstance() {
     return axios.create({
@@ -131,7 +86,7 @@ export class Stan {
     
     // Save to cache
     this.saveToCache('stan_lignes', lignes);
-    console.log(lignes);
+    
     return lignes;
   }
 
@@ -178,8 +133,6 @@ export class Stan {
     // Save to cache
     this.saveToCache(cacheKey, arrets);
     
-
-    console.log(arrets);
     return arrets;
   }
 
@@ -234,9 +187,19 @@ export class Stan {
     return passages;
   }
 
-  static getPlan(ligne: Ligne): string | null {
-    if (!ligne || !ligne.osmid) return null;
-    return this.plans[ligne.osmid] || null;
+  static async loadPlans(): Promise<void> {
+    if (this.plans) return; // Avoid reloading if already loaded
+    try {
+      const response = await axios.get('/stan-webapp/plans.json');
+      this.plans = response.data;
+    } catch (error) {
+      console.error('Error loading plans:', error);
+    }
+  }
+
+  static async getPlan(ligne: Ligne): Promise<string | null> {
+    if (!this.plans) await this.loadPlans();
+    return ligne?.osmid ? this.plans?.[ligne.osmid] || null : null;
   }
   
   // Helper methods

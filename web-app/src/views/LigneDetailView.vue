@@ -16,6 +16,7 @@ const showFancyModal = ref(false);
 
 const arrets = ref<ArretType[]>([]);
 const ligne = ref<Ligne | null>(null);
+const planUrl = ref<string | null>(null);
 
 const loading = ref(true);
 const refreshing = ref(false);
@@ -40,7 +41,6 @@ const clearAutoRefresh = () => {
     autoRefreshInterval.value = null;
   }
 };
-
 const loadData = async (forceRefresh = false) => {
   loading.value = true;
 
@@ -48,6 +48,7 @@ const loadData = async (forceRefresh = false) => {
     const osmidLigne = Array.isArray(route.params.osmid_ligne) ? route.params.osmid_ligne[0] : route.params.osmid_ligne;
     ligne.value = await Stan.getLigne(osmidLigne, forceRefresh);
     arrets.value = ligne.value ? await Stan.getArrets(ligne.value, forceRefresh) : [];
+    planUrl.value = ligne.value ? await Stan.getPlan(ligne.value) : null;
   } catch (error) {
     router.push('/home');
   } finally {
@@ -182,7 +183,8 @@ watch(() => route.path, () => {
         <div class="bg-white rounded-lg shadow-md p-4 flex items-center">
           <img v-if="ligne?.image" :src="ligne.image" alt="Line icon" class="h-12 mr-4">
           <div>
-            <h2 class="font-bold text-lg">{{ ligne?.libelle }} {{ ligne }}</h2>
+            <h2 class="font-bold text-lg">{{ ligne?.libelle }}</h2>
+            <p class="text-gray-400 text-xs italic">{{ ligne?.osmid }}</p>
           </div>
         </div>
       </div>
@@ -210,11 +212,11 @@ watch(() => route.path, () => {
   </div>
 
   <AppMenu />
-
+  
   <FancyModal :show="showFancyModal" @close="showFancyModal = false">
       <iframe
-      v-if="ligne"
-      :src="Stan.getPlan(ligne) ?? undefined"
+      v-if="planUrl"
+      :src="planUrl"
       class="size-full"
       frameborder="0"
       allowfullscreen

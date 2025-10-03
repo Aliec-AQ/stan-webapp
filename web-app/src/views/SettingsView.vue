@@ -44,16 +44,6 @@ const savePreferences = () => {
     localStorage.setItem('preferences', JSON.stringify(preferences.value));
     locale.value = preferences.value.language;
 };
-
-const changeLanguage = (lang: string) => {
-    preferences.value.language = lang;
-    savePreferences();
-};
-
-const changeHomePage = (page: string) => {
-    preferences.value.home = page;
-    savePreferences();
-};
 </script>
 
 <template>
@@ -72,51 +62,29 @@ const changeHomePage = (page: string) => {
                 <!-- Language Selection -->
                 <div class="mb-4">
                     <h3 class="text-gray-700 font-medium mb-2">{{ t('settings.preferences.language') }}</h3>
-                    <div class="flex gap-3">
-                        <button 
-                            @click="changeLanguage('fr')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.language === 'fr' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            Français
-                        </button>
-                        <button 
-                            @click="changeLanguage('en')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.language === 'en' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            English
-                        </button>
-                    </div>
+                    <select 
+                        v-model="preferences.language" 
+                        @change="savePreferences" 
+                        class="mt-3 p-2 border rounded-md w-full bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option disabled value="">{{ t('settings.preferences.selectLanguage') }}</option>
+                        <option value="fr">Français</option>
+                        <option value="en">English</option>
+                    </select>
                 </div>
                 
                 <!-- Home Page Selection -->
                 <div>
                     <h3 class="text-gray-700 font-medium mb-2">{{ t('settings.preferences.homePage') }}</h3>
-                    <div class="flex gap-3">
-                        <button 
-                            @click="changeHomePage('accueil')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.home === 'accueil' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            {{ t('settings.preferences.homeOptions.home') }}
-                        </button>
-                        <button 
-                            @click="changeHomePage('favorites')" 
-                            class="flex-1 py-2 px-4 rounded-md transition duration-200"
-                            :class="preferences.home === 'favorites' ? 
-                                'bg-blue-500 text-white' : 
-                                'bg-gray-200 text-gray-700 hover:bg-gray-300'"
-                        >
-                            {{ t('settings.preferences.homeOptions.favorites') }}
-                        </button>
-                    </div>
+                    <select 
+                        v-model="preferences.home" 
+                        @change="savePreferences" 
+                        class="flex-1 p-2 border rounded-md w-full bg-gray-50 focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option disabled value="">{{ t('settings.preferences.selectHomePage') }}</option>
+                        <option value="home">{{ t('settings.preferences.homeOptions.home') }}</option>
+                        <option value="favorites">{{ t('settings.preferences.homeOptions.favorites') }}</option>
+                    </select>
                 </div>
             </div>
 
