@@ -93,6 +93,10 @@ const setup = () => {
   window.addEventListener('appinstalled', handleAppInstalled);
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
+
+  if (deviceType.value === 'ios' && !isPWA.value) {
+    canInstall.value = true;
+  }
 };
 
 // to call at app unmount
