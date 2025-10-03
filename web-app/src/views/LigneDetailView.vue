@@ -1,4 +1,5 @@
-<script setup>
+<script setup lang="ts">
+import type { Ligne, Arret as ArretType, Passage } from '@/types';
 import { onMounted, ref, onBeforeUnmount, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { LineLoader, Arret, RefreshIcon, ChevronLeftIcon, FancyModal, MapIcon, AppMenu } from '@/components';
@@ -13,17 +14,17 @@ const favoritesStore = useFavoritesStore();
 
 const showFancyModal = ref(false);
 
-const arrets = ref([]);
-const ligne = ref(null);
+const arrets = ref<ArretType[]>([]);
+const ligne = ref<Ligne | null>(null);
 
 const loading = ref(true);
 const refreshing = ref(false);
 
-const selectedArret = ref(null);
-const arretPassages = ref({});
+const selectedArret = ref<ArretType | null>(null);
+const arretPassages = ref<Record<string, Passage[]>>({});
 
-const loadingArretId = ref(null);
-const autoRefreshInterval = ref(null);
+const loadingArretId = ref<string | null>(null);
+const autoRefreshInterval = ref<number | null>(null);
 
 onMounted(async () => {
   await loadData();
@@ -44,8 +45,9 @@ const loadData = async (forceRefresh = false) => {
   loading.value = true;
 
   try {
-    ligne.value = await Stan.getLigne(route.params.osmid_ligne, forceRefresh);
-    arrets.value = await Stan.getArrets(ligne.value, forceRefresh);
+    const osmidLigne = Array.isArray(route.params.osmid_ligne) ? route.params.osmid_ligne[0] : route.params.osmid_ligne;
+    ligne.value = await Stan.getLigne(osmidLigne, forceRefresh);
+    arrets.value = ligne.value ? await Stan.getArrets(ligne.value, forceRefresh) : [];
   } catch (error) {
     router.push('/home');
   } finally {
@@ -61,7 +63,7 @@ const refreshData = async () => {
   }, 1000);
 };
 
-const hasSoonArrival = (passages) => {
+const hasSoonArrival = (passages : Passage[]) => {
   return passages?.some(passage => passage.temps_min < 5);
 };
 
@@ -69,10 +71,10 @@ const updateSelectedArretPassages = async () => {
   if (!selectedArret.value || loadingArretId.value) return;
   
   try {
-    const arret = arrets.value.find(a => a.osmid === selectedArret.value);
+    const arret = arrets.value.find(a => a.osmid === selectedArret.value?.osmid);
     if (arret) {
       const passages = await Stan.getProchainsPassages(arret);
-      arretPassages.value = { ...arretPassages.value, [selectedArret.value]: passages };
+      arretPassages.value = { ...arretPassages.value, [selectedArret.value.osmid]: passages };
       
       setupAutoRefreshIfNeeded(passages);
     }
@@ -81,7 +83,7 @@ const updateSelectedArretPassages = async () => {
   }
 };
 
-const setupAutoRefreshIfNeeded = (passages) => {
+const setupAutoRefreshIfNeeded = (passages : Passage[]) => {
   clearAutoRefresh();
   
   if (hasSoonArrival(passages)) {
@@ -103,15 +105,15 @@ const setupAutoRefreshIfNeeded = (passages) => {
   }
 };
 
-const handleSelectArret = async (arret) => {
-  if (selectedArret.value === arret.osmid) {
+const handleSelectArret = async (arret : ArretType) => {
+  if (selectedArret.value?.osmid === arret.osmid) {
     selectedArret.value = null;
     clearAutoRefresh();
     return;
   }
   
   clearAutoRefresh();
-  selectedArret.value = arret.osmid;
+  selectedArret.value = arret;
   
   loadingArretId.value = arret.osmid;
   
@@ -127,15 +129,15 @@ const handleSelectArret = async (arret) => {
   }
 };
 
-const getPassagesForArret = (arret) => {
-  return selectedArret.value === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
+const getPassagesForArret = (arret: ArretType) => {
+  return selectedArret.value?.osmid === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
 };
 
-const isArretLoading = (arret) => {
+const isArretLoading = (arret: ArretType) => {
   return loadingArretId.value === arret.osmid;
 };
 
-const handleToggleFavorite = (arret) => {
+const handleToggleFavorite = (arret: ArretType) => {
   favoritesStore.toggleFavorite(arret);
 };
 
@@ -151,12 +153,12 @@ watch(() => route.path, () => {
 
     <div v-else class="pb-20">
 
-      <header :class="[getColor(ligne), 'sticky top-0 z-10 shadow-md']">
+      <header :class="[ligne ? getColor(ligne) : '', 'sticky top-0 z-10 shadow-md']">
         <div class="flex items-center justify-between h-20 px-4">
             <button @click="router.back()" class="text-white p-2">
               <ChevronLeftIcon class="size-6" />
             </button>
-            <h1 class="text-xl font-bold text-white">{{ t('ligne.title') }} {{ ligne.numlignepublic }}</h1>
+            <h1 class="text-xl font-bold text-white">{{ t('ligne.title') }} {{ ligne?.numlignepublic }}</h1>
             <div>
               <button 
               @click="refreshData" 
@@ -180,7 +182,7 @@ watch(() => route.path, () => {
         <div class="bg-white rounded-lg shadow-md p-4 flex items-center">
           <img v-if="ligne?.image" :src="ligne.image" alt="Line icon" class="h-12 mr-4">
           <div>
-            <h2 class="font-bold text-lg">{{ ligne?.libelle }}</h2>
+            <h2 class="font-bold text-lg">{{ ligne?.libelle }} {{ ligne }}</h2>
           </div>
         </div>
       </div>
@@ -192,12 +194,12 @@ watch(() => route.path, () => {
             <Arret
               v-for="(arret, index) in arrets"
               :key="arret.osmid"
-              :color="getColor(ligne)"
+              :color="ligne ? getColor(ligne) : ''"
               :arret="arret"
               :index="index"
               :passages="getPassagesForArret(arret)"
               :loading="isArretLoading(arret)"
-              :is-selected="selectedArret === arret.osmid"
+              :is-selected="selectedArret?.osmid === arret.osmid"
               @select-arret="handleSelectArret"
               @toggle-favorite="handleToggleFavorite"
             />
@@ -212,7 +214,7 @@ watch(() => route.path, () => {
   <FancyModal :show="showFancyModal" @close="showFancyModal = false">
       <iframe
       v-if="ligne"
-      :src="Stan.getPlan(ligne)"
+      :src="Stan.getPlan(ligne) ?? undefined"
       class="size-full"
       frameborder="0"
       allowfullscreen

@@ -1,6 +1,6 @@
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted } from 'vue';
-import { AppMenu, ChevronLeftIcon } from '@/components';
+import { AppMenu } from '@/components';
 import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Stan } from '@/composables/stan';
@@ -45,12 +45,12 @@ const savePreferences = () => {
     locale.value = preferences.value.language;
 };
 
-const changeLanguage = (lang) => {
+const changeLanguage = (lang: string) => {
     preferences.value.language = lang;
     savePreferences();
 };
 
-const changeHomePage = (page) => {
+const changeHomePage = (page: string) => {
     preferences.value.home = page;
     savePreferences();
 };

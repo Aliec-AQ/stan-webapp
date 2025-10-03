@@ -25,6 +25,6 @@ export function useI18n() {
   return i18n.global
 }
 
-const { t } = i18n.global;
+const t: (key: string, ...args: any[]) => string = i18n.global.t;
 
 export default t;

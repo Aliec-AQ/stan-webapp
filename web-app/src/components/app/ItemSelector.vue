@@ -1,11 +1,13 @@
-<script setup>
+<script setup lang="ts">
+import type { Ref } from 'vue';
+import type { Ligne } from '@/types';
 import { computed, ref, nextTick } from 'vue';
 import { ChevronDownIcon, SearchIcon } from '@/components/icons';
 import t from '@/i18n';
 
 const props = defineProps({
   items: {
-    type: Array,
+    type: Array as () => Ligne[],
     required: true
   },
   label: {
@@ -18,10 +20,11 @@ const emit = defineEmits(['select']);
 
 const isOpen = ref(false);
 const searchQuery = ref('');
-const searchInput = ref(null);
+
+const searchInput = ref<HTMLInputElement | null>(null);
 
 const sortedItems = computed(() => {
-  return [...props.items].sort((a, b) => {
+  return [...props.items].sort((a : Ligne, b: Ligne) => {
     return a.numlignepublic.localeCompare(b.numlignepublic);
   });
 });
@@ -48,21 +51,22 @@ const toggleDropdown = () => {
   }
 };
 
-const selectItem = (item) => {
+const selectItem = (item: Ligne) => {
   emit('select', item);
   isOpen.value = false;
   searchQuery.value = '';
 };
 
-const handleClickOutside = (event) => {
-  if (!event.target.closest('.custom-dropdown')) {
+const handleClickOutside = (event: MouseEvent) => {
+  const target = event.target as Element;
+  if (!target || !target.closest('.custom-dropdown')) {
     isOpen.value = false;
     searchQuery.value = '';
   }
 };
 
 // Prevent zoom on iOS devices
-const preventZoom = (event) => {
+const preventZoom = (event: Event) => {
   event.preventDefault();
   searchInput.value?.focus();
 };
@@ -104,7 +108,7 @@ const preventZoom = (event) => {
             spellcheck="false"
             class="w-full pl-10 pr-3 py-2.5 bg-stone-200 border border-gray-600 rounded-md text-base text-black font-normal"
             :placeholder="t('ligne.search')"
-            @click.stop="preventZoom"
+            @click="preventZoom"
             @touchstart.stop="preventZoom"
           />
         </div>

@@ -1,12 +1,13 @@
-<script setup>
+<script setup lang="ts">
+import type { Ligne as LigneType } from '@/types';
 import { onMounted, computed, ref } from 'vue';
 import { Stan } from '@/composables/stan';
-import {Ligne, ItemSelector, SadIcon, SearchIcon, AppMenu, LineLoader} from '@/components';
+import { Ligne, ItemSelector, SadIcon, SearchIcon, AppMenu, LineLoader } from '@/components';
 import { useRouter } from 'vue-router';
 import t from '@/i18n';
 
 const loading = ref(true);
-const lignes = ref([]);
+const lignes = ref<LigneType[]>([]);
 const router = useRouter();
 const showMobileMenu = ref(false);
 const refreshing = ref(false);
@@ -35,7 +36,7 @@ const refreshData = async () => {
 };
 
 const categorizedLignes = computed(() => {
-  const categories = {
+  const categories: Record<string, LigneType[]> = {
     'Tempo': [],
     'Corol': [],
     'Express': [],
@@ -53,7 +54,7 @@ const categorizedLignes = computed(() => {
       categories['Express'].push(ligne);
     } else if (ligne.numlignepublic.startsWith('Citadine')) {
       categories['Citadine'].push(ligne);
-    } else if (!isNaN(ligne.numlignepublic)) {
+    } else if (!isNaN(Number(ligne.numlignepublic))) {
       categories['Standard'].push(ligne);
     } else {
       categories['Autres'].push(ligne);
@@ -65,7 +66,7 @@ const categorizedLignes = computed(() => {
   return categories;
 });
 
-const goToLigneDetail = (ligne) => {
+const goToLigneDetail = (ligne: LigneType) => {
   router.push(`/ligne/${ligne.osmid}`);
 };
 

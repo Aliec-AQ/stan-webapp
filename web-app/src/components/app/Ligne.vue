@@ -1,17 +1,18 @@
-<script setup>
+<script setup lang="ts">
+import type { Ligne } from '@/types';
 import { getColor } from '@/utils/stan';
 import { BusIcon, ChevronRightIcon } from '@/components/icons';
 import t from '@/i18n';
 
 const props = defineProps({
     ligne: {
-        type: Object,
+        type: Object as () => Ligne,
         required: true
     }
 });
 
 const emit = defineEmits(['lineSelected']);
-const goToLineDetail = (ligne) => {
+const goToLineDetail = (ligne: Ligne) => {
     emit('lineSelected', ligne);
 };
 </script>

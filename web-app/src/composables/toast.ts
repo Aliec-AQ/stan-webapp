@@ -5,18 +5,18 @@ const toast = useToast();
 
 export {Toast};
 
-export const successToast = (message) => {
+export const successToast = (message: string) => {
     toast.success(message); 
 };
 
-export const warningToast = (message) => {
+export const warningToast = (message: string) => {
     toast.warning(message);
 };
 
-export const errorToast = (message) => {
+export const errorToast = (message: string) => {
     toast.error(message);
 };
 
-export const infoToast = (message) => {
+export const infoToast = (message: string) => {
     toast.info(message);
 }

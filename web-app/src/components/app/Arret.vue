@@ -1,8 +1,9 @@
-<script setup>
+<script setup lang="ts">
 import { ChevronDownIcon, ChevronUpIcon, BusIcon, StarIcon, StarOutlineIcon } from '@/components/icons';
 import { computed } from 'vue';
 import t from '@/i18n';
 import { useFavoritesStore } from '@/stores/favorites';
+import type { Arret, Passage } from '@/types';
 
 const favorites = useFavoritesStore();
 
@@ -35,7 +36,7 @@ const props = defineProps({
 
 const emit = defineEmits(['selectArret', 'toggleFavorite'])
 
-const formatPassageTime = (passage) => {
+const formatPassageTime = (passage: Passage) => {
     if (passage.temps_min === 0) {
         return t('arret.passageImediat');
     } else if (passage.temps_min < 60) {
@@ -52,9 +53,9 @@ const borderColor = computed(() => {
 });
 
 const passagesByDirection = computed(() => {
-    const grouped = {};
+    const grouped: Record<string, Passage[]> = {};
     if (props.passages && props.passages.length > 0) {
-        props.passages.forEach(passage => {
+        (props.passages as Passage[]).forEach((passage: Passage) => {
             if (!grouped[passage.direction]) {
                 grouped[passage.direction] = [];
             }
@@ -73,7 +74,7 @@ const isFavoriteArret = computed(() => {
     return props.isFavorite || favorites.isFavorite(props.arret.osmid);
 });
 
-const handleToggleFavorite = (e) => {
+const handleToggleFavorite = (e: MouseEvent) => {
     e.stopPropagation();
     emit('toggleFavorite', props.arret);
 };

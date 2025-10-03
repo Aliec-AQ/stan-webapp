@@ -1,15 +1,17 @@
 import axios from "axios";
+import type { Ligne, Arret, Passage } from "@/types";
 
 export class Stan {
   // Constants
   static CACHE_DURATION = 14 * 24 * 60 * 60 * 1000; // 2 semaines en millisecondes
   
-  static plans = {
+  static plans: { [key: string]: string } = {
     "line:GST:1-97" : "https://tim.reseau-stan.com/tim/data/pdf/2283_Ligne Tempo 1.pdf",
     "line:GST:2-97" : "https://tim.reseau-stan.com/tim/data/pdf/1372_Ligne Tempo 2.pdf",
     "line:GST:3-97" : "https://tim.reseau-stan.com/tim/data/pdf/2312_Ligne Tempo 3.pdf",
     "line:GST:4-97" : "https://tim.reseau-stan.com/tim/data/pdf/2215_Ligne Tempo 4.pdf",
-    "line:GST:5-97" : "https://tim.reseau-stan.com/tim/data/pdf/2216_Ligne Corol.pdf",
+    "line:GST:5-97" : "https://tim.reseau-stan.com/tim/data/pdf/2460_Tempo 5_2025.pdf",
+    "line:GST:7": "https://tim.reseau-stan.com/tim/data/pdf/2216_Ligne Corol.pdf",
     "line:GST:18-97": "https://tim.reseau-stan.com/tim/data/pdf/2219_Brabois Express.pdf",
     "line:GST:14-97": "https://tim.reseau-stan.com/tim/data/pdf/1315_Ligne 14ex-14sept23.pdf",
     "line:SUB:10": "https://tim.reseau-stan.com/tim/data/pdf/2217_Ligne 10.pdf",
@@ -61,7 +63,7 @@ export class Stan {
   }
 
   // Cache management methods
-  static saveToCache(key, data) {
+  static saveToCache(key: string, data: any) {
     try {
       const cacheItem = {
         timestamp: Date.now(),
@@ -73,7 +75,7 @@ export class Stan {
     }
   }
   
-  static getFromCache(key) {
+  static getFromCache(key: string) {
     try {
       const cacheItem = localStorage.getItem(key);
       if (!cacheItem) return null;
@@ -100,7 +102,7 @@ export class Stan {
   }
   
   // Data fetch methods
-  static async getLignes(forceRefresh = false) {
+  static async getLignes(forceRefresh = false): Promise<Ligne[]> {
     // Try to get from cache unless refresh is forced
     if (!forceRefresh) {
       const cachedLignes = this.getFromCache('stan_lignes');
@@ -113,7 +115,7 @@ export class Stan {
     
     // Parse lines data using regex
     const ligneRegex = /data-ligne="(\d+)" data-numlignepublic="([^"]+)" data-osmid="(line[^"+]+)" data-libelle="([^"]+)" value="[^"]+">/g;
-    const lignes = [];
+    const lignes: Ligne[] = [];
     
     for (const match of htmlContent.matchAll(ligneRegex)) {
       const [_, id, numPublic, osmId, rawLibelle] = match;
@@ -129,16 +131,16 @@ export class Stan {
     
     // Save to cache
     this.saveToCache('stan_lignes', lignes);
-    
+    console.log(lignes);
     return lignes;
   }
 
-  static async getLigne(osmid, forceRefresh = false) {
+  static async getLigne(osmid: string, forceRefresh = false): Promise<Ligne | null> {
     const lignes = await this.getLignes(forceRefresh);
     return lignes.find(ligne => ligne.osmid === osmid) || null;
   }
 
-  static async getArrets(ligne, forceRefresh = false) {
+  static async getArrets(ligne: Ligne, forceRefresh = false): Promise<Arret[]> {
     // Try to get from cache unless refresh is forced
     const cacheKey = `stan_arrets_${ligne.id}`;
     if (!forceRefresh) {
@@ -149,7 +151,7 @@ export class Stan {
     // Prepare form data for request
     const formData = new FormData();
     formData.append('requete', 'tempsreel_arrets');
-    formData.append('requete_val[ligne]', ligne.id);
+    formData.append('requete_val[ligne]', ligne.id.toString());
     formData.append('requete_val[numlignepublic]', ligne.numlignepublic);
     
     // Make request
@@ -161,7 +163,7 @@ export class Stan {
     
     // Parse stops data using regex
     const arretRegex = /data-libelle="([^"]+)" data-ligne="(\d+)" data-numlignepublic="([^"]+)" value="([^"]+)">([^<]+)<\/option>/g;
-    const arrets = [];
+    const arrets: Arret[] = [];
     
     for (const match of response.data.matchAll(arretRegex)) {
       const [_, libelle, , , osmid] = match;
@@ -176,10 +178,12 @@ export class Stan {
     // Save to cache
     this.saveToCache(cacheKey, arrets);
     
+
+    console.log(arrets);
     return arrets;
   }
 
-  static async getProchainsPassages(arret) {
+  static async getProchainsPassages(arret: Arret): Promise<Passage[]> {
     // Prepare form data for request
     const formData = new FormData();
     formData.append('requete', 'tempsreel_submit');
@@ -195,7 +199,7 @@ export class Stan {
     
     // Split response by list items
     const passageItems = response.data.split('<li>').slice(1);
-    const passages = [];
+    const passages: Passage[] = [];
     
     // Process each passage item
     for (const item of passageItems) {
@@ -206,20 +210,15 @@ export class Stan {
       if (!directionMatch || !ligneMatch) continue;
       
       const direction = directionMatch[1];
-      const ligneId = parseInt(ligneMatch[1], 10);
-      const ligneNumPublic = ligneMatch[2];
       
-      // Create base passage object
-      const basePassage = {
+      // Create base passage object with required properties
+      const basePassage: Passage = {
         arret: { 
-          ligne: { 
-            ...arret.ligne, 
-            id: ligneId, 
-            numlignepublic: ligneNumPublic 
-          }, 
           ...arret 
         },
-        direction
+        direction,
+        temps_min: 0,
+        temps_theorique: false
       };
       
       // Process "now" passages
@@ -235,20 +234,20 @@ export class Stan {
     return passages;
   }
 
-  static getPlan(ligne) {
+  static getPlan(ligne: Ligne): string | null {
     if (!ligne || !ligne.osmid) return null;
     return this.plans[ligne.osmid] || null;
   }
   
   // Helper methods
-  static _decodeHtmlEntities(text) {
+  static _decodeHtmlEntities(text: string): string {
     return text
       .replace('&lt;', '<')
       .replace('&gt;', '>')
       .replace(/&#039;/g, "'");
   }
-  
-  static _processNowPassages(html, basePassage, passages) {
+
+  static _processNowPassages(html: string, basePassage: Passage, passages: Passage[]) {
     const nowRegex = /class="tpsreel-temps-item large-1 "><i class="icon-car1"><\/i><i title="Temps Réel" class="icon-wifi2"><\/i>/g;
     
     for (const _ of html.matchAll(nowRegex)) {
@@ -259,8 +258,8 @@ export class Stan {
       });
     }
   }
-  
-  static _processMinutePassages(html, basePassage, passages) {
+
+  static _processMinutePassages(html: string, basePassage: Passage, passages: Passage[]) {
     const minutesRegex = /class="tpsreel-temps-item large-1 ">(\d+) min/g;
     
     for (const match of html.matchAll(minutesRegex)) {
@@ -271,8 +270,8 @@ export class Stan {
       });
     }
   }
-  
-  static _processHourPassages(html, basePassage, passages) {
+
+  static _processHourPassages(html: string, basePassage: Passage, passages: Passage[]) {
     const hoursRegex = /temps-item-heure">(\d+)h(\d+)(.*)<\/a>/g;
     
     for (const match of html.matchAll(hoursRegex)) {
