@@ -48,6 +48,8 @@ const platformName = computed(() => {
 });
 
 const canInstall = computed(() => {
+  console.log('deferredPrompt:', deferredPrompt.value);
+  console.log('isFirefox:', isFirefox.value);
   return deferredPrompt.value !== null && !isFirefox.value;
 });
 
@@ -56,6 +58,7 @@ const canInstall = computed(() => {
 //#region INSTALLATION
 const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
   deferredPrompt.value = e;
+  console.log('PWA install prompt available');
 };
 const handleAppInstalled = () => {
   deferredPrompt.value = null;
