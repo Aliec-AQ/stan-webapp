@@ -15,6 +15,7 @@ onUnmounted(pwa.cleanup);
   <div>
     <PWAInstallButton customClass="fixed bottom-20 right-2 z-50" :showError="false" />
     <RouterView />
+    <Test />
   </div>
 </template>
 
