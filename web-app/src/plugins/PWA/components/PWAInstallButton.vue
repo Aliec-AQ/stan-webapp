@@ -44,9 +44,11 @@ const install = () => {
     console.warn('Firefox does not support PWA installation.');
     return;
   }
+  console.log('Install button clicked', canInstall.value, deviceType.value);
   if (canInstall.value && deviceType.value !== 'ios') {
     installPWA();
   } else {
+    console.log('Showing tutorial modal for iOS or unsupported device');
     tutorialModal.value = true;
   }
 };
@@ -58,7 +60,7 @@ const closeModal = () => {
 
 <template>
   <div :class="[customClass]">
-    {{ canInstall }}
+    {{ canInstall }} {{ tutorialModal }}
     <button
       v-if="canInstall"
       @click="install"

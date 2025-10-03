@@ -94,8 +94,6 @@ const setup = () => {
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
 
-  console.log(canInstall.value, isPWA.value, isFirefox.value);
-
   if (isPWA.value || isFirefox.value) {
     canInstall.value = false;
   }
