@@ -58,6 +58,7 @@ const closeModal = () => {
 
 <template>
   <div :class="[customClass]">
+    {{ canInstall }}
     <button
       v-if="canInstall"
       @click="install"
