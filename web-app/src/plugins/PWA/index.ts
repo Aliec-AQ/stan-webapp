@@ -8,7 +8,7 @@ interface BeforeInstallPromptEvent extends Event {
 
 
 const deferredPrompt = ref<BeforeInstallPromptEvent | null>(null);
-const canInstall = ref(false);
+const canInstall = ref(true);
 const isInstalling = ref(false);
 const isOnline = ref(navigator.onLine);
 
@@ -94,8 +94,8 @@ const setup = () => {
   window.addEventListener('online', updateOnlineStatus);
   window.addEventListener('offline', updateOnlineStatus);
 
-  if (deviceType.value === 'ios' && !isPWA.value) {
-    canInstall.value = true;
+  if (isPWA.value || isFirefox.value) {
+    canInstall.value = false;
   }
 };
 
