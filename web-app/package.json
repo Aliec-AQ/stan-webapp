@@ -2,7 +2,7 @@
  "name": "stan-web-app",
   "description": "Stan Web Application",
   "author": "Aliec-AQ",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "license": "MIT",
   "type": "module",
   "scripts": {
@@ -15,6 +15,7 @@
     "axios": "^1.10.0",
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.4.1",
+    "primeicons": "^7.0.0",
     "vue": "^3.5.17",
     "vue-i18n": "11.1.5",
     "vue-query": "^1.26.0",

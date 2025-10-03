@@ -1,14 +1,12 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { AppMenu } from '@/components';
-import { useRouter } from 'vue-router';
 import { useI18n } from 'vue-i18n';
 import { Stan } from '@/composables/stan';
 
-const router = useRouter();
 const { t, locale } = useI18n();
 const cacheCleared = ref(false);
-const appVersion = ref('1.0.2'); 
+const appVersion = ref('1.0.3'); 
 const clearingCache = ref(false);
 const preferences = ref({
     language: 'fr',

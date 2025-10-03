@@ -9,8 +9,6 @@ import t from '@/i18n';
 const loading = ref(true);
 const lignes = ref<LigneType[]>([]);
 const router = useRouter();
-const showMobileMenu = ref(false);
-const refreshing = ref(false);
 
 onMounted(async () => {
   await loadData();
@@ -25,14 +23,6 @@ const loadData = async (forceRefresh = false) => {
   } finally {
     loading.value = false;
   }
-};
-
-const refreshData = async () => {
-  refreshing.value = true;
-  await loadData(true);
-  setTimeout(() => {
-    refreshing.value = false;
-  }, 1000);
 };
 
 const categorizedLignes = computed(() => {
@@ -68,10 +58,6 @@ const categorizedLignes = computed(() => {
 
 const goToLigneDetail = (ligne: LigneType) => {
   router.push(`/ligne/${ligne.osmid}`);
-};
-
-const toggleMobileMenu = () => {
-  showMobileMenu.value = !showMobileMenu.value;
 };
 </script>
 

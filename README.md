@@ -29,6 +29,7 @@ Cette application web permet aux utilisateurs de consulter les horaires des bus 
 - **Gestion du cache**: Stockage local des données pour améliorer les performances et réduire la consommation de données
 - **Gestion des favoris**: Permet aux utilisateurs de marquer leurs arrêts préférés pour un accès rapide
 - **Internationalisation**: Support pour plusieurs langues (français et anglais)
+- **PWA**: Installation en tant qu'application web progressive pour une utilisation quasi-native sur mobile
 
 ## Mentions légales
 
