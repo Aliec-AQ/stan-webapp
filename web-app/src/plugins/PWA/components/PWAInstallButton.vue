@@ -44,11 +44,10 @@ const install = () => {
     console.warn('Firefox does not support PWA installation.');
     return;
   }
-  console.log('Install button clicked', canInstall.value, deviceType.value);
+
   if (canInstall.value && deviceType.value !== 'ios') {
     installPWA();
   } else {
-    console.log('Showing tutorial modal for iOS or unsupported device');
     tutorialModal.value = true;
   }
 };
@@ -60,12 +59,11 @@ const closeModal = () => {
 
 <template>
   <div :class="[customClass]">
-    {{ canInstall }} {{ tutorialModal }}
     <button
       v-if="canInstall"
       @click="install"
       :disabled="isInstalling"
-      class="inline-flex items-center gap-2 px-3 py-1 md:px-6 md:py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      class="installButton inline-flex items-center gap-2 px-3 py-1 md:px-6 md:py-3 bg-primary text-white rounded-lg hover:bg-primary-dark transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <slot>
         <i class="pi pi-download"></i>
@@ -144,7 +142,7 @@ const closeModal = () => {
   @apply bg-white hover:bg-white text-black hover:text-black border-0 focus:outline-none;
 }
 
-button {
+.installButton {
   animation: pulse 3s infinite;
 }
 </style>
