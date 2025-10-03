@@ -57,7 +57,6 @@ const canInstall = computed(() => {
 //#region INSTALLATION
 const handleBeforeInstallPrompt = (e: BeforeInstallPromptEvent) => {
   deferredPrompt.value = e;
-  console.log('beforeinstallprompt event captured:', e);
 };
 const handleAppInstalled = () => {
   deferredPrompt.value = null;
@@ -67,7 +66,7 @@ const installPWA = async () => {
     console.warn('Firefox does not support PWA installation.');
     return;
   }
-  if (!deferredPrompt.value) {console.log('No deferred prompt available'); return;}
+  if (!deferredPrompt.value) return;
   isInstalling.value = true;
   try {
     await deferredPrompt.value.prompt();
@@ -101,7 +100,6 @@ const requestNotificationPermission = async () => {
 
 // to call at app mount
 const setup = () => {
-  console.log('Setting up PWA event listeners');
   window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt as EventListener);
   window.addEventListener('appinstalled', handleAppInstalled);
   window.addEventListener('online', updateOnlineStatus);

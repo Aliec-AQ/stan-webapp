@@ -1,6 +1,5 @@
 import { createI18n } from 'vue-i18n'
-import fr from './locale/fr';
-import en from './locale/en';
+import { fr, en, it, de, es } from './locale';
 
 const getLocale = () => {
   const preferences = localStorage.getItem('preferences');
@@ -17,7 +16,10 @@ export const i18n = createI18n({
   fallbackLocale: 'fr',
   messages: {
     fr,
-    en
+    en,
+    it,
+    de,
+    es
   }
 });
 

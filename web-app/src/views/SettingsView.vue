@@ -16,6 +16,7 @@ const preferences = ref({
 // Load preferences from localStorage
 onMounted(() => {
     const savedPreferences = localStorage.getItem('preferences');
+    console.log('Loaded preferences:', savedPreferences);
     if (savedPreferences) {
         const parsed = JSON.parse(savedPreferences);
         preferences.value = {
@@ -23,6 +24,7 @@ onMounted(() => {
             home: parsed.home || 'accueil'
         };
     }
+    console.log('Current preferences:', preferences.value);
 });
 
 const clearCache = async () => {
@@ -68,6 +70,9 @@ const savePreferences = () => {
                         <option disabled value="">{{ t('settings.preferences.selectLanguage') }}</option>
                         <option value="fr">Français</option>
                         <option value="en">English</option>
+                        <option value="de">Deutsch</option>
+                        <option value="es">Español</option>
+                        <option value="it">Italiano</option>
                     </select>
                 </div>
                 
@@ -80,7 +85,7 @@ const savePreferences = () => {
                         class="flex-1 p-2 border rounded-md w-full bg-gray-50 focus:ring-2 focus:ring-blue-500"
                     >
                         <option disabled value="">{{ t('settings.preferences.selectHomePage') }}</option>
-                        <option value="home">{{ t('settings.preferences.homeOptions.home') }}</option>
+                        <option value="accueil">{{ t('settings.preferences.homeOptions.home') }}</option>
                         <option value="favorites">{{ t('settings.preferences.homeOptions.favorites') }}</option>
                     </select>
                 </div>
