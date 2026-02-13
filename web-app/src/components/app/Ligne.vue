@@ -35,10 +35,10 @@ const goToLineDetail = (ligne: Ligne) => {
         <div class="px-4 py-4">
             <div class="flex items-center">
                 <img 
-                        :src="ligne.image" 
-                        alt="Ligne Icon" 
-                        class="w-12 h-12 object-contain mr-3 flex-shrink-0"
-                    />
+                    :src="ligne.image" 
+                    alt="Ligne Icon" 
+                    class="w-12 h-12 object-contain mr-3 flex-shrink-0"
+                />
                 <div class="flex-1">
                     <p class="font-medium text-gray-900 line-clamp-1">
                         {{ ligne.libelle }}

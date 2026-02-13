@@ -18,3 +18,8 @@ export type Passage = {
     temps_min: number; // in minutes
     temps_theorique: boolean;
 };
+
+export type Favoris = {
+    ligne: Ligne;
+    arrets: Arret[];
+};
