@@ -71,7 +71,7 @@ const passagesByDirection = computed(() => {
 });
 
 const isFavoriteArret = computed(() => {
-    return props.isFavorite || favorites.isFavorite(props.arret.osmid);
+    return props.isFavorite || favorites.isFavorite(props.arret.osmid, props.arret.ligne.osmid);
 });
 
 const handleToggleFavorite = (e: MouseEvent) => {

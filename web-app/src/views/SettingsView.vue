@@ -6,7 +6,7 @@ import { Stan } from '@/composables/stan';
 
 const { t, locale } = useI18n();
 const cacheCleared = ref(false);
-const appVersion = ref('1.0.3'); 
+const appVersion = ref('1.0.4'); 
 const clearingCache = ref(false);
 const preferences = ref({
     language: 'fr',

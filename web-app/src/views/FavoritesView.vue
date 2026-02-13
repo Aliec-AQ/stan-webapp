@@ -20,13 +20,13 @@ onMounted(async () => {
 });
 
 const handleSelectArret = async (arret: ArretType) => {
-  if (selectedArret.value === arret.osmid) {
+  if (selectedArret.value === arret.osmid+'-'+arret.ligne.osmid) {
     selectedArret.value = null;
     return;
   }
 
-  selectedArret.value = arret.osmid;
-  loadingArretId.value = arret.osmid;
+  selectedArret.value = arret.osmid+'-'+arret.ligne.osmid;
+  loadingArretId.value = arret.osmid+'-'+arret.ligne.osmid;
 
   try {
     const passages = await Stan.getProchainsPassages(arret);
@@ -39,16 +39,16 @@ const handleSelectArret = async (arret: ArretType) => {
 };
 
 const getPassagesForArret = (arret: ArretType) => {
-  return selectedArret.value === arret.osmid ? arretPassages.value[arret.osmid] || [] : [];
+  return selectedArret.value === arret.osmid+'-'+arret.ligne.osmid ? arretPassages.value[arret.osmid] || [] : [];
 };
 
 const isArretLoading = (arret: ArretType) => {
-  return loadingArretId.value === arret.osmid;
+  return loadingArretId.value === arret.osmid+'-'+arret.ligne.osmid;
 };
 
-const handleRemoveFavorite = (arretId: string) => {
-  favorites.removeFavorite(arretId);
-  if (selectedArret.value === arretId) {
+const handleRemoveFavorite = (arret: ArretType) => {
+  favorites.removeFavorite(arret.osmid, arret.ligne.osmid);
+  if (selectedArret.value === arret.osmid+'-'+arret.ligne.osmid) {
     selectedArret.value = null;
   }
 };
@@ -71,22 +71,37 @@ const handleRemoveFavorite = (arretId: string) => {
           <p class="text-gray-500 mt-2">{{t('favorites.emptyDescription')}}</p>
         </div>
         
-        <div v-else class="bg-white rounded-lg shadow-md">
-          <ul class="divide-y divide-gray-200">
-            <Arret
-              v-for="(arret, index) in favoriteArrets"
-              :key="arret.osmid"
-              :color="getColor(arret.ligne)"
-              :arret="arret"
-              :index="index"
-              :passages="getPassagesForArret(arret)"
-              :loading="isArretLoading(arret)"
-              :is-selected="selectedArret === arret.osmid"
-              :is-favorite="true"
-              @select-arret="handleSelectArret"
-              @toggle-favorite="handleRemoveFavorite(arret.osmid)"
-            />
-          </ul>
+        <div v-else class="space-y-4">
+          <div v-for="(favoris, index) in favoriteArrets" :key="index" class="bg-white rounded-lg shadow-md divide-y divide-gray-300">
+            <div class="px-4 py-4">
+              <div class="flex items-center">
+                <img 
+                    :src="favoris.ligne.image" 
+                    alt="Ligne Icon" 
+                    class="w-8 h-8 object-contain mr-3 flex-shrink-0"
+                />
+                <div class="flex-1">
+                    <p class="font-medium text-gray-900 line-clamp-1">
+                        {{ favoris.ligne.libelle }}
+                    </p>
+                </div>
+              </div>
+            </div>
+            <ul>
+              <Arret
+                v-for="arret in favoris.arrets"
+                :key="arret.osmid+'-'+favoris.ligne.osmid"
+                :color="getColor(favoris.ligne)"
+                :arret="arret"
+                :passages="getPassagesForArret(arret)"
+                :loading="isArretLoading(arret)"
+                :is-selected="selectedArret === arret.osmid+'-'+favoris.ligne.osmid"
+                :is-favorite="true"
+                @select-arret="handleSelectArret"
+                @toggle-favorite="handleRemoveFavorite(arret)"
+              />
+            </ul>
+          </div>
         </div>
       </div>
     </div>

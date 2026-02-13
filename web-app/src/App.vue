@@ -4,10 +4,17 @@ import { usePWA } from '@/plugins/PWA';
 import { RouterView } from 'vue-router';
 import PWAInstallButton from './plugins/PWA/components/PWAInstallButton.vue';
 
+import { transferFavorites } from '@/utils/transfer';
+
 const { setup, cleanup } = usePWA();
 
 
-onMounted(setup);
+onMounted (() => {
+  setup();
+
+  // transfer the favorites to the old way to the new way
+  transferFavorites();
+});
 onUnmounted(cleanup);
 
 </script>
